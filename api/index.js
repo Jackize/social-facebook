@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import multer from 'multer';
 import dotenv from 'dotenv';
+import { connectDB } from './src/config/connecDB.js';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use(
     })
 );
 app.use(cookieParser());
+connectDB();
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
