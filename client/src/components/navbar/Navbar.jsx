@@ -2,59 +2,122 @@ import {
     AppBar,
     Avatar,
     Badge,
+    Box,
     IconButton,
-    InputBase,
     Menu,
     MenuItem,
-    Toolbar,
     Typography,
+    useTheme,
 } from '@mui/material';
 import React from 'react';
-import { Icons, Search, StyledToolBar, UserBox } from './Navbar.style';
-import { FacebookOutlined, Mail, Notifications } from '@mui/icons-material';
+import {
+    Icons,
+    Left,
+    Middle,
+    Mobile,
+    Right,
+    Search,
+    SearchIconWrapper,
+    StyledInputBase,
+    StyledToolBar,
+} from './Navbar.style';
+import {
+    Home,
+    Mail,
+    Notifications,
+    OndemandVideo,
+    Store,
+} from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from 'react-router-dom';
+
 const Navbar = () => {
-    const [open, setOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const theme = useTheme();
     return (
-        <AppBar position="sticky">
+        <AppBar
+            position="sticky"
+            sx={{
+                background: theme.palette.background.default,
+                color: theme.palette.primary.main,
+            }}
+        >
             <StyledToolBar>
-                <Typography
-                    variant="h6"
-                    sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
-                    Facebook
-                </Typography>
-                <FacebookOutlined
-                    sx={{ display: { xs: 'block', sm: 'none' } }}
-                />
-                <Search>
-                    <InputBase placeholder="Search ..." />
-                </Search>
-                <Icons>
+                <Left>
+                    <Typography
+                        component={Link}
+                        to="/"
+                        variant="h4"
+                        fontWeight={600}
+                        sx={{ display: { xs: 'none', sm: 'block' } }}
+                    >
+                        facebook
+                    </Typography>
+                </Left>
+                <Middle>
+                    <Search>
+                        <SearchIconWrapper>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase placeholder="Search" />
+                    </Search>
+                </Middle>
+                <Right>
+                    <Icons>
+                        <IconButton sx={{ color: theme.palette.text.primary }}>
+                            <Badge badgeContent={4} color="error">
+                                <Mail />
+                            </Badge>
+                        </IconButton>
+                        <IconButton sx={{ color: theme.palette.text.primary }}>
+                            <Badge badgeContent={2} color="error">
+                                <Notifications />
+                            </Badge>
+                        </IconButton>
+                        <Avatar
+                            sx={{ width: 30, height: 30 }}
+                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                            id="avatar-menu"
+                            aria-controls={open ? 'menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={handleClick}
+                        />
+                    </Icons>
+                </Right>
+
+                <Mobile>
                     <IconButton>
-                        <Badge badgeContent={4} color="error">
-                            <Mail />
-                        </Badge>
+                        <Home />
                     </IconButton>
                     <IconButton>
-                        <Badge badgeContent={2} color="error">
-                            <Notifications />
-                        </Badge>
+                        <OndemandVideo />
                     </IconButton>
-                    <Avatar
-                        sx={{ width: 30, height: 30 }}
-                        src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                        onClick={(e) => setOpen(true)}
-                    />
-                </Icons>
-                <UserBox onClick={(e) => setOpen(true)}>
-                    <Avatar
-                        sx={{ width: 30, height: 30 }}
-                        src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    />
-                    <Typography variant="span">John</Typography>
-                </UserBox>
+                    <IconButton>
+                        <Store />
+                    </IconButton>
+                    <IconButton>
+                        <MenuIcon />
+                    </IconButton>
+                </Mobile>
             </StyledToolBar>
-            <Menu open={open} onClose={(e) => setOpen(false)}>
+            <Menu
+                id="menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'avatar-menu',
+                }}
+            >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>My account</MenuItem>
                 <MenuItem>Logout</MenuItem>

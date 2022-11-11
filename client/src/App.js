@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
+import Theme from './components/Theme/Theme';
 import Layout from './layout';
 import Home from './pages/home/Home';
 
@@ -6,7 +7,11 @@ function App() {
     const router = createBrowserRouter([
         {
             path: '/',
-            element: <Layout />,
+            element: (
+                <Theme>
+                    <Layout />
+                </Theme>
+            ),
             children: [
                 {
                     path: '/',
