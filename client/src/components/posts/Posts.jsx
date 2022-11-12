@@ -1,11 +1,24 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import Post from './post/Post';
+import UpPost from '../upPost/UpPost';
+import ModalUpPost from '../modalUpPost/ModalUpPost';
 
 const Posts = () => {
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     return (
-        <Box bgcolor="red" flex={2} p={2}>
-            Posts
-        </Box>
+        <>
+            <Box flex={2} p={2}>
+                <UpPost handleOpen={handleOpen} />
+                <Post />
+                <Post />
+                <Post />
+                <Post />
+            </Box>
+            <ModalUpPost open={open} handleClose={handleClose} />
+        </>
     );
 };
 

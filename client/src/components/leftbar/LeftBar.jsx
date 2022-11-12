@@ -14,8 +14,8 @@ import { Home, OndemandVideo, Store } from '@mui/icons-material';
 import { MaterialUISwitch } from './leftBar.style';
 const LeftBar = () => {
     return (
-        <Box flex={1} sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <Box width="70%">
+        <Box flex={1} p={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Box position="fixed">
                 <List>
                     <ListItem>
                         <ListItemButton>
