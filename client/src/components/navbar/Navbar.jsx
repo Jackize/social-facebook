@@ -31,6 +31,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/authContext';
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -42,6 +43,7 @@ const Navbar = () => {
         setAnchorEl(null);
     };
     const theme = useTheme();
+    const { logout } = React.useContext(AuthContext);
     return (
         <AppBar
             position="sticky"
@@ -120,7 +122,9 @@ const Navbar = () => {
             >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>My account</MenuItem>
-                <MenuItem>Logout</MenuItem>
+                <MenuItem onClick={logout} component={Link} to="/login">
+                    Logout
+                </MenuItem>
             </Menu>
         </AppBar>
     );

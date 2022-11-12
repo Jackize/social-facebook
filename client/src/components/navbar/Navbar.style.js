@@ -33,11 +33,8 @@ export const Search = styled('div')(({ theme }) => ({
     borderRadius: theme.shape.borderRadius * 5,
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.background.paper, 0.25),
-    },
     marginLeft: 0,
-    flex: 2,
+    marginRight: '40px',
     // display: { xs: 'none', sm: 'block' },
     [theme.breakpoints.down('sm')]: {
         display: 'none',

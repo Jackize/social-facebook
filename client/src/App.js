@@ -1,16 +1,33 @@
-import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
+import {
+    createBrowserRouter,
+    RouterProvider,
+    Route,
+    Navigate,
+} from 'react-router-dom';
 import Theme from './components/Theme/Theme';
 import Layout from './layout';
 import Home from './pages/home/Home';
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
 
 function App() {
+    const currentUser = true;
+    const ProtectedRoute = ({ children }) => {
+        if (!currentUser) {
+            return <Navigate to="/login" />;
+        }
+
+        return children;
+    };
     const router = createBrowserRouter([
         {
             path: '/',
             element: (
-                <Theme>
-                    <Layout />
-                </Theme>
+                <ProtectedRoute>
+                    <Theme>
+                        <Layout />
+                    </Theme>
+                </ProtectedRoute>
             ),
             children: [
                 {
@@ -18,6 +35,14 @@ function App() {
                     element: <Home />,
                 },
             ],
+        },
+        {
+            path: '/login',
+            element: <Login />,
+        },
+        {
+            path: '/register',
+            element: <Register />,
         },
     ]);
     return (

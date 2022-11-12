@@ -1,11 +1,14 @@
 import { createTheme, ThemeProvider } from '@mui/material';
 import React from 'react';
+import { DarkModeContext } from '../../context/darkModeContext';
 
 const Theme = ({ children }) => {
+    const { darkMode } = React.useContext(DarkModeContext);
     const styles = createTheme({
         palette: {
+            mode: darkMode ? 'dark' : 'light',
             background: {
-                paper: '#F0F2F5',
+                paper: darkMode ? '#18191A' : '#F0F2F5',
             },
         },
     });
