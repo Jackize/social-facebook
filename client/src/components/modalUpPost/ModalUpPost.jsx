@@ -9,17 +9,23 @@ import {
     Stack,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 import React from 'react';
 import { style } from './ModalUpPost.style';
 
 const ModalUpPost = ({ open, handleClose }) => {
+    const theme = useTheme();
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={style}>
                 <Stack direction="column">
                     <Box>
-                        <Typography variant="h6" textAlign="center">
+                        <Typography
+                            variant="h6"
+                            textAlign="center"
+                            color={theme.palette.text.primary}
+                        >
                             Create Post
                         </Typography>
                         <Divider />
