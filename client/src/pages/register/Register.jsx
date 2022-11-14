@@ -1,7 +1,36 @@
 import { Link } from 'react-router-dom';
+import React from 'react';
+import axios from 'axios';
+import Alert from '@mui/material/Alert';
 import './register.scss';
 
 const Register = () => {
+    const [inputs, setInputs] = React.useState({
+        username: '',
+        email: '',
+        password: '',
+        name: '',
+    });
+    const [err, setErr] = React.useState(null);
+
+    const handleChange = (e) => {
+        setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setErr(null);
+    };
+
+    const handleClick = async (e) => {
+        e.preventDefault();
+
+        try {
+            let res = await axios.post(
+                'http://localhost:8080/api/auth/register',
+                inputs
+            );
+            setErr(res.data);
+        } catch (err) {
+            setErr(err.response.data);
+        }
+    };
     return (
         <div className="register">
             <div className="card">
@@ -20,11 +49,36 @@ const Register = () => {
                 <div className="right">
                     <h1>Register</h1>
                     <form>
-                        <input type="text" placeholder="Username" />
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <input type="text" placeholder="Name" />
-                        <button>Register</button>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            name="username"
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            name="email"
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            name="password"
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            name="name"
+                            onChange={handleChange}
+                        />
+                        {err === 'User already exists' ? (
+                            <Alert severity="error">{err}</Alert>
+                        ) : err === 'User created' ? (
+                            <Alert severity="success">{err}</Alert>
+                        ) : null}
+                        <button onClick={handleClick}>Register</button>
                     </form>
                 </div>
             </div>
