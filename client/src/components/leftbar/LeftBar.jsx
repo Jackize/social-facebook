@@ -15,7 +15,7 @@ import { Home, OndemandVideo, Store } from '@mui/icons-material';
 import { MaterialUISwitch } from './leftBar.style';
 import { DarkModeContext } from '../../context/darkModeContext';
 const LeftBar = () => {
-    const { toggle } = React.useContext(DarkModeContext);
+    const { toggle, darkMode } = React.useContext(DarkModeContext);
     const theme = useTheme();
     return (
         <Box flex={1} sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -61,6 +61,7 @@ const LeftBar = () => {
                         control={<MaterialUISwitch sx={{ m: 1 }} />}
                         label="Dark mode"
                         sx={{ ml: 2, color: theme.palette.text.primary }}
+                        checked={darkMode}
                         onClick={toggle}
                     />
                 </FormGroup>
