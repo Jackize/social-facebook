@@ -35,6 +35,7 @@ import { AuthContext } from '../../context/authContext';
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const { currentUser } = React.useContext(AuthContext);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -86,7 +87,7 @@ const Navbar = () => {
                         </IconButton>
                         <Avatar
                             sx={{ width: 30, height: 30 }}
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                            src={currentUser.avatarPic}
                             id="avatar-menu"
                             aria-controls={open ? 'menu' : undefined}
                             aria-haspopup="true"
