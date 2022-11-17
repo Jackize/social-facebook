@@ -13,6 +13,7 @@
         />
         <style>
             * {
+                box-sizing: border-box;
                 font-family: 'Roboto', sans-serif;
                 margin: 0;
                 padding: 0;
@@ -20,6 +21,16 @@
             a {
                 text-decoration: none;
                 color: currentcolor;
+            }
+            /* width */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+                background: rgba(72, 71, 77, 0.895);
+                border-radius: 10px;
             }
         </style>
         <title>React App</title>

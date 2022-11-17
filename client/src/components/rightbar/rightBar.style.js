@@ -1,4 +1,4 @@
-import { Badge, styled } from '@mui/material';
+import { Badge, Box, styled } from '@mui/material';
 
 export const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -16,3 +16,10 @@ export const StyledBadge = styled(Badge)(({ theme }) => ({
         },
     },
 }));
+
+export const BoxStyle = styled(Box)({
+    position: 'fixed',
+    width: '26%',
+    overflowY: 'scroll',
+    height: '43rem',
+});
