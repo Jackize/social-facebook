@@ -10,7 +10,11 @@ const Posts = () => {
     const handleClose = () => setOpen(false);
     return (
         <>
-            <Box flex={2} p={2}>
+            <Box
+                flex={2}
+                p={2}
+                sx={{ p: { xs: 0 }, marginLeft: '0 !important' }}
+            >
                 <UpPost handleOpen={handleOpen} />
                 <Post />
                 <Post />

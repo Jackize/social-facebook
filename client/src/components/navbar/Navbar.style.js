@@ -7,14 +7,14 @@ export const StyledToolBar = styled(Toolbar)(({ theme }) => ({
 
 export const Left = styled(Box)(({ theme }) => ({
     flex: 1,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         display: 'none',
     },
 }));
 
 export const Middle = styled(Box)(({ theme }) => ({
     flex: 2,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         display: 'none',
     },
 }));
@@ -24,7 +24,7 @@ export const Right = styled(Box)(({ theme }) => ({
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: '30px',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         display: 'none',
     },
 }));
@@ -35,8 +35,7 @@ export const Search = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
     marginLeft: 0,
     marginRight: '40px',
-    // display: { xs: 'none', sm: 'block' },
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
         display: 'none',
     },
 }));
@@ -76,7 +75,7 @@ export const Mobile = styled(Box)(({ theme }) => ({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-around',
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
         display: 'none',
     },
 }));

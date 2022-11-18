@@ -1,24 +1,10 @@
-import {
-    Avatar,
-    Button,
-    Card,
-    CardHeader,
-    IconButton,
-    useTheme,
-} from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Avatar, Button, CardHeader } from '@mui/material';
 import React from 'react';
+import { CardStyle } from '../posts/post/post.style';
 
 const UpPost = ({ handleOpen }) => {
-    const theme = useTheme();
     return (
-        <Card
-            sx={{
-                margin: 5,
-                background: theme.palette.background.default,
-                borderRadius: '15px',
-            }}
-        >
+        <CardStyle>
             <CardHeader
                 avatar={<Avatar aria-label="recipe">R</Avatar>}
                 title={
@@ -28,7 +14,7 @@ const UpPost = ({ handleOpen }) => {
                 }
                 disableTypography
             />
-        </Card>
+        </CardStyle>
     );
 };
 

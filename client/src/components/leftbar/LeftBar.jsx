@@ -18,7 +18,7 @@ const LeftBar = () => {
     const { toggle, darkMode } = React.useContext(DarkModeContext);
     const theme = useTheme();
     return (
-        <Box flex={1} sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Box flex={1} sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}>
             <Box position="fixed">
                 <List>
                     <ListItem>

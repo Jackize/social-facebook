@@ -11,21 +11,22 @@ import {
     useTheme,
 } from '@mui/material';
 import { Favorite, FavoriteBorder, MoreVert, Share } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+
 import React from 'react';
+import { CardStyle } from './post.style';
 
 const Post = () => {
-    const theme = useTheme();
     return (
-        <Card
-            sx={{
-                margin: 5,
-                background: theme.palette.background.default,
-                borderRadius: '15px',
-            }}
-        >
+        <CardStyle>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: 'red' }} aria-label="recipe">
+                    <Avatar
+                        sx={{ bgcolor: 'red' }}
+                        aria-label="recipe"
+                        component={Link}
+                        to={`/profile/1`}
+                    >
                         R
                     </Avatar>
                 }
@@ -62,7 +63,7 @@ const Post = () => {
                     <Share />
                 </IconButton>
             </CardActions>
-        </Card>
+        </CardStyle>
     );
 };
 
