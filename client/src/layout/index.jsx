@@ -10,7 +10,11 @@ const Layout = () => {
     return (
         <Box bgcolor={theme.palette.background.paper}>
             <Navbar />
-            <Stack direction="row" spacing={2} justifyContent="space-between">
+            <Stack
+                direction="row"
+                spacing={{ xs: 0, lg: 2 }}
+                justifyContent="space-between"
+            >
                 <LeftBar />
                 <Outlet />
                 <RightBar />

@@ -3,6 +3,7 @@ import {
     Avatar,
     Button,
     Divider,
+    IconButton,
     ListItem,
     ListItemAvatar,
     ListItemText,
@@ -30,7 +31,9 @@ const AddFriend = () => {
                         primary="NTH"
                         secondary="9 mutual"
                     />
-                    <Add color="primary" />
+                    <IconButton>
+                        <Add color="primary" />
+                    </IconButton>
                 </ListItem>
 
                 <Divider />
