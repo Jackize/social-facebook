@@ -8,6 +8,7 @@ import Theme from './components/Theme/Theme';
 import Layout from './layout';
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
+import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
 
 function App() {
@@ -33,6 +34,10 @@ function App() {
                 {
                     path: '/',
                     element: <Home />,
+                },
+                {
+                    path: '/profile/:id',
+                    element: <Profile />,
                 },
             ],
         },

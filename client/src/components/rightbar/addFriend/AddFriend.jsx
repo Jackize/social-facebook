@@ -1,7 +1,9 @@
+import { Add } from '@mui/icons-material';
 import {
     Avatar,
     Button,
     Divider,
+    IconButton,
     ListItem,
     ListItemAvatar,
     ListItemText,
@@ -17,7 +19,7 @@ const AddFriend = () => {
         <>
             <Typography color="text.primary">Friends you can know</Typography>
             <ListStyle>
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
+                <ListItem>
                     <ListItemAvatar>
                         <Avatar
                             src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
@@ -29,6 +31,9 @@ const AddFriend = () => {
                         primary="NTH"
                         secondary="9 mutual"
                     />
+                    <IconButton>
+                        <Add color="primary" />
+                    </IconButton>
                 </ListItem>
 
                 <Divider />

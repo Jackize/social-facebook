@@ -1,23 +1,43 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import Post from './post/Post';
-import UpPost from '../upPost/UpPost';
-import ModalUpPost from '../modalUpPost/ModalUpPost';
+
+const data = [
+    {
+        id: 1,
+        avatarPic:
+            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        context: 'Lorem ipsum dolor sit amet, consectetur adip',
+        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    },
+    {
+        id: 2,
+        avatarPic:
+            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        context: 'Lorem ipsum dolor sit amet, consectetur adip',
+        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    },
+    {
+        id: 3,
+        avatarPic:
+            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        context: 'Lorem ipsum dolor sit amet, consectetur adip',
+        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    },
+    {
+        id: 4,
+        avatarPic:
+            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+        context: 'Lorem ipsum dolor sit amet, consectetur adip',
+        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    },
+];
 
 const Posts = () => {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     return (
         <>
-            <Box flex={2} p={2}>
-                <UpPost handleOpen={handleOpen} />
-                <Post />
-                <Post />
-                <Post />
-                <Post />
-            </Box>
-            <ModalUpPost open={open} handleClose={handleClose} />
+            {data.map((e) => (
+                <Post key={e.id} post={e} />
+            ))}
         </>
     );
 };

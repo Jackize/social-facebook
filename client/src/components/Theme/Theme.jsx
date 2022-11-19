@@ -7,6 +7,11 @@ const Theme = ({ children }) => {
     const styles = createTheme({
         palette: {
             mode: darkMode ? 'dark' : 'light',
+            palette: {
+                text: {
+                    primary: darkMode ? '#000' : '#fff',
+                },
+            },
             background: {
                 paper: darkMode ? '#18191A' : '#F0F2F5',
             },
