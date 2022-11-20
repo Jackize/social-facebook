@@ -30,7 +30,7 @@ import {
 } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 
 const Navbar = () => {
@@ -98,15 +98,38 @@ const Navbar = () => {
                 </Right>
 
                 <Mobile>
-                    <IconButton>
-                        <Home />
-                    </IconButton>
-                    <IconButton>
-                        <OndemandVideo />
-                    </IconButton>
-                    <IconButton>
-                        <Store />
-                    </IconButton>
+                    <NavLink
+                        to="/"
+                        children={({ isActive }) => (
+                            <IconButton>
+                                {isActive ? <Home color="primary" /> : <Home />}
+                            </IconButton>
+                        )}
+                    />
+                    <NavLink
+                        to="/watch"
+                        children={({ isActive }) => (
+                            <IconButton>
+                                {isActive ? (
+                                    <OndemandVideo color="primary" />
+                                ) : (
+                                    <OndemandVideo />
+                                )}
+                            </IconButton>
+                        )}
+                    />
+                    <NavLink
+                        to="/store"
+                        children={({ isActive }) => (
+                            <IconButton>
+                                {isActive ? (
+                                    <Store color="primary" />
+                                ) : (
+                                    <Store />
+                                )}
+                            </IconButton>
+                        )}
+                    />
                     <IconButton>
                         <MenuIcon />
                     </IconButton>

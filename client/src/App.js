@@ -7,6 +7,8 @@ import {
 import Theme from './components/Theme/Theme';
 import Layout from './layout';
 import Home from './pages/home/Home';
+import Watch from './pages/watch/Watch';
+import Store from './pages/store/Store';
 import Login from './pages/login/Login';
 import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
@@ -38,6 +40,14 @@ function App() {
                 {
                     path: '/profile/:id',
                     element: <Profile />,
+                },
+                {
+                    path: '/watch',
+                    element: <Watch />,
+                },
+                {
+                    path: '/store',
+                    element: <Store />,
                 },
             ],
         },
