@@ -87,7 +87,11 @@ const Navbar = () => {
                         </IconButton>
                         <Avatar
                             sx={{ width: 30, height: 30 }}
-                            src={currentUser.avatarPic}
+                            src={
+                                currentUser.avatarPic
+                                    ? currentUser.avatarPic
+                                    : 'https://p.kindpng.com/picc/s/22-223965_no-profile-picture-icon-circle-member-icon-png.png'
+                            }
                             id="avatar-menu"
                             aria-controls={open ? 'menu' : undefined}
                             aria-haspopup="true"

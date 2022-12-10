@@ -1,43 +1,18 @@
 import React from 'react';
 import Post from './post/Post';
-
-const data = [
-    {
-        id: 1,
-        avatarPic:
-            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        context: 'Lorem ipsum dolor sit amet, consectetur adip',
-        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-        id: 2,
-        avatarPic:
-            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        context: 'Lorem ipsum dolor sit amet, consectetur adip',
-        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-        id: 3,
-        avatarPic:
-            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        context: 'Lorem ipsum dolor sit amet, consectetur adip',
-        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-    {
-        id: 4,
-        avatarPic:
-            'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        context: 'Lorem ipsum dolor sit amet, consectetur adip',
-        image: 'https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    },
-];
+import { useQuery } from '@tanstack/react-query';
+import { makeRequest } from '../../axios';
 
 const Posts = () => {
+    const { isLoading, error, data } = useQuery(['posts'], () => {
+        makeRequest.get('/posts').then((res) => console.log(res.data));
+    });
+    console.log(data);
     return (
         <>
-            {data.map((e) => (
+            {/* {data.map((e) => (
                 <Post key={e.id} post={e} />
-            ))}
+            ))} */}
         </>
     );
 };

@@ -1,7 +1,6 @@
 import {
     createBrowserRouter,
     RouterProvider,
-    Route,
     Navigate,
 } from 'react-router-dom';
 import Theme from './components/Theme/Theme';
@@ -12,9 +11,13 @@ import Store from './pages/store/Store';
 import Login from './pages/login/Login';
 import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
+import { useContext } from 'react';
+import { AuthContext } from './context/authContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
-    const currentUser = true;
+    const currentUser = useContext(AuthContext);
+    const queryClient = new QueryClient();
     const ProtectedRoute = ({ children }) => {
         if (!currentUser) {
             return <Navigate to="/login" />;
@@ -28,7 +31,9 @@ function App() {
             element: (
                 <ProtectedRoute>
                     <Theme>
-                        <Layout />
+                        <QueryClientProvider client={queryClient}>
+                            <Layout />
+                        </QueryClientProvider>
                     </Theme>
                 </ProtectedRoute>
             ),
