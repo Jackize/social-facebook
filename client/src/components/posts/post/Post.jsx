@@ -1,6 +1,5 @@
 import {
     Avatar,
-    Card,
     CardActions,
     CardContent,
     CardHeader,
@@ -8,9 +7,13 @@ import {
     Checkbox,
     IconButton,
     Typography,
-    useTheme,
 } from '@mui/material';
-import { Favorite, FavoriteBorder, MoreVert, Share } from '@mui/icons-material';
+import {
+    Comment,
+    Favorite,
+    FavoriteBorder,
+    MoreVert,
+} from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 import React from 'react';
@@ -58,8 +61,8 @@ const Post = ({ post }) => {
                         checkedIcon={<Favorite sx={{ color: 'red' }} />}
                     />
                 </IconButton>
-                <IconButton aria-label="share">
-                    <Share />
+                <IconButton aria-label="comment">
+                    <Comment />
                 </IconButton>
             </CardActions>
         </CardStyle>
