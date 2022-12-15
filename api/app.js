@@ -6,13 +6,13 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 
-// import authRouter from './src/routes/auth.js';
-// import userRouter from './src/routes/users.js';
-// import postRouter from './src/routes/posts.js';
-// import likeRouter from './src/routes/likes.js';
-// import storyRouter from './src/routes/stories.js';
-// import relationshipRouter from './src/routes/relationships.js';
-// import commentRouter from './src/routes/comments.js';
+import authRouter from './src/routes/auth.js';
+import userRouter from './src/routes/users.js';
+import postRouter from './src/routes/posts.js';
+import likeRouter from './src/routes/likes.js';
+import storyRouter from './src/routes/stories.js';
+import relationshipRouter from './src/routes/relationships.js';
+import commentRouter from './src/routes/comments.js';
 import { connectToDatabase } from './src/utils/db.js';
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,12 +47,12 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     res.status(200).json(file.filename);
 });
 
-// app.use('/api/auth', authRouter);
-// app.use('/api/users', userRouter);
-// app.use('/api/posts', postRouter);
-// app.use('/api/comments', commentRouter);
-// app.use('/api/likes', likeRouter);
-// app.use('/api/stories', storyRouter);
-// app.use('/api/relationships', relationshipRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/posts', postRouter);
+app.use('/api/comments', commentRouter);
+app.use('/api/likes', likeRouter);
+app.use('/api/stories', storyRouter);
+app.use('/api/relationships', relationshipRouter);
 
 module.exports = app;

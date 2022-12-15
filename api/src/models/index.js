@@ -1,49 +1,29 @@
-// 'use strict';
-// require('dotenv').config();
-// const fs = require('fs');
-// const path = require('path');
-// const Sequelize = require('sequelize');
-// const process = require('process');
-// const basename = path.basename(__filename);
-// const env = process.env.NODE_ENV || 'development';
-// const config = require(__dirname + '/../utils/config.json')[env];
-// const db = {};
+import User from './users';
+import Post from './posts';
+import Story from './stories';
+import Like from './likes';
+import Comment from './comments';
+import Relationship from './relationships';
 
-// let sequelize;
-// if (config.use_env_variable) {
-//     sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//     sequelize = new Sequelize(
-//         config.database,
-//         config.username,
-//         config.password,
-//         config
-//     );
-// }
+Post.hasMany(Like);
+Like.belongsTo(Post);
 
-// fs.readdirSync(__dirname)
-//     .filter((file) => {
-//         return (
-//             file.indexOf('.') !== 0 &&
-//             file !== basename &&
-//             file.slice(-3) === '.js'
-//         );
-//     })
-//     .forEach((file) => {
-//         const model = require(path.join(__dirname, file))(
-//             sequelize,
-//             Sequelize.DataTypes
-//         );
-//         db[model.name] = model;
-//     });
+Post.hasMany(Comment);
+Comment.belongsTo(Post);
 
-// Object.keys(db).forEach((modelName) => {
-//     if (db[modelName].associate) {
-//         db[modelName].associate(db);
-//     }
-// });
+User.hasMany(Comment);
+Comment.belongsTo(User);
 
-// db.sequelize = sequelize;
-// db.Sequelize = Sequelize;
+User.hasMany(Post);
+Post.belongsTo(User);
 
-// module.exports = db;
+User.hasMany(Story);
+Story.belongsTo(User);
+
+Post.sync({ alter: true });
+User.sync({ alter: true });
+Story.sync({ alter: true });
+Like.sync({ alter: true });
+Comment.sync({ alter: true });
+Relationship.sync({ alter: true });
+export { User, Post, Story, Like, Comment,Relationship };
