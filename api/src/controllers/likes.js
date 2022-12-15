@@ -11,7 +11,7 @@ export const getLikes = async (req, res) => {
             },
             attributes: ['userId'],
         });
-        return res.status(200).json(likes);
+        return res.status(200).json(likes.map(e=>e.userId));
     } catch (error) {
         return res.status(500).json(error);
     }

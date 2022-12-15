@@ -1,72 +1,122 @@
 import {
-    Avatar,
-    CardActions,
-    CardContent,
-    CardHeader,
-    CardMedia,
-    Checkbox,
-    IconButton,
-    Typography,
-} from '@mui/material';
+  Avatar,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Checkbox,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import {
-    Comment,
-    Favorite,
-    FavoriteBorder,
-    MoreVert,
-} from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+  Comment,
+  Favorite,
+  FavoriteBorder,
+  MoreVert,
+} from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import React from "react";
+import { CardStyle } from "./post.style";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import moment from "moment";
 
-import React from 'react';
-import { CardStyle } from './post.style';
+import { AuthContext } from "../../../context/authContext";
+import { makeRequest } from "../../../axios";
 
 const Post = ({ post }) => {
-    return (
-        <CardStyle>
-            <CardHeader
-                avatar={
-                    <Avatar
-                        aria-label="recipe"
-                        component={Link}
-                        to={`/profile/1`}
-                        src={post.avatarPic}
-                    />
-                }
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVert />
-                    </IconButton>
-                }
-                title="John Doe"
-                subheader="September 14, 2022"
+  const { currentUser } = React.useContext(AuthContext);
+
+  const { isLoading, error, data } = useQuery(["likes", post.id], () =>
+    makeRequest.get("/likes?postId=" + post.id).then((res) => {
+      return res.data;
+    })
+  );
+
+  const queryClient = useQueryClient();
+
+  const likeMutation = useMutation(
+    (liked) => {
+      if (liked) return makeRequest.delete("/likes?postId=" + post.id);
+      return makeRequest.post("/likes", { postId: post.id });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["likes"]);
+      },
+    }
+  );
+
+  const deletePostMutation = useMutation(
+    (postId) => {
+      return makeRequest.delete("/posts/" + postId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["posts"]);
+      },
+    }
+  );
+
+  const handleLike = () => {
+    likeMutation.mutate(data.includes(currentUser.id));
+  };
+
+  const handleDelete = () => {
+    deletePostMutation.mutate(post.id);
+  };
+  return (
+    <CardStyle>
+      <CardHeader
+        avatar={
+          <Avatar
+            aria-label="recipe"
+            component={Link}
+            to={`/profile/${post.userId}`}
+            src={post.avatarPic}
+          />
+        }
+        action={
+          <IconButton aria-label="settings">
+            {post.userId === currentUser.id ? <MoreVert /> : null}
+          </IconButton>
+        }
+        title={post.user.name}
+        subheader={moment(post.createdAt).fromNow()}
+      />
+      {post.content && (
+        <CardContent>
+          <Typography variant="body2" color="text.primary">
+            {post.content}
+          </Typography>
+        </CardContent>
+      )}
+      {post.image && (
+        <CardMedia
+          component="img"
+          height="20%"
+          image={post.image}
+          alt="Paella dish"
+        />
+      )}
+      <CardActions disableSpacing>
+        <IconButton aria-label="add to favorites">
+          {isLoading ? (
+            "loading"
+          ) : (
+            <Checkbox
+              icon={<FavoriteBorder />}
+              checkedIcon={<Favorite sx={{ color: "red" }} />}
+              checked={data.includes(currentUser.id)}
+              onChange={handleLike}
             />
-            {post.context && (
-                <CardContent>
-                    <Typography variant="body2" color="text.primary">
-                        {post.context}
-                    </Typography>
-                </CardContent>
-            )}
-            {post.image && (
-                <CardMedia
-                    component="img"
-                    height="20%"
-                    image={post.image}
-                    alt="Paella dish"
-                />
-            )}
-            <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <Checkbox
-                        icon={<FavoriteBorder />}
-                        checkedIcon={<Favorite sx={{ color: 'red' }} />}
-                    />
-                </IconButton>
-                <IconButton aria-label="comment">
-                    <Comment />
-                </IconButton>
-            </CardActions>
-        </CardStyle>
-    );
+          )}
+        </IconButton>
+        <IconButton aria-label="comment">
+          <Comment />
+        </IconButton>
+      </CardActions>
+    </CardStyle>
+  );
 };
 
 export default Post;

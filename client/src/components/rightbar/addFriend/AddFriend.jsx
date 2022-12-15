@@ -1,118 +1,56 @@
-import { Add } from '@mui/icons-material';
+import { Add } from "@mui/icons-material";
 import {
-    Avatar,
-    Button,
-    Divider,
-    IconButton,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Typography,
-    useTheme,
-} from '@mui/material';
-import React from 'react';
-import { ListStyle } from './addFriend.style';
+  Avatar,
+  Button,
+  Divider,
+  IconButton,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
+import { makeRequest } from "../../../axios";
+import { ListStyle } from "./addFriend.style";
 
 const AddFriend = () => {
-    const theme = useTheme();
-    return (
-        <>
-            <Typography color="text.primary">Friends you can know</Typography>
-            <ListStyle>
+  const theme = useTheme();
+
+  const { isLoading, error, data } = useQuery(["user"], () =>
+    makeRequest.get("/users/people").then((res) => {
+      return res.data;
+    })
+  );
+  return (
+    <>
+      <Typography color="text.primary">Friends you can know</Typography>
+      <ListStyle>
+        {error
+          ? "Something went wrong!"
+          : isLoading
+          ? "loading"
+          : data.map((e) => (
+              <React.Fragment key={e.id}>
                 <ListItem>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                    <IconButton>
-                        <Add color="primary" />
-                    </IconButton>
+                  <ListItemAvatar>
+                    <Avatar src={e.avatarPic} sx={{ width: 30, height: 30 }} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    sx={{ color: theme.palette.text.primary }}
+                    primary={e.name}
+                  />
+                  <IconButton>
+                    <Add color="primary" />
+                  </IconButton>
                 </ListItem>
-
                 <Divider />
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                </ListItem>
-
-                <Divider />
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                </ListItem>
-
-                <Divider />
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                </ListItem>
-
-                <Divider />
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                </ListItem>
-
-                <Divider />
-                <ListItem secondaryAction={<Button>Add Friend</Button>}>
-                    <ListItemAvatar>
-                        <Avatar
-                            src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                    </ListItemAvatar>
-                    <ListItemText
-                        sx={{ color: theme.palette.text.primary }}
-                        primary="NTH"
-                        secondary="9 mutual"
-                    />
-                </ListItem>
-            </ListStyle>
-        </>
-    );
+              </React.Fragment>
+            ))}
+      </ListStyle>
+    </>
+  );
 };
 
 export default AddFriend;
