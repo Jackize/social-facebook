@@ -17,10 +17,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
     const currentUser = useContext(AuthContext);
+
     const queryClient = new QueryClient();
+
     const ProtectedRoute = ({ children }) => {
         if (!currentUser) {
-            return <Navigate to="/login" />;
+            return <Navigate to="/login"/>;
         }
 
         return children;
