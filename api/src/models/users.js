@@ -2,25 +2,32 @@ const { Model, DataTypes, Op } = require('sequelize');
 
 const { sequelize } = require('../utils/db');
 
-class Comment extends Model {}
+class User extends Model {}
 
-Comment.init(
+User.init(
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        content: {
-            type: DataTypes.TEXT,
+        username: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
         },
-        userId: {
-            type: DataTypes.INTEGER,
-            references: { model: 'users', key: 'id' },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
-        postId: {
-            type: DataTypes.INTEGER,
-            references: { model: 'posts', key: 'id' },
+        password: {
+            type: DataTypes.STRING,
+        },
+        avatarPic: {
+            type: DataTypes.STRING,
+        },
+        coverPic: {
+            type: DataTypes.STRING,
         },
         createdAt: {
             allowNull: false,
@@ -34,8 +41,8 @@ Comment.init(
     {
         sequelize,
         underscored: true,
-        modelName: 'comments',
+        modelName: 'users',
     }
 );
 
-module.exports = Comment;
+module.exports = User;

@@ -1,91 +1,115 @@
-import { db } from '../../connect.js';
-
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
 
-export const getUser = async (req, res) => {
-    const userId = req.params.userId;
-    const q = 'SELECT * FROM users WHERE id=?';
+import { SECRET } from '../utils/config';
+import { User, Relationship } from '../models';
 
-    db.query(q, [userId], (err, data) => {
-        if (err) return res.status(500).json(err);
-        const { password, ...info } = data[0];
-        // console.log(info);
-        return res.status(200).json(info);
-    });
+export const getAllUsers = async (req, res) => {
+    try {
+	const where = {};
+	
+	    if (req.query.username) {
+	        where.username = {
+	            [Op.substring]: req.query.username,
+	        };
+	    }
+	    const users = await User.findAll({
+	        attributes: { exclude: ['password'] },
+	        where,
+	    });
+	    res.status(200).json(users);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error)
+    }
+};
+
+export const getUserById = async (req, res) => {
+    try {
+	    const { userId } = req.params;
+	    const user = await User.findOne({
+	        where: { id: userId },
+	        attributes: { exclude: ['password'] },
+	    });
+	    if (user) {
+	        return res.status(200).json(user);
+	    } else {
+	        return res.status(404).json('User not found');
+	    }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
 };
 
 export const getUsersNotFollow = async (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json('Not logged in');
 
-    jwt.verify(token, 'secretkey', (err, userInfo) => {
+    jwt.verify(token, SECRET, async (err, userInfo) => {
         if (err) return res.status(403).json('Token is not valid');
 
-        const q = `SELECT u.id AS userId, name, profilePic FROM users AS u WHERE  u.id NOT IN (SELECT r.followedUserId FROM relationships AS r WHERE r.followerUserId = ?) AND u.id NOT IN (SELECT r.followerUserId FROM relationships AS r WHERE r.followerUserId = ?) AND u.id <> ?`;
-
-        db.query(q, [userInfo.id, userInfo.id, userInfo.id], (err, data) => {
-            if (err) return res.status(500).json(err);
-            return res.status(200).json(data);
-        });
+        try {
+	        const followedUser = await Relationship.findAll({
+	            where: {
+	                followerUserId: userInfo.id
+	            },
+	            attributes: ['followedUserId']
+	        })
+	        const userIdShouldNotFind = followedUser.map(e=>e.followedUserId).concat(userInfo.id);
+            console.log({userIdShouldNotFind});
+            //Lấy ra những người mà mình chưa follow 
+            const users = await User.findAll({
+                where:{
+                        id: {
+                        [Op.notIn]: userIdShouldNotFind
+                        }
+                },
+                attributes: ['id', 'name', 'avatarPic']
+            })
+        // const q = `SELECT u.id AS userId, name, profilePic FROM users AS u WHERE  u.id NOT IN 
+        // (SELECT r.followedUserId FROM relationships AS r WHERE r.followerUserId = ?) 
+        // AND u.id NOT IN (SELECT r.followerUserId FROM relationships AS r WHERE r.followerUserId = ?) AND u.id <> ?`;   
+            return res.status(200).json(users)
+        } catch (error) {
+            console.log(error); 
+            return res.status(500).json(error);
+        }
     });
 };
 
 export const updateUser = async (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json('Not authenticated!');
-
-    jwt.verify(token, 'secretkey', (err, userInfo) => {
+    jwt.verify(token, SECRET, async (err, userInfo) => {
         if (err) return res.status(403).json('Token is not valid!');
 
-        if (req.body.password !== '') {
-            const q =
-                'UPDATE users SET `name`=?,`email`=?,`password`=?,`profilePic`=?,`coverPic`=? WHERE id=? ';
-
-            const salt = bcrypt.genSaltSync(10);
-            const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-            db.query(
-                q,
-                [
-                    req.body.name,
-                    req.body.email,
-                    hashedPassword,
-                    req.body.profilePic,
-                    req.body.coverPic,
-                    userInfo.id,
-                ],
-                (err, data) => {
-                    if (err) res.status(500).json(err);
-                    if (data.affectedRows > 0)
-                        return res.status(200).json('Updated!');
-                    return res
-                        .status(403)
-                        .json('You can update only your post!');
-                }
-            );
-        } else {
-            const q =
-                'UPDATE users SET `name`=?,`email`=?,`profilePic`=?,`coverPic`=? WHERE id=? ';
-
-            db.query(
-                q,
-                [
-                    req.body.name,
-                    req.body.email,
-                    req.body.profilePic,
-                    req.body.coverPic,
-                    userInfo.id,
-                ],
-                (err, data) => {
-                    if (err) res.status(500).json(err);
-                    if (data.affectedRows > 0)
-                        return res.status(200).json('Updated!');
-                    return res
-                        .status(403)
-                        .json('You can update only your post!');
-                }
-            );
+        try {
+	        if (req.body.username) {
+	            return res.status(403).json('Username is not changed!');
+	        } else {
+	            const { password } = req.body;
+	            let user = await User.findByPk(userInfo.id, {
+	                raw: true,
+	            });
+	            const saltRounds = 10;
+	            let passwordHash;
+	            if (password) {
+	                //hash new password
+	                passwordHash = await bcrypt.hash(password, saltRounds);
+	            }
+	            delete req.body.password;
+	            await User.update(
+	                { ...req.body, password: passwordHash },
+	                { where: { id: userInfo.id } }
+	            );
+	            user = { ...user, ...req.body, passwordHash };
+	            return res.status(200).json(user);
+	        }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(error)
         }
     });
 };

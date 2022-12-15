@@ -1,13 +1,15 @@
-import db from '../models/index';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+import { User } from '../models';
+import { SECRET } from '../utils/config';
 
 const salt = bcrypt.genSaltSync(10);
 
 let checkUserName = (userName) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await db.user.findOne({ where: { username: userName } });
+            let user = await User.findOne({ where: { username: userName } });
             user ? resolve(true) : resolve(false);
         } catch (error) {
             reject(error);
@@ -21,9 +23,8 @@ export const register = async (req, res) => {
     } else {
         try {
             const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-            await db.user.create({
+            await User.create({
                 username: req.body.username,
-                email: req.body.email,
                 password: hashedPassword,
                 name: req.body.name,
             });
@@ -37,7 +38,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     let checkIsUserNameExist = await checkUserName(req.body.username);
     if (checkIsUserNameExist) {
-        let user = await db.user.findOne({
+        let user = await User.findOne({
             where: { username: req.body.username },
             raw: true,
         });
@@ -48,9 +49,11 @@ export const login = async (req, res) => {
             );
             if (!checkPassword)
                 return res.status(400).json('Wrong username or password');
-            const token = jwt.sign({ id: user.id }, 'secretkey');
+
+            const token = jwt.sign({ id: user.id }, SECRET);
             const { password, ...others } = user;
-            res.cookie('accessToken', token, { httpOnly: true })
+            return res
+                .cookie('accessToken', token, { httpOnly: true })
                 .status(200)
                 .json(others);
         }
