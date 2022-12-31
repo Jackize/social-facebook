@@ -58,7 +58,6 @@ export const getUsersNotFollow = async (req, res) => {
 	            attributes: ['followedUserId']
 	        })
 	        const userIdShouldNotFind = followedUser.map(e=>e.followedUserId).concat(userInfo.id);
-            console.log({userIdShouldNotFind});
             //Lấy ra những người mà mình chưa follow 
             const users = await User.findAll({
                 where:{

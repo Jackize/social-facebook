@@ -2,7 +2,6 @@ import {
     AppBar,
     Avatar,
     Badge,
-    Box,
     IconButton,
     Menu,
     MenuItem,
@@ -35,7 +34,7 @@ import { AuthContext } from '../../context/authContext';
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const { currentUser } = React.useContext(AuthContext);
+    const { currentUser,logout } = React.useContext(AuthContext);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -44,7 +43,7 @@ const Navbar = () => {
         setAnchorEl(null);
     };
     const theme = useTheme();
-    const { logout } = React.useContext(AuthContext);
+
     return (
         <AppBar
             position="sticky"
@@ -148,8 +147,8 @@ const Navbar = () => {
                     'aria-labelledby': 'avatar-menu',
                 }}
             >
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>My account</MenuItem>
+                <MenuItem>{currentUser.name}</MenuItem>
+                <MenuItem component={Link} to={`/profile/${currentUser.id}`}>My account</MenuItem>
                 <MenuItem onClick={logout} component={Link} to="/login">
                     Logout
                 </MenuItem>

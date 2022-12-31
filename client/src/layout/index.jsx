@@ -17,7 +17,6 @@ const Layout = () => {
             >
                 <LeftBar />
                 <Outlet />
-                <RightBar />
             </Stack>
         </Box>
     );

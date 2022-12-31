@@ -15,12 +15,12 @@ import relationshipRouter from './src/routes/relationships.js';
 import commentRouter from './src/routes/comments.js';
 import { connectToDatabase } from './src/utils/db.js';
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', true);
     next();
 });
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(
     cors({
         origin: 'http://localhost:3000',

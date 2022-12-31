@@ -32,27 +32,41 @@ export const getPosts = async (req, res) => {
                     where: {
                         followerUserId: userInfo.id
                     },
+                    attributes: ['followedUserId'],
                     raw: true,
-                    nested: true
-                })
-                const posts = await Promise.all(relationships.map(async e => {
-                            const result = await Post.findAll({
-                                where:{
-                                    [Op.or]: [{userId: e.followedUserId}, {userId: userInfo.id}]
-                                },
-                                include: {
-                                    model: User,
-                                    attributes: ['id', 'name', 'avatarPic']
-                                },
-                                order:[
-                                    ['createdAt', 'DESC']
-                                ],
-                                raw: true,
-                                nest: true
-                            })
-                            return result
-                }))
-                return res.status(200).json(posts[0]);
+                    nested: true,
+                });
+                const postsShouldFind = relationships.map(e => e.followedUserId)
+                if (relationships.length === 0) {
+                    const result = await Post.findAll({
+                        where: {
+                            userId: userInfo.id,
+                        },
+                        include: {
+                            model: User,
+                            attributes: ["id", "name", "avatarPic"],
+                        },
+                        order: [["createdAt", "DESC"]],
+                        raw: true,
+                        nest: true,
+                    });
+                    return res.status(200).json(result);
+                }
+                const result = await Post.findAll({
+                    where: {
+                        userId: {
+                        [Op.or]: [...postsShouldFind, userInfo.id],
+                        },
+                    },
+                    include: {
+                        model: User,
+                        attributes: ["id", "name", "avatarPic"],
+                    },
+                    order: [["createdAt", "DESC"]],
+                    raw: true,
+                    nest: true,
+                });
+                return res.status(200).json(result);
             }
         } catch (error) {
             return res.status(500).json(error);
