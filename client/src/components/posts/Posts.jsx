@@ -6,13 +6,9 @@ import { makeRequest } from "../../axios";
 const Posts = ({ userId }) => {
   const { isLoading, error, data } = useQuery(["posts"], () => {
     if (userId === undefined) {
-      return makeRequest.get("/posts").then((res) => {
-        return res.data;
-      });
+      return makeRequest.get("/posts").then((res) => res.data);
     } else {
-      return makeRequest.get("/posts?userId=" + userId).then((res) => {
-        return res.data;
-      });
+      return makeRequest.get("/posts?userId=" + userId).then((res) => res.data);
     }
   });
   return (

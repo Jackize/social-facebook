@@ -7,7 +7,6 @@ import './register.scss';
 const Register = () => {
     const [inputs, setInputs] = React.useState({
         username: '',
-        email: '',
         password: '',
         name: '',
     });
@@ -56,21 +55,15 @@ const Register = () => {
                             onChange={handleChange}
                         />
                         <input
-                            type="email"
-                            placeholder="Email"
-                            name="email"
+                            type="text"
+                            placeholder="Name"
+                            name="name"
                             onChange={handleChange}
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             name="password"
-                            onChange={handleChange}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            name="name"
                             onChange={handleChange}
                         />
                         {err === 'User already exists' ? (

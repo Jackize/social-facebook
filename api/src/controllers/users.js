@@ -58,7 +58,6 @@ export const getUsersNotFollow = async (req, res) => {
 	            attributes: ['followedUserId']
 	        })
 	        const userIdShouldNotFind = followedUser.map(e=>e.followedUserId).concat(userInfo.id);
-            console.log({userIdShouldNotFind});
             //Lấy ra những người mà mình chưa follow 
             const users = await User.findAll({
                 where:{
@@ -100,6 +99,7 @@ export const updateUser = async (req, res) => {
 	                passwordHash = await bcrypt.hash(password, saltRounds);
 	            }
 	            delete req.body.password;
+				if (req.body.name.trim().length === 0) delete req.body.name;
 	            await User.update(
 	                { ...req.body, password: passwordHash },
 	                { where: { id: userInfo.id } }
