@@ -1,8 +1,15 @@
 import jwt from 'jsonwebtoken';
 const { Op } = require("sequelize");
+const cloudinary = require('cloudinary').v2;
 
-import { SECRET } from '../utils/config';
+import { SECRET, CLOUD_API_KEY, CLOUD_NAME, CLOUD_API_SECRET } from '../utils/config';
 import { Post,Relationship, User } from '../models';
+
+cloudinary.config({
+    cloud_name: CLOUD_NAME,
+    api_key: CLOUD_API_KEY,
+    api_secret: CLOUD_API_SECRET,
+});
 
 export const getPosts = async (req, res) => {
     const userId = req.query.userId;
@@ -114,6 +121,14 @@ export const deletePost = (req, res) => {
         try {
             const post = await Post.findOne({ where: { id: req.params.id } });
             if (post) {
+                if(post.img) {
+                    let imgURL = post.img
+                    let arrayURL = imgURL.split('/')
+                    let imgID = arrayURL[arrayURL.length - 1].split('.')[0];
+                    await cloudinary.api.delete_resources([imgID], function(error, result) {
+                        console.log(result);
+                    });
+                }
                 await Post.destroy({
                     where: { id: req.params.id, userId: userInfo.id },
                 });

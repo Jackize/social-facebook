@@ -1,1 +1,0 @@
-export const noneAvatar = 'https://p.kindpng.com/picc/s/22-223965_no-profile-picture-icon-circle-member-icon-png.png'

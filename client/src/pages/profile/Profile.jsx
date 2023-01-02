@@ -9,6 +9,7 @@ import { AvatarPic, CoverPic, InfoUser } from "./profile.style";
 import { AuthContext } from "../../context/authContext";
 import { makeRequest } from "../../axios";
 import ModalUpdate from "../../components/modalUpdate/ModalUpdate";
+import { noneAvatar, noneCoverPic } from "../../utils/image";
 const Profile = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -50,18 +51,25 @@ const Profile = () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
   };
   return (
-    <Box flex={2} p={2}>
+    <Box flex={4} p={10}>
       {error ? (
         "Something went wrong!"
       ) : isLoading ? (
         "Loading"
       ) : (
-        <CoverPic key={data.id}>
+        <CoverPic
+          key={data.id}
+          sx={{
+            backgroundImage: data.coverPic
+              ? `url(${data.coverPic})`
+              : `url(${noneCoverPic})`,
+          }}>
           <InfoUser display="flex" justifyContent="center" alignItems="center">
             <AvatarPic
               sx={{
-                backgroundImage:
-                  "url(https://images.pexels.com/photos/4534200/pexels-photo-4534200.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)",
+                backgroundImage: data.avatarPic
+                  ? `url(${data.avatarPic})`
+                  : `url(${noneAvatar})`,
               }}
               alt="acb"
             />

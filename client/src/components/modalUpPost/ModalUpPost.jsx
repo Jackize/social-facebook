@@ -13,23 +13,14 @@ import {
 } from "@mui/material";
 import React from "react";
 import { closeBtn, style } from "./ModalUpPost.style";
-import { makeRequest } from "../../axios";
+import { makeRequest, uploadImage } from "../../axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const ModalUpPost = ({ open, handleClose }) => {
   const theme = useTheme();
   const [file, setFile] = React.useState(null);
   const [content, setContent] = React.useState("");
-  const upload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -43,7 +34,7 @@ const ModalUpPost = ({ open, handleClose }) => {
   const handleClick = async (e) => {
     e.preventDefault();
     let imgUrl = "";
-    if (file) imgUrl = await upload();
+    if (file) imgUrl = await uploadImage(file);
     mutation.mutate({ content, img: imgUrl });
     setContent("");
     setFile(null);
@@ -70,15 +61,13 @@ const ModalUpPost = ({ open, handleClose }) => {
               onChange={(e) => setContent(e.target.value)}
               value={content}
             />
-            {file ? (
+            {file && (
               <img
                 src={URL.createObjectURL(file)}
                 alt={file.name}
                 type={file.type}
                 style={{ width: "320px", height: "250px", objectFit: "cover" }}
               />
-            ) : (
-              ""
             )}
             {!file ? (
               <IconButton

@@ -4,7 +4,6 @@ const app = express();
 const cors = require('cors');
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import multer from 'multer';
 
 import authRouter from './src/routes/auth.js';
 import userRouter from './src/routes/users.js';
@@ -29,23 +28,6 @@ app.use(
 app.use(cookieParser());
 
 connectToDatabase();
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, '../client/public/upload');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname);
-    },
-});
-
-const upload = multer({ storage: storage });
-
-app.post('/api/upload', upload.single('file'), (req, res) => {
-    const file = req.file;
-    console.log(file);
-    res.status(200).json(file.filename);
-});
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);

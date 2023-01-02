@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Link } from "react-router-dom";
 import { makeRequest } from "../../../axios";
-import { noneAvatar } from "../../../utils";
+import { noneAvatar } from "../../../utils/image";
 import { ListStyle } from "./addFriend.style";
 
 const AddFriend = () => {

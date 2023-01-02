@@ -24,7 +24,7 @@ import moment from "moment";
 
 import { AuthContext } from "../../../context/authContext";
 import { makeRequest } from "../../../axios";
-import { noneAvatar } from "../../../utils";
+import { noneAvatar } from "../../../utils/image";
 const Post = ({ post }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -84,7 +84,7 @@ const Post = ({ post }) => {
               aria-label="recipe"
               component={Link}
               to={`/profile/${post.userId}`}
-              src={post.avatarPic ? post.avatarPic : noneAvatar}
+              src={post.user.avatarPic ? post.user.avatarPic : noneAvatar}
             />
           }
           action={
@@ -106,7 +106,7 @@ const Post = ({ post }) => {
           <CardMedia
             component="img"
             height="20%"
-            image={"/upload/" + post.img}
+            image={post.img}
             alt={post.img}
           />
         )}

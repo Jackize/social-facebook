@@ -99,6 +99,7 @@ export const updateUser = async (req, res) => {
 	                passwordHash = await bcrypt.hash(password, saltRounds);
 	            }
 	            delete req.body.password;
+				if (req.body.name.trim().length === 0) delete req.body.name;
 	            await User.update(
 	                { ...req.body, password: passwordHash },
 	                { where: { id: userInfo.id } }
