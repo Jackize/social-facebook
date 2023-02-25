@@ -13,9 +13,10 @@ const Home = () => {
         <Stack
             direction="row"
             justifyContent="space-between"
-            sx={{flex: 4}}
+            gap={3}
+            sx={{flex: 3}}
         >
-            <Box flex={2} p={2} sx={{ p: { xs: 0 } }} width="100%">
+            <Box flex={1.5} sx={{ p: 2 }} width="100%">
                 <UpPost handleOpen={handleOpen} />
                 <Posts />
                 <ModalUpPost open={open} handleClose={handleClose} />

@@ -1,10 +1,10 @@
 import { Add } from "@mui/icons-material";
 import {
   Avatar,
-  Divider,
   IconButton,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
   Typography,
   useTheme,
@@ -20,7 +20,7 @@ const AddFriend = () => {
   const theme = useTheme();
 
   const { isLoading, error, data } = useQuery(["relationship"], () =>
-    makeRequest.get("/users/people").then((res) => {
+    makeRequest.get("/users/not-friend").then((res) => {
       return res.data;
     })
   );
@@ -33,42 +33,42 @@ const AddFriend = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["relationship"]);
+        queryClient.invalidateQueries(["relationship", "posts", "friends"]);
       },
     }
   );
 
   const handleFollow = (userId) => {
-    console.log(userId);
     mutation.mutate(userId);
   };
   return (
     <>
-      <Typography color="text.primary">Friends you can know</Typography>
+      <Typography color="text.primary" gutterBottom>Friends you can know</Typography>
       <ListStyle>
         {error
           ? "Something went wrong!"
           : isLoading
           ? "loading"
           : data.map((e, id) => (
-              <ListItem key={id}>
-                <ListItemAvatar>
-                  <Avatar
-                    src={e.avatarPic ? e.avatarPic : noneAvatar}
-                    sx={{ width: 30, height: 30 }}
-                    component={Link}
-                    to={`/profile/${e.id}`}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  sx={{ color: theme.palette.text.primary }}
-                  primary={e.name}
-                />
-                <IconButton onClick={() => handleFollow(e.id)}>
-                  <Add color="primary" />
-                </IconButton>
-                <Divider />
-              </ListItem>
+                <ListItem key={id}>
+                  <ListItemButton sx={{borderRadius: 2}}>
+                    <ListItemAvatar>
+                      <Avatar
+                        src={e.avatarPic ? e.avatarPic : noneAvatar}
+                        sx={{ width: 30, height: 30 }}
+                        component={Link}
+                        to={`/profile/${e.id}`}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      sx={{ color: theme.palette.text.primary }}
+                      primary={e.name}
+                    />
+                    <IconButton onClick={() => handleFollow(e.id)}>
+                      <Add color="primary" />
+                    </IconButton>
+                  </ListItemButton>
+                </ListItem>
             ))}
       </ListStyle>
     </>

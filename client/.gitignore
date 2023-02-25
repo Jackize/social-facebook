@@ -6,6 +6,7 @@
 /public/upload
 .pnp.js
 /src/utils/config.js
+.env.development
 
 # testing
 /coverage

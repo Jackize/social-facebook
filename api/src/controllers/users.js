@@ -113,3 +113,33 @@ export const updateUser = async (req, res) => {
         }
     });
 };
+
+export const getUserFollowed = async (req, res) => {
+    const token = req.cookies.accessToken;
+    if (!token) return res.status(401).json('Not logged in!');
+
+    jwt.verify(token, SECRET, async (err, userInfo) => {
+        if (err) return res.status(403).json('Token is not valid!');
+        try {
+            const idUserFollowed = await Relationship.findAll({
+                where: {
+                    followerUserId: userInfo.id,
+                },
+                attributes: ['followedUserId'],
+            });
+			const userIdShouldFind = idUserFollowed.map(e=>e.followedUserId);
+            //Lấy ra những người mà mình followed
+            const infoUsers = await User.findAll({
+                where:{
+                        id: {
+                        	[Op.in]: userIdShouldFind
+                        }
+                },
+                attributes: ['id', 'name', 'avatarPic']
+            })
+            return res.status(200).json(infoUsers);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    })
+};

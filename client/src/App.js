@@ -2,6 +2,7 @@ import {
     createBrowserRouter,
     RouterProvider,
     Navigate,
+    Outlet,
 } from 'react-router-dom';
 import Theme from './components/Theme/Theme';
 import Layout from './layout';
@@ -11,61 +12,69 @@ import Store from './pages/store/Store';
 import Login from './pages/login/Login';
 import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
-import { useContext } from 'react';
-import { AuthContext } from './context/authContext';
+import { AuthContextProvider } from './context/authContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
-    const currentUser = useContext(AuthContext);
-
     const queryClient = new QueryClient();
 
+    const AuthLayout = () => {
+        return (
+            <AuthContextProvider>
+                <Outlet/>
+            </AuthContextProvider>
+        )
+    }
     const ProtectedRoute = ({ children }) => {
-        if (!currentUser) {
-            return <Navigate to="/login"/>;
+        if (localStorage.getItem('user') === null) {
+            return <Navigate to="/login" />;
         }
 
         return children;
     };
     const router = createBrowserRouter([
         {
-            path: '/',
-            element: (
-                <ProtectedRoute>
-                    <Theme>
-                        <QueryClientProvider client={queryClient}>
-                            <Layout />
-                        </QueryClientProvider>
-                    </Theme>
-                </ProtectedRoute>
-            ),
+            element: <AuthLayout />,
             children: [
                 {
-                    path: '/',
-                    element: <Home />,
+                    path: '/login',
+                    element: <Login />,
                 },
                 {
-                    path: '/profile/:id',
-                    element: <Profile />,
+                    path: '/register',
+                    element: <Register />,
                 },
                 {
-                    path: '/watch',
-                    element: <Watch />,
+                    element: (
+                        <ProtectedRoute>
+                            <Theme>
+                                <QueryClientProvider client={queryClient}>
+                                    <Layout />
+                                </QueryClientProvider>
+                            </Theme>
+                        </ProtectedRoute>
+                    ),
+                    children: [
+                        {
+                            path: '/',
+                            element: <Home />,
+                        },
+                        {
+                            path: '/profile/:id',
+                            element: <Profile />,
+                        },
+                        {
+                            path: '/watch',
+                            element: <Watch />,
+                        },
+                        {
+                            path: '/store',
+                            element: <Store />,
+                        },
+                    ],
                 },
-                {
-                    path: '/store',
-                    element: <Store />,
-                },
-            ],
-        },
-        {
-            path: '/login',
-            element: <Login />,
-        },
-        {
-            path: '/register',
-            element: <Register />,
-        },
+            ]
+        },        
     ]);
     return (
         <div>

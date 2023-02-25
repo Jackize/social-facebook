@@ -14,6 +14,7 @@ const Layout = () => {
                 direction="row"
                 spacing={{ xs: 0, lg: 2 }}
                 justifyContent="space-between"
+                height={'100%'}
             >
                 <LeftBar />
                 <Outlet />

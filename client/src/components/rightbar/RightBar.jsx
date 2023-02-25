@@ -1,64 +1,33 @@
 import {
     Avatar,
     Box,
+    CircularProgress,
     List,
     ListItem,
     ListItemAvatar,
+    ListItemButton,
     ListItemText,
     Typography,
     useTheme,
 } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import { makeRequest } from '../../axios';
+import { noneAvatar } from '../../utils/image';
 import AddFriend from './addFriend/AddFriend';
 import { BoxStyle, StyledBadge } from './rightBar.style';
 
-const data = [
-    {
-        id: 1,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 2,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 3,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 4,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 5,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 6,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 7,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-    {
-        id: 8,
-        url: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        name: 'Card',
-    },
-];
+
 const RightBar = () => {
     const theme = useTheme();
+    const { isLoading, data } = useQuery(["friends"], () =>
+        makeRequest.get("/users/friends").then((res) => {
+        return res.data;
+        })
+    );
     return (
         <Box
-            flex={1}
+            flex={0.9}
             p={2}
             sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
         >
@@ -69,24 +38,28 @@ const RightBar = () => {
                     OnlineFriends
                 </Typography>
                 <List>
-                    {data.map((e) => (
+                    {   
+                        isLoading ? <CircularProgress/>:
+                        data.map((e) => (
                         <ListItem key={e.id}>
-                            <ListItemAvatar>
-                                <StyledBadge
-                                    overlap="circular"
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    variant="dot"
-                                >
-                                    <Avatar alt="Remy Sharp" src={e.url} />
-                                </StyledBadge>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={e.name}
-                                sx={{ color: theme.palette.text.primary }}
-                            />
+                            <ListItemButton sx={{borderRadius: 2}}>
+                                <ListItemAvatar>
+                                    <StyledBadge
+                                        overlap="circular"
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        variant="dot"
+                                    >
+                                        <Avatar alt={e.name} src={e.avatarPic? e.avatarPic: noneAvatar} />
+                                    </StyledBadge>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={e.name}
+                                    sx={{ color: theme.palette.text.primary }}
+                                />
+                            </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
