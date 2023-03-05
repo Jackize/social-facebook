@@ -5,20 +5,21 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
+import { SOCKET_SERVER } from "../../utils/config";
 import { noneAvatar } from "../../utils/image";
 import AddFriend from "./addFriend/AddFriend";
 import { BoxStyle, StyledBadge } from "./rightBar.style";
 
 const RightBar = () => {
     const theme = useTheme();
-    const socket = useRef(io("ws://localhost:8900"));
+    const socket = useRef(io(SOCKET_SERVER));
     const { currentUser } = React.useContext(AuthContext);
     const [onlineFriend, setOnlineFriend] = useState([]);
     const [friends, setFriends] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        socket.current = io("ws://localhost:8900");
+        socket.current = io(SOCKET_SERVER);
     }, []);
 
     useEffect(() => {

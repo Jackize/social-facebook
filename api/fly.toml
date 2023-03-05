@@ -1,17 +1,20 @@
-# fly.toml file generated for social-nth on 2022-12-11T00:22:49+07:00
+# fly.toml file generated for nth-social-api on 2023-03-05T14:06:27+07:00
 
-app = "social-nth"
+app = "nth-social-api"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
   PORT = "8080"
-
+  NODE_ENV = "development"
+  SECRET ='ecret'
+  DATABASE_URL = 'postgres://postgres:7huiDMtChk6paTQ@social-nth-db.internal:5432/postgres'
+  CLOUD_NAME = 'dpbhp5ury'
+  CLOUD_API_KEY = '168921146788365'
+  CLOUD_API_SECRET = 'xyGefjjzHufGEcQDwyyjNUrR1tk'
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
-
 [[services]]
   http_checks = []
   internal_port = 8080

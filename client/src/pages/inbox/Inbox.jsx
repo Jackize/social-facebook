@@ -7,6 +7,7 @@ import Conversation from "../../components/conversation/Conversation";
 import Messages from "../../components/messages/Messages";
 import { AuthContext } from "../../context/authContext";
 import { io } from "socket.io-client";
+import { SOCKET_SERVER } from "../../utils/config";
 
 export default function Inbox() {
     const { currentUser } = React.useContext(AuthContext);
@@ -16,10 +17,10 @@ export default function Inbox() {
     const [sendMessage, setSendMessage] = useState("");
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const scrollRef = useRef();
-    const socket = useRef(io("ws://localhost:8900"));
+    const socket = useRef(io(SOCKET_SERVER));
 
     useEffect(() => {
-        socket.current = io("ws://localhost:8900");
+        socket.current = io(SOCKET_SERVER);
         socket.current.on("getMessage", (data) => {
             setArrivalMessage({
                 sender: data.senderId,
@@ -39,19 +40,6 @@ export default function Inbox() {
         //     console.log(users);
         // });
     }, [currentUser]);
-
-    // const {
-    //     isLoading: isLoadingConversation,
-    //     error,
-    //     data: dataConversation,
-    // } = useQuery(["conversation"], async () => {
-    //     try {
-    //         const res = await makeRequest.get("/conversations");
-    //         return res.data;
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // });
 
     useEffect(() => {
         const getConversation = async () => {

@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+const path = require('path');
 
 import authRouter from './src/routes/auth.js';
 import userRouter from './src/routes/users.js';
@@ -30,6 +31,12 @@ app.use(
 app.use(cookieParser());
 
 connectToDatabase();
+// console.log(path.join(__dirname, 'build', 'index.html'));
+// app.use(express.static(path.join(__dirname, 'build')));
+
+// app.get('*', function (req, res) {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
