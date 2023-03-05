@@ -12,6 +12,8 @@ import likeRouter from './src/routes/likes.js';
 import storyRouter from './src/routes/stories.js';
 import relationshipRouter from './src/routes/relationships.js';
 import commentRouter from './src/routes/comments.js';
+import ConversationRouter from './src/routes/conversations.js';
+import MessageRouter from './src/routes/messages.js';
 import { connectToDatabase } from './src/utils/db.js';
 
 app.use((req, res, next) => {
@@ -36,5 +38,7 @@ app.use('/api/comments', commentRouter);
 app.use('/api/likes', likeRouter);
 app.use('/api/stories', storyRouter);
 app.use('/api/relationships', relationshipRouter);
+app.use('/api/conversations', ConversationRouter);
+app.use('/api/messages', MessageRouter);
 
 module.exports = app;

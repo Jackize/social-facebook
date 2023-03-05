@@ -3,17 +3,18 @@ import {
     RouterProvider,
     Navigate,
     Outlet,
-} from 'react-router-dom';
-import Theme from './components/Theme/Theme';
-import Layout from './layout';
-import Home from './pages/home/Home';
-import Watch from './pages/watch/Watch';
-import Store from './pages/store/Store';
-import Login from './pages/login/Login';
-import Profile from './pages/profile/Profile';
-import Register from './pages/register/Register';
-import { AuthContextProvider } from './context/authContext';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+} from "react-router-dom";
+import Theme from "./components/Theme/Theme";
+import Layout from "./layout";
+import Home from "./pages/home/Home";
+import Watch from "./pages/watch/Watch";
+import Store from "./pages/store/Store";
+import Login from "./pages/login/Login";
+import Profile from "./pages/profile/Profile";
+import Register from "./pages/register/Register";
+import { AuthContextProvider } from "./context/authContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Inbox from "./pages/inbox/Inbox";
 
 function App() {
     const queryClient = new QueryClient();
@@ -21,12 +22,12 @@ function App() {
     const AuthLayout = () => {
         return (
             <AuthContextProvider>
-                <Outlet/>
+                <Outlet />
             </AuthContextProvider>
-        )
-    }
+        );
+    };
     const ProtectedRoute = ({ children }) => {
-        if (localStorage.getItem('user') === null) {
+        if (localStorage.getItem("user") === null) {
             return <Navigate to="/login" />;
         }
 
@@ -37,11 +38,11 @@ function App() {
             element: <AuthLayout />,
             children: [
                 {
-                    path: '/login',
+                    path: "/login",
                     element: <Login />,
                 },
                 {
-                    path: '/register',
+                    path: "/register",
                     element: <Register />,
                 },
                 {
@@ -56,31 +57,31 @@ function App() {
                     ),
                     children: [
                         {
-                            path: '/',
+                            path: "/",
                             element: <Home />,
                         },
                         {
-                            path: '/profile/:id',
+                            path: "/profile/:id",
                             element: <Profile />,
                         },
                         {
-                            path: '/watch',
+                            path: "/watch",
                             element: <Watch />,
                         },
                         {
-                            path: '/store',
+                            path: "/store",
                             element: <Store />,
+                        },
+                        {
+                            path: "/inbox",
+                            element: <Inbox />,
                         },
                     ],
                 },
-            ]
-        },        
+            ],
+        },
     ]);
-    return (
-        <div>
-            <RouterProvider router={router} />
-        </div>
-    );
+    return <RouterProvider router={router} />;
 }
 
 export default App;

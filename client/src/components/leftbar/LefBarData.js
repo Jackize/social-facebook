@@ -1,4 +1,4 @@
-import { Home, OndemandVideo, Store } from '@mui/icons-material';
+import { Home, Inbox, OndemandVideo, Store } from '@mui/icons-material';
 
 export const dataLeftBar = [
     {
@@ -18,5 +18,11 @@ export const dataLeftBar = [
         to: '/store',
         activeIcon: <Store color="primary" />,
         noneActiveIcon: <Store />,
+    },
+    {
+        name: 'Inbox',
+        to: '/inbox',
+        activeIcon: <Inbox color="primary" />,
+        noneActiveIcon: <Inbox />,
     },
 ];
