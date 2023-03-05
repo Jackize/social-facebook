@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { makeRequest } from '../axios';
 
 export const AuthContext = createContext();
 
@@ -9,13 +9,7 @@ export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
     // const navigate = useNavigate();
     const login = async (values) => {
-        const res = await axios.post(
-            'http://localhost:8080/api/auth/login',
-            values,
-            {
-                withCredentials: true,
-            }
-        );
+        const res = await makeRequest('/auth/login', values)
         localStorage.setItem('user', JSON.stringify(res.data));
         setCurrentUser(res.data);
     };
