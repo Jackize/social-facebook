@@ -1,6 +1,6 @@
 const io = require('socket.io')(8900,{
     cors: {
-        origin: ['http://localhost:3000','https://localhost:8080'],
+        origin: ['http://localhost:3000', 'http://localhost:8080','https://nth-social-api.fly.dev'],
     }
 })
 

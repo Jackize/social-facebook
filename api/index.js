@@ -5,7 +5,11 @@ const config = require('./src/utils/config');
 const logger = require('./src/utils/logger');
 
 const server = http.createServer(app);
-const io = require('socket.io')(server)
+const io = require('socket.io')(server,{
+    cors: {
+        origin: ['http://localhost:3000', 'http://localhost:8080','https://nth-social-api.fly.dev'],
+    }
+})
 
 let users = []
 
@@ -14,8 +18,8 @@ const addUser= (userId, socketId) => {
         users.push({userId, socketId})
 }
 
-const removeUser = (socketId) => {
-    users = users.filter(user => user.socketId !== socketId)
+const removeUser = (userId) => {
+    users = users.filter(user => user.userId !== userId)
 }
 
 const getUser = (userId) =>{
@@ -48,9 +52,9 @@ io.on("connection", (socket) => {
         }
     })
     //when disconnect
-    socket.on("disconnect", ()=>{
-        console.log('a user disconnected');
-        removeUser(socket.id)
+    socket.on("removeUser", ({userId})=>{
+        removeUser(userId)
+        console.log('a user disconnected', {userId});
         io.emit("getUsers", users)
     })
 })
