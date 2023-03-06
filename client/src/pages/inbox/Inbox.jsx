@@ -103,7 +103,7 @@ export default function Inbox() {
                         {dataConversation &&
                             dataConversation.map((e, i) => (
                                 <div key={e.id} onClick={() => setCurrentChat(e)}>
-                                    <Conversation currentUser={currentUser} conversation={e} checked={currentChat && e.id === currentChat.id ? true : false} />
+                                    <Conversation key={e.id} currentUser={currentUser} conversation={e} checked={currentChat && e.id === currentChat.id ? true : false} />
                                 </div>
                             ))}
                     </List>

@@ -66,10 +66,7 @@ export const getUsersNotFollow = async (req, res) => {
                         }
                 },
                 attributes: ['id', 'name', 'avatarPic']
-            })
-        // const q = `SELECT u.id AS userId, name, profilePic FROM users AS u WHERE  u.id NOT IN 
-        // (SELECT r.followedUserId FROM relationships AS r WHERE r.followerUserId = ?) 
-        // AND u.id NOT IN (SELECT r.followerUserId FROM relationships AS r WHERE r.followerUserId = ?) AND u.id <> ?`;   
+            })   
             return res.status(200).json(users)
         } catch (error) {
             console.log(error); 

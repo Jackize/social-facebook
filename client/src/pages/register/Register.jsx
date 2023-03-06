@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import './register.scss';
+import { makeRequest } from '../../axios';
 
 const Register = () => {
     const [inputs, setInputs] = React.useState({
@@ -11,6 +12,7 @@ const Register = () => {
         name: '',
     });
     const [err, setErr] = React.useState(null);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -21,11 +23,11 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            let res = await axios.post(
-                'http://localhost:8080/api/auth/register',
-                inputs
-            );
+            const res = await makeRequest.post('/auth/register', inputs)
             setErr(res.data);
+            if(res.data) {
+                navigate('/login');
+            }
         } catch (err) {
             setErr(err.response.data);
         }

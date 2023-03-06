@@ -9,7 +9,7 @@ const LeftBar = () => {
     const { toggle, darkMode } = React.useContext(DarkModeContext);
     const theme = useTheme();
     return (
-        <Box flex={1} sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
+        <Box flex={1} sx={{ display: { xs: "none", sm: "none", md: "block" }, height: '100vh' }}>
             <Box position="fixed">
                 <List>
                     {dataLeftBar.map((e, index) => (

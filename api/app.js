@@ -19,24 +19,20 @@ import { connectToDatabase } from './src/utils/db.js';
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', '*');
     next();
 });
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(
     cors({
-        origin: 'http://localhost:3000',
+        origin: ['http://localhost:3000','https://social-facebook-smoky.vercel.app'],
     })
 );
 app.use(cookieParser());
 
 connectToDatabase();
-// console.log(path.join(__dirname, 'build', 'index.html'));
-// app.use(express.static(path.join(__dirname, 'build')));
 
-// app.get('*', function (req, res) {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
@@ -48,4 +44,9 @@ app.use('/api/relationships', relationshipRouter);
 app.use('/api/conversations', ConversationRouter);
 app.use('/api/messages', MessageRouter);
 
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('*', async (req, res) =>{
+   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 module.exports = app;

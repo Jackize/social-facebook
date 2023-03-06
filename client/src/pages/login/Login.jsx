@@ -55,6 +55,7 @@ const Login = () => {
                             placeholder="Password"
                             name="password"
                             onChange={handleChange}
+                            autoComplete="on"
                         />
                         {err && err}
                         <button onClick={handleLogin}>Login</button>

@@ -1,7 +1,7 @@
 import { Instagram, LinkedIn, Twitter, YouTube } from "@mui/icons-material";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Posts from "../../components/posts/Posts";
@@ -16,6 +16,7 @@ const Profile = () => {
   const handleClose = () => setOpen(false);
 
   const { currentUser } = React.useContext(AuthContext);
+  const navigate = useNavigate();
 
   const userId = parseInt(useLocation().pathname.split("/")[2]);
 
@@ -50,6 +51,13 @@ const Profile = () => {
   const handleFollow = () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
   };
+
+  const handleCreateConversation = async () =>{
+      const res = await makeRequest.post("/conversations", { userId });
+          if (res.data.id) {
+              navigate("/inbox");
+          }
+  }
   return (
     <Box flex={4} p={10}>
       {error ? (
@@ -106,13 +114,23 @@ const Profile = () => {
               Update
             </Button>
           ) : relationshipData.includes(currentUser.id) ? (
-            <Button variant="contained" color="success" onClick={handleFollow}>
-              Following
-            </Button>
+            <>
+              <Button variant="contained" color="primary" onClick={handleCreateConversation} sx={{mr: 2}}>
+                Message
+              </Button>
+              <Button variant="contained" color="success" onClick={handleFollow}>
+                Following
+              </Button>
+            </>
           ) : (
-            <Button variant="contained" color="primary" onClick={handleFollow}>
-              Follow
-            </Button>
+            <>
+              <Button variant="contained" color="primary" onClick={handleCreateConversation} sx={{mr: 2}}>
+                Message
+              </Button>
+              <Button variant="contained" color="primary" onClick={handleFollow}>
+                Follow
+              </Button>
+            </>
           )}
         </Box>
       </Paper>
