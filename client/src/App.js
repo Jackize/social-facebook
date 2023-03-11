@@ -15,6 +15,7 @@ import Register from "./pages/register/Register";
 import { AuthContextProvider } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Inbox from "./pages/inbox/Inbox";
+import Messages from "./components/messages/Messages";
 
 function App() {
     const queryClient = new QueryClient();
@@ -75,6 +76,12 @@ function App() {
                         {
                             path: "/inbox",
                             element: <Inbox />,
+                            children: [
+                                {
+                                    path: "/inbox/:id",
+                                    element: <Messages />,
+                                },
+                            ]
                         },
                     ],
                 },

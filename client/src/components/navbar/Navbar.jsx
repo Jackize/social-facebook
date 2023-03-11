@@ -1,5 +1,5 @@
 import { AppBar, Avatar, Badge, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Icons, Left, Middle, Mobile, Right, Search, SearchIconWrapper, StyledInputBase, StyledToolBar } from "./Navbar.style";
 import { Home, Inbox, Mail, Notifications, OndemandVideo, Store } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -7,14 +7,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { noneAvatar } from "../../utils/image";
-import { io } from "socket.io-client";
-import { SOCKET_SERVER } from "../../utils/config";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { currentUser, logout } = React.useContext(AuthContext);
     const open = Boolean(anchorEl);
-    const socket = useRef(io(SOCKET_SERVER));
     const navigate = useNavigate();
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -24,13 +21,9 @@ const Navbar = () => {
     };
     const theme = useTheme();
     
-    useEffect(() => {
-        socket.current = io(SOCKET_SERVER);
-    }, [currentUser]);
 
     
     const handleLogout = () =>{
-        socket.current.emit('removeUser', {userId: currentUser.id});
         logout()
     }
     return (

@@ -3,10 +3,12 @@ import React from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { noneAvatar } from "../../utils/image";
 import moment from "moment";
+import { AuthContext } from "../../context/authContext";
 
-export default function Messages({ message, own, timeZone }) {
+export default function Messages({ message, own, timeZone, userInfo }) {
     const theme = useTheme();
     const { darkMode } = React.useContext(DarkModeContext);
+    const { currentUser } = React.useContext(AuthContext);
 
     return (
         <ListItem sx={{ justifyContent: own ? "flex-end" : "flex-start" }}>
@@ -16,7 +18,7 @@ export default function Messages({ message, own, timeZone }) {
                     flexDirection: own ? "row-reverse" : null,
                     width: "50%",
                 }}>
-                <Avatar src={noneAvatar} sx={{ width: 30, height: 30 }} />
+                <Avatar src={own ? currentUser?.avatarPic : userInfo.avatarPic ? userInfo.avatarPic : noneAvatar} sx={{ width: 30, height: 30 }} />
                 <Box display={"flex"} flexDirection={"column"}>
                     <ListItemText
                         sx={{

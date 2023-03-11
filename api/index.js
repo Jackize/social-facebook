@@ -28,35 +28,31 @@ const getUser = (userId) =>{
 
 io.on("connection", (socket) => {
     //when connect
-    console.log("a user connected");
-    console.log(users);
-    //take userId and socketId from user
-    socket.on("addUser", userId=>{
-        addUser(userId, socket.id)
-        io.emit("getUsers", users)
+    console.log("New client connected");
+
+    //Handle join room event
+    socket.on("joinRoom", (roomId, userId) => {
+        console.log(`${userId} joined room ${roomId}`);
+        socket.join(roomId);
+        socket.to(roomId).emit("user joined", userId, roomId);
     })
 
-    //send and get message
-    socket.on("sendMessage",({senderId, receiverId, content}) =>{
-        const user = getUser(receiverId)
-        if (user) {
-            io.to(user.socketId).emit("getMessage", {
-                senderId,
-                content
-            })
-        } else {
-            socket.emit("getMessage", {
-                senderId,
-                content
-            })
-        }
+    //Handle leave room event
+    socket.on("leaveRoom", (roomId, userId) => {
+        console.log(`${userId} left room ${roomId}`);
+        socket.leave(roomId);
+        socket.to(roomId).emit("user left", userId, roomId);
+    })
+
+    //Handle send message event
+    socket.on("sendMessage", ({roomId, senderId, message}) => {
+        console.log(`${senderId} sent message in room ${roomId}: ${message}`);
+        socket.to(roomId).emit("new message", senderId, message);
     })
     //when disconnect
-    socket.on("removeUser", ({userId})=>{
-        removeUser(userId)
-        console.log('a user disconnected', {userId});
-        io.emit("getUsers", users)
-    })
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+    });
 })
 
 const PORT = config.PORT || 8080;

@@ -15,12 +15,16 @@ export const createMessage = async (req, res) => {
 
 export const getMessageByConversationId = async (req, res) => {
     try {
-        const messages = await Message.findAll({
+        let messages = await Message.findAll({
             where: {
                 conversation_id: req.params.conversation_id,
             },
-            // limit: 10,
+            order: [
+                ["createdAt", "DESC"],
+            ],
+            limit: 10,
         })
+        messages = messages.reverse()
         res.status(200).json(messages)
     } catch (error) {
         res.status(500).json(error)
