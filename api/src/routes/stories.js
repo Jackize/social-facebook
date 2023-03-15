@@ -1,10 +1,11 @@
-import express from 'express';
-import { getStories, addStory, deleteStory } from '../controllers/stories.js';
+import express from "express";
+import { getStories, addStory, deleteStory } from "../controllers/stories.js";
+import { authMiddleware } from "../utils/middleware.js";
 
 const router = express.Router();
 
-router.get('/', getStories);
-router.post('/', addStory);
-router.delete('/:id', deleteStory);
+router.get("/", authMiddleware, getStories);
+router.post("/", authMiddleware, addStory);
+router.delete("/:id", authMiddleware, deleteStory);
 
 export default router;

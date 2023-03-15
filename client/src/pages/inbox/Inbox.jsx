@@ -22,7 +22,18 @@ export default function Inbox() {
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
 
     useEffect(() => {
-        socketRef.current = io.connect(SOCKET_SERVER);
+        socketRef.current = io.connect(SOCKET_SERVER, {
+            withCredentials: true,
+            transports: ["websocket"],
+            extraHeaders: {
+                "Content-Type": "application/json",
+            },
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionAttempts: 5,
+            forceNew: false,
+            timeout: 20000,
+        });
 
         socketRef.current.on("user joined", (userId, roomId) => {
             console.log(`${userId} joined room ${roomId}`);
@@ -46,7 +57,7 @@ export default function Inbox() {
             try {
                 const res = await makeRequest.get("/conversations");
                 const dataConversations = res.data;
-                if (dataConversations.length > 0) {
+                if (dataConversations.length > 0 && conversation_id) {
                     const dataConversation = dataConversations.find((conversation) => conversation.id === conversation_id);
                     const infoReceiver = dataConversation?.user1_id === currentUser.id ? dataConversation?.user2 : dataConversation?.user1;
                     infoReceiver && setUserInfo(infoReceiver);
@@ -130,7 +141,7 @@ export default function Inbox() {
     return (
         <Stack direction="row" sx={{ flex: 3, height: "100vh", p: 2 }}>
             <Paper variant="elevation" elevation={24} sx={{ display: "flex", flex: "3", height: "700px" }}>
-                <Box flex={1.5}>
+                <Box flex={1}>
                     <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
                     <List sx={{ height: "100%", overflowY: "scroll" }}>
                         {dataConversations &&
@@ -179,6 +190,7 @@ export default function Inbox() {
                     )}
                 </Box>
             </Paper>
+            <Box flex={1}></Box>
         </Stack>
     );
 }

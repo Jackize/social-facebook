@@ -7,24 +7,12 @@ const logger = require('./src/utils/logger');
 const server = http.createServer(app);
 const io = require('socket.io')(server,{
     cors: {
-        origin: ['http://localhost:3000', 'http://localhost:8080','https://nth-social-api.fly.dev'],
-    }
+        origin: ['http://localhost:3000', 'http://localhost:8080',"https://nth-social-api.fly.dev/api/"],
+        credentials: true,
+        optionsSuccessStatus: 200,
+    },
+    // secure: true
 })
-
-let users = []
-
-const addUser= (userId, socketId) => {
-    !users.some(user => user.userId === userId) && 
-        users.push({userId, socketId})
-}
-
-const removeUser = (userId) => {
-    users = users.filter(user => user.userId !== userId)
-}
-
-const getUser = (userId) =>{
-    return users.find(user => user.userId === userId)
-}
 
 io.on("connection", (socket) => {
     //when connect

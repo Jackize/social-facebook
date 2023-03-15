@@ -21,8 +21,6 @@ const Navbar = () => {
     };
     const theme = useTheme();
     
-
-    
     const handleLogout = () =>{
         logout()
     }
@@ -61,7 +59,7 @@ const Navbar = () => {
                         </IconButton>
                         <Avatar
                             sx={{ width: 30, height: 30 }}
-                            src={currentUser.avatarPic ? currentUser.avatarPic : noneAvatar}
+                            src={currentUser?.avatarPic ? currentUser.avatarPic : noneAvatar}
                             id="avatar-menu"
                             aria-controls={open ? "menu" : undefined}
                             aria-haspopup="true"
@@ -89,8 +87,8 @@ const Navbar = () => {
                 MenuListProps={{
                     "aria-labelledby": "avatar-menu",
                 }}>
-                <MenuItem>{currentUser.name}</MenuItem>
-                <MenuItem component={Link} to={`/profile/${currentUser.id}`}>
+                <MenuItem>{currentUser?.name}</MenuItem>
+                <MenuItem component={Link} to={`/profile/${currentUser?.id}`}>
                     My account
                 </MenuItem>
                 {/* <MenuItem onClick={handleLogout} component={Link} to="/login"> */}

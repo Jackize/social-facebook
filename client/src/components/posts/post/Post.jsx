@@ -40,7 +40,10 @@ const Post = ({ post }) => {
   const { isLoading, error, data } = useQuery(["likes", post.id], () =>
     makeRequest.get("/likes?postId=" + post.id).then((res) => {
       return res.data;
-    })
+    }),{
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
   );
 
   const queryClient = useQueryClient();
@@ -69,7 +72,7 @@ const Post = ({ post }) => {
   );
 
   const handleLike = () => {
-    likeMutation.mutate(data.includes(currentUser.id));
+    likeMutation.mutate(data.includes(currentUser?.id));
   };
 
   const handleDelete = () => {
@@ -89,7 +92,7 @@ const Post = ({ post }) => {
           }
           action={
             <IconButton onClick={handleClick}>
-              {post.userId === currentUser.id ? <MoreVert /> : null}
+              {post.userId === currentUser?.id ? <MoreVert /> : null}
             </IconButton>
           }
           title={post.user.name}
@@ -118,7 +121,7 @@ const Post = ({ post }) => {
               <Checkbox
                 icon={<FavoriteBorder />}
                 checkedIcon={<Favorite sx={{ color: "red" }} />}
-                checked={data.includes(currentUser.id)}
+                checked={data.includes(currentUser?.id)}
                 onChange={handleLike}
               />
             )}

@@ -51,11 +51,11 @@ export const login = async (req, res) => {
                 return res.status(400).json('Wrong username or password');
 
             const token = jwt.sign({ id: user.id }, SECRET);
-            const { password, ...others } = user;
+            const { password, ...other } = user;
             return res
-                .cookie('accessToken', token, { httpOnly: true })
+                // .cookie('accessToken', token, { httpOnly: true, secure: true })
                 .status(200)
-                .json(others);
+                .json({...other, token});
         }
     } else {
         return res.status(404).json('User not found');

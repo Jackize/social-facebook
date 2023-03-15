@@ -12,6 +12,9 @@ const Posts = ({ userId }) => {
       const res_1 = await makeRequest.get("/posts?userId=" + userId);
       return res_1.data;
     }
+  },{
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
   return (
     <>

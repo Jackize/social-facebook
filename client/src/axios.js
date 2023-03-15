@@ -4,6 +4,13 @@ import { CLOUD_NAME, CLOUD_PRESET, URL_BE } from "./utils/config";
 export const makeRequest = axios.create({
   baseURL: URL_BE,
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+    "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
+    "Authorization": `Bearer ${localStorage.getItem("token")}`
+  }
 });
 
 export const uploadImage = async (imageFile) => {

@@ -26,7 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
     cors({
-        origin: ['http://localhost:3000','https://social-facebook-smoky.vercel.app'],
+        origin: ['http://localhost:3000',"https://nth-social-api.fly.dev/api/"],
+        credentials: true,
+        optionsSuccessStatus: 200,
     })
 );
 app.use(cookieParser());

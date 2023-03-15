@@ -19,10 +19,13 @@ import { ListStyle } from "./addFriend.style";
 const AddFriend = () => {
   const theme = useTheme();
 
-  const { isLoading, error, data } = useQuery(["relationship"], () =>
+  const { isLoading, error, data } = useQuery(["not-friends"], () =>
     makeRequest.get("/users/not-friend").then((res) => {
       return res.data;
-    })
+    }),{
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
   );
   const queryClient = useQueryClient();
 
@@ -33,7 +36,7 @@ const AddFriend = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["relationship", "posts", "friends"]);
+        queryClient.invalidateQueries(["not-friends", "posts", "friends"]);
       },
     }
   );

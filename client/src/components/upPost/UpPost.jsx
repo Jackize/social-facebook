@@ -12,7 +12,7 @@ const UpPost = ({ handleOpen }) => {
       <CardHeader
         avatar={
           <Avatar
-            src={currentUser.avatarPic ? currentUser.avatarPic : noneAvatar}
+            src={currentUser?.avatarPic ? currentUser.avatarPic : noneAvatar}
           />
         }
         title={
