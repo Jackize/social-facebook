@@ -21,8 +21,8 @@ const Posts = ({ userId }) => {
       {error
         ? "Something went wrong"
         : isLoading
-        ? "Loading"
-        : data.map((e) => <Post key={e.id} post={e} />)}
+        ? <Post loading={isLoading}/>
+        : data.map((e) => <Post key={e.id} post={e} loading={isLoading}/>)}
     </>
   );
 };

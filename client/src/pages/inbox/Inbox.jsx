@@ -85,14 +85,14 @@ export default function Inbox() {
     }, [conversation_id, currentUser.id]);
 
     const handleSetUserJoinRoom = async (roomId) => {
-        if (!conversationId) {
+        if (!conversationId && !gptURL) {
             socketRef.current.emit("joinRoom", roomId, currentUser.id);
             await getMessages();
         } else if (roomId !== conversationId) {
             socketRef.current.emit("leaveRoom", conversationId, currentUser.id);
-            socketRef.current.emit("joinRoom", roomId, currentUser.id);
             await getMessages();
         }
+        setgetMessages([]);
 
         async function getMessages() {
             try {
@@ -138,7 +138,6 @@ export default function Inbox() {
 
                 const res = await makeRequest.post("/messages/gpt", newMessage);
                 if (res.data) {
-                    console.log(res.data.bot);
                     setgetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
                 }
             } catch (error) {
@@ -162,7 +161,7 @@ export default function Inbox() {
                 <Box flex={1}>
                     <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
                     <List sx={{ height: "100%", overflowY: "scroll" }}>
-                        <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} />
+                        <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} onClick={handleSetUserJoinRoom} />
                         {dataConversations &&
                             dataConversations.map((e, i) => (
                                 <NavLink

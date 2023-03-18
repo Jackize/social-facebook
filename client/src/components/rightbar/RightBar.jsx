@@ -1,4 +1,4 @@
-import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Skeleton, Typography, useTheme } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -38,33 +38,42 @@ const RightBar = () => {
                     OnlineFriends
                 </Typography>
                 <List>
-                    {error
-                        ? "Something went wrong"
-                        : isLoading
-                        ? "loading"
-                        : data.map((e, id) => (
-                              <ListItem key={e.id}>
-                                  <ListItemButton sx={{ borderRadius: 2 }} onClick={() => handleCreateConversation(e)}>
-                                      <ListItemAvatar>
-                                          <StyledBadge
-                                              overlap="circular"
-                                              anchorOrigin={{
-                                                  vertical: "bottom",
-                                                  horizontal: "right",
-                                              }}
-                                              variant="dot">
-                                              <Avatar alt={e.name} src={e.avatarPic ? e.avatarPic : noneAvatar} />
-                                          </StyledBadge>
-                                      </ListItemAvatar>
-                                      <ListItemText
-                                          primary={e.name}
-                                          sx={{
-                                              color: theme.palette.text.primary,
-                                          }}
-                                      />
-                                  </ListItemButton>
-                              </ListItem>
-                          ))}
+                    {error ? (
+                        "Something went wrong"
+                    ) : isLoading ? (
+                        <ListItem>
+                            <ListItemButton sx={{ borderRadius: 2 }}>
+                                <ListItemAvatar>
+                                    <Skeleton animation="wave" variant="circular" width={40} height={40} />
+                                </ListItemAvatar>
+                                <Skeleton animation="wave" height={10} width="50%" />
+                            </ListItemButton>
+                        </ListItem>
+                    ) : (
+                        data.map((e, id) => (
+                            <ListItem key={e.id}>
+                                <ListItemButton sx={{ borderRadius: 2 }} onClick={() => handleCreateConversation(e)}>
+                                    <ListItemAvatar>
+                                        <StyledBadge
+                                            overlap="circular"
+                                            anchorOrigin={{
+                                                vertical: "bottom",
+                                                horizontal: "right",
+                                            }}
+                                            variant="dot">
+                                            <Avatar alt={e.name} src={e.avatarPic ? e.avatarPic : noneAvatar} />
+                                        </StyledBadge>
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={e.name}
+                                        sx={{
+                                            color: theme.palette.text.primary,
+                                        }}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        ))
+                    )}
                 </List>
             </BoxStyle>
         </Box>

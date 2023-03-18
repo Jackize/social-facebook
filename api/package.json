@@ -8,7 +8,7 @@
     "start": "nodemon --exec ./node_modules/.bin/babel-node --legacy-watch index.js",
     "migration:down": "node utils/rollback.js",
     "build:ui": "cd ../client && npm run build && move build ../api/dist",
-    "deploy": "cd ../api/dist && flyctl deploy",
+    "deploy": "cd ./dist && flyctl deploy",
     "deploy:full": "npm run transpile && npm run build:ui && npm run deploy",
     "transpile": "npx babel ./src --out-dir dist/src && npx babel ./app.js --out-file dist/app.js && npx babel ./index.js --out-file dist/index.js"
   },
