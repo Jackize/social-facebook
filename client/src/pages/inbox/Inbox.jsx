@@ -1,8 +1,9 @@
 import { Send } from "@mui/icons-material";
 import { Box, Divider, IconButton, List, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useMatch } from "react-router-dom";
 import { io } from "socket.io-client";
+import logoGPT from "../../assets/logoGPT";
 import { makeRequest } from "../../axios";
 import Conversation from "../../components/conversation/Conversation";
 import Message from "../../components/messages/Messages";
@@ -18,7 +19,7 @@ export default function Inbox() {
     const [conversationId, setconversationId] = useState();
     const socketRef = useRef();
     const scrollRef = useRef();
-
+    const gptURL = useMatch("/inbox/gpt");
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
 
     useEffect(() => {
@@ -112,21 +113,38 @@ export default function Inbox() {
             content: sendMessage,
             conversation_id,
         };
+        if (!gptURL) {
+            try {
+                const res = await makeRequest.post("/messages", newMessage);
+                setgetMessages([...getMessages, res.data]);
+            } catch (error) {
+                console.log(error);
+            }
 
-        try {
-            const res = await makeRequest.post("/messages", newMessage);
-            setgetMessages([...getMessages, res.data]);
+            socketRef.current.emit("sendMessage", {
+                roomId: conversation_id,
+                senderId: currentUser.id,
+                message: sendMessage,
+            });
             setSendMessage("");
-        } catch (error) {
-            console.log(error);
-        }
+        } else {
+            try {
+                delete newMessage.conversation_id;
+                const timestamp = Date.now();
+                const randomNumber = Math.random();
+                const hexadecimalNumber = randomNumber.toString(16);
+                setgetMessages((prev) => [...prev, { sender_id: currentUser.id, content: newMessage.content, id: `id-${timestamp}-${hexadecimalNumber}`, updatedAt: new Date() }]);
+                setSendMessage("");
 
-        socketRef.current.emit("sendMessage", {
-            roomId: conversation_id,
-            senderId: currentUser.id,
-            message: sendMessage,
-        });
-        setSendMessage("");
+                const res = await makeRequest.post("/messages/gpt", newMessage);
+                if (res.data) {
+                    console.log(res.data.bot);
+                    setgetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
     };
 
     useEffect(() => {
@@ -144,6 +162,7 @@ export default function Inbox() {
                 <Box flex={1}>
                     <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
                     <List sx={{ height: "100%", overflowY: "scroll" }}>
+                        <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} />
                         {dataConversations &&
                             dataConversations.map((e, i) => (
                                 <NavLink
@@ -157,13 +176,19 @@ export default function Inbox() {
                 </Box>
                 <Divider orientation="vertical" flexItem />
                 <Box display={"flex"} flex={3} p={2} flexDirection={"column"}>
-                    {conversation_id ? (
+                    {gptURL || conversation_id ? (
                         <>
                             <Box sx={{ height: "100%", overflowY: "scroll" }}>
                                 {getMessages &&
                                     getMessages.map((mess) => (
                                         <div key={mess.id} ref={scrollRef}>
-                                            <Message key={mess.id} message={mess.content} own={mess.sender_id === currentUser.id} timeZone={mess.updatedAt} userInfo={userInfo} />
+                                            <Message
+                                                key={mess.id}
+                                                message={mess.content}
+                                                own={mess.sender_id === currentUser.id}
+                                                timeZone={mess.updatedAt}
+                                                userInfo={gptURL ? { avatarPic: logoGPT.logo } : userInfo}
+                                            />
                                         </div>
                                     ))}
                             </Box>

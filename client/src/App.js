@@ -81,6 +81,10 @@ function App() {
                                     path: "/inbox/:id",
                                     element: <Messages />,
                                 },
+                                {
+                                    path: "/inbox/gpt",
+                                    element: <Messages />,
+                                },
                             ]
                         },
                     ],

@@ -7,14 +7,15 @@ import {
     useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
+import logoGPT from "../../assets/logoGPT";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { noneAvatar } from "../../utils/image";
+import {  noneAvatar } from "../../utils/image";
 
-export default function Conversation({ conversation, currentUser, checked }) {
+export default function Conversation({ conversation, currentUser, checked, gpt }) {
     const theme = useTheme();
     const { darkMode } = React.useContext(DarkModeContext);
     const [user, setUser] = useState(
-        currentUser.id === conversation.user1_id ? conversation.user2 : conversation.user1
+        gpt? null : currentUser.id === conversation.user1_id ? conversation.user2 : conversation.user1
     );
 
     return (
@@ -31,13 +32,13 @@ export default function Conversation({ conversation, currentUser, checked }) {
                 }}>
                 <ListItemAvatar>
                     <Avatar
-                        src={user ? user.avatarPic : noneAvatar}
+                        src={gpt ? logoGPT.logo : user ? user.avatarPic : noneAvatar}
                         sx={{ width: 30, height: 30 }}
                     />
                 </ListItemAvatar>
                 <ListItemText
                     sx={{ color: theme.palette.text.primary }}
-                    primary={user.username}
+                    primary={gpt ? "ChatGPT" : user.username}
                 />
             </ListItemButton>
         </ListItem>
