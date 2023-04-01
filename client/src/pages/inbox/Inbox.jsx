@@ -9,6 +9,7 @@ import Conversation from "../../components/conversation/Conversation";
 import Message from "../../components/messages/Messages";
 import { AuthContext } from "../../context/authContext";
 import { SOCKET_SERVER } from "../../utils/config";
+import SEO from "../../components/seo/SEO";
 
 export default function Inbox() {
     const { currentUser } = React.useContext(AuthContext);
@@ -156,65 +157,71 @@ export default function Inbox() {
         }
     };
     return (
-        <Stack direction="row" sx={{ flex: 3, height: "100vh", p: 2 }}>
-            <Paper variant="elevation" elevation={24} sx={{ display: "flex", flex: "3", height: "700px" }}>
-                <Box flex={1}>
-                    <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
-                    <List sx={{ height: "100%", overflowY: "scroll" }}>
-                        <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} onClick={handleSetUserJoinRoom} />
-                        {dataConversations &&
-                            dataConversations.map((e, i) => (
-                                <NavLink
-                                    key={e.id}
-                                    to={`/inbox/${e.id}`}
-                                    children={({ isActive }) => <Conversation key={e.id} currentUser={currentUser} conversation={e} checked={isActive} />}
-                                    onClick={() => handleSetUserJoinRoom(e.id)}
-                                />
-                            ))}
-                    </List>
-                </Box>
-                <Divider orientation="vertical" flexItem />
-                <Box display={"flex"} flex={3} p={2} flexDirection={"column"}>
-                    {gptURL || conversation_id ? (
-                        <>
-                            <Box sx={{ height: "100%", overflowY: "scroll" }}>
-                                {getMessages &&
-                                    getMessages.map((mess) => (
-                                        <div key={mess.id} ref={scrollRef}>
-                                            <Message
-                                                key={mess.id}
-                                                message={mess.content}
-                                                own={mess.sender_id === currentUser.id}
-                                                timeZone={mess.updatedAt}
-                                                userInfo={gptURL ? { avatarPic: logoGPT.logo } : userInfo}
-                                            />
-                                        </div>
-                                    ))}
-                            </Box>
-                            <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
-                                <TextField
-                                    fullWidth
-                                    multiline
-                                    variant="outlined"
-                                    onChange={(e) => setSendMessage(e.target.value)}
-                                    value={sendMessage}
-                                    maxRows={5}
-                                    margin={"normal"}
-                                    onKeyDown={handleKeyDown}
-                                />
-                                <IconButton color={sendMessage.length > 0 ? "primary" : undefined} disabled={sendMessage.length > 0 ? false : true} onClick={handleSendMessage}>
-                                    <Send />
-                                </IconButton>
-                            </Box>
-                        </>
-                    ) : (
-                        <Typography variant="h4" sx={{ p: 2, margin: "0 auto" }} textAlign>
-                            Open a conversation to start a chat.
-                        </Typography>
-                    )}
-                </Box>
-            </Paper>
-            <Box flex={1}></Box>
-        </Stack>
+        <>
+            <SEO 
+            description={'Chat box'}
+            title={'Inbox'}            
+        />
+            <Stack direction="row" sx={{ flex: 3, height: "100vh", p: 2 }}>
+                <Paper variant="elevation" elevation={24} sx={{ display: "flex", flex: "3", height: "700px" }}>
+                    <Box flex={1}>
+                        <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
+                        <List sx={{ height: "100%", overflowY: "scroll" }}>
+                            <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} onClick={handleSetUserJoinRoom} />
+                            {dataConversations &&
+                                dataConversations.map((e, i) => (
+                                    <NavLink
+                                        key={e.id}
+                                        to={`/inbox/${e.id}`}
+                                        children={({ isActive }) => <Conversation key={e.id} currentUser={currentUser} conversation={e} checked={isActive} />}
+                                        onClick={() => handleSetUserJoinRoom(e.id)}
+                                    />
+                                ))}
+                        </List>
+                    </Box>
+                    <Divider orientation="vertical" flexItem />
+                    <Box display={"flex"} flex={3} p={2} flexDirection={"column"}>
+                        {gptURL || conversation_id ? (
+                            <>
+                                <Box sx={{ height: "100%", overflowY: "scroll" }}>
+                                    {getMessages &&
+                                        getMessages.map((mess) => (
+                                            <div key={mess.id} ref={scrollRef}>
+                                                <Message
+                                                    key={mess.id}
+                                                    message={mess.content}
+                                                    own={mess.sender_id === currentUser.id}
+                                                    timeZone={mess.updatedAt}
+                                                    userInfo={gptURL ? { avatarPic: logoGPT.logo } : userInfo}
+                                                />
+                                            </div>
+                                        ))}
+                                </Box>
+                                <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        variant="outlined"
+                                        onChange={(e) => setSendMessage(e.target.value)}
+                                        value={sendMessage}
+                                        maxRows={5}
+                                        margin={"normal"}
+                                        onKeyDown={handleKeyDown}
+                                    />
+                                    <IconButton color={sendMessage.length > 0 ? "primary" : undefined} disabled={sendMessage.length > 0 ? false : true} onClick={handleSendMessage}>
+                                        <Send />
+                                    </IconButton>
+                                </Box>
+                            </>
+                        ) : (
+                            <Typography variant="h4" sx={{ p: 2, margin: "0 auto" }} textAlign>
+                                Open a conversation to start a chat.
+                            </Typography>
+                        )}
+                    </Box>
+                </Paper>
+                <Box flex={1}></Box>
+            </Stack>
+        </>
     );
 }

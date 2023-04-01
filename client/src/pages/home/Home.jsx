@@ -4,12 +4,17 @@ import ModalUpPost from '../../components/modalUpPost/ModalUpPost';
 import Posts from '../../components/posts/Posts';
 import RightBar from '../../components/rightbar/RightBar';
 import UpPost from '../../components/upPost/UpPost';
-
+import SEO from '../../components/seo/SEO';
 const Home = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     return (
+        <>
+        <SEO 
+            description={'Home'}
+            title={'Home'}            
+        />
         <Stack
             direction="row"
             justifyContent="space-between"
@@ -23,6 +28,7 @@ const Home = () => {
             </Box>
             <RightBar />
         </Stack>
+        </>
     );
 };
 
