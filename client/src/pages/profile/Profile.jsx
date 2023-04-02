@@ -1,6 +1,6 @@
 import { Instagram, LinkedIn, Twitter, YouTube } from "@mui/icons-material";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -11,6 +11,7 @@ import { makeRequest } from "../../axios";
 import ModalUpdate from "../../components/modalUpdate/ModalUpdate";
 import { noneAvatar, noneCoverPic } from "../../utils/image";
 import SEO from "../../components/seo/SEO";
+import { NotificationContext } from "../../context/notificationContext";
 
 const Profile = () => {
     const [open, setOpen] = React.useState(false);
@@ -18,6 +19,7 @@ const Profile = () => {
     const handleClose = () => setOpen(false);
 
     const { currentUser } = React.useContext(AuthContext);
+    const { handeMessage } = useContext(NotificationContext);
     const navigate = useNavigate();
 
     const userId = parseInt(useLocation().pathname.split("/")[2]);
@@ -48,9 +50,22 @@ const Profile = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation(
-        (following) => {
-            if (following) return makeRequest.delete("/relationships?userId=" + userId);
-            return makeRequest.post("/relationships", { userId });
+        async (following) => {
+            if (following) {
+                try {
+                    const res = await makeRequest.delete("/relationships?userId=" + userId);
+                    handeMessage(res);
+                } catch (error) {
+                    handeMessage(error);
+                }
+            } else {
+                try {
+                    const res = await makeRequest.post("/relationships", { userId });
+                    handeMessage(res);
+                } catch (error) {
+                    handeMessage(error);
+                }
+            }
         },
         {
             onSuccess: () => {
@@ -126,8 +141,8 @@ const Profile = () => {
                                 <Button variant="contained" color="primary" onClick={handleCreateConversation} sx={{ mr: 2 }}>
                                     Message
                                 </Button>
-                                <Button variant="contained" color="success" onClick={handleFollow}>
-                                    Following
+                                <Button variant="contained" color="error" onClick={handleFollow}>
+                                    Unfollow
                                 </Button>
                             </>
                         ) : (
