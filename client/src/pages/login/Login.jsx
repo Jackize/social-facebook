@@ -21,6 +21,7 @@ const Login = () => {
         try {
             await login(values);
             navigate('/');
+            window.location.reload();
         } catch (error) {
             setErr(error.response.data);
         }
