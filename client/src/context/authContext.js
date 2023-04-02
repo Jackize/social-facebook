@@ -22,8 +22,14 @@ export const AuthContextProvider = ({ children }) => {
         navigate('/login');
     };
 
+    const handleResetUser = user => {
+        localStorage.removeItem('user');
+        localStorage.setItem('user', JSON.stringify(user));
+        setCurrentUser(user);
+        window.location.reload();
+    }
     return (
-        <AuthContext.Provider value={{ currentUser, login, logout }}>
+        <AuthContext.Provider value={{handleResetUser, currentUser, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -22,8 +22,9 @@ const ModalUpdate = ({ open, handleClose }) => {
   const theme = useTheme();
   const [avatarFile, setAvatarFile] = React.useState(null);
   const [coverFile, setCoverFile] = React.useState(null);
+  const {handleLoading, handeMessage} = React.useContext(NotificationContext);
   
-  const { currentUser } = React.useContext(AuthContext);
+  const { currentUser,handleResetUser } = React.useContext(AuthContext);
 
   const handleAvatarChange = (event) => {
     setAvatarFile(event.target.files[0]);
@@ -36,7 +37,16 @@ const ModalUpdate = ({ open, handleClose }) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
-    (updateUser) => makeRequest.put("/users", updateUser),
+    async (updateUser) => {
+      makeRequest.put("/users", updateUser)
+        .then((res) => {
+          handleResetUser(res.data)
+          handeMessage(res, "Change successfully");
+        })
+        .catch((err) => {
+          handeMessage(err, "Change failed");
+        })
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["user"]);
@@ -45,17 +55,21 @@ const ModalUpdate = ({ open, handleClose }) => {
   );
   const handleSubmit = async (e) => {
     e.preventDefault();
+    handleLoading(true)
     let avatarURL = "",
       coverURL = "";
     if (avatarFile) avatarURL = await uploadImage(avatarFile);
     if (coverFile) coverURL = await uploadImage(coverFile);
-    mutation.mutate({
-      name: e.target.name.value,
-      avatarPic: avatarURL,
-      coverPic: coverURL,
-    });
+    if (e.target.name.value || avatarFile || coverFile) {
+      mutation.mutate({
+        name: e.target.name.value,
+        avatarPic: avatarURL,
+        coverPic: coverURL,
+      });
+    }
     setAvatarFile(null);
     setCoverFile(null);
+    handleLoading(false)
     handleClose();
   };
   return (
@@ -139,7 +153,7 @@ const ModalUpdate = ({ open, handleClose }) => {
                   }}
                   fullWidth
                   onChange={handleCoverChange}>
-                  Upload Image Profile
+                  Upload Image Cover
                   <input hidden accept="image/*" type="file" />
                 </Button>
               )}

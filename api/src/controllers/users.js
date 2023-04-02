@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 
 import { User, Relationship } from "../models";
+import { handleDeleteImage } from "../utils/handleCloudinary";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -71,21 +72,26 @@ export const updateUser = async (req, res) => {
         if (req.body.username) {
             return res.status(403).json("Username is not changed!");
         } else {
-            const { password } = req.body;
+            const {name, avatarPic, coverPic} = req.body;
             let user = await User.findByPk(req.userId, {
                 raw: true,
             });
-            const saltRounds = 10;
-            let passwordHash;
-            if (password) {
-                //hash new password
-                passwordHash = await bcrypt.hash(password, saltRounds);
+            if (!user) {
+                return res.status(404).json("User not found!");
+            } else {
+                if (user.avatarPic && avatarPic) {
+                    await handleDeleteImage(user.avatarPic);
+                }
+                if (user.coverPic && coverPic) {
+                    const res = await handleDeleteImage(user.coverPic);
+                }
+                if (name.trim().length === 0) delete req.body.name;
+                if (avatarPic.trim().length === 0) delete req.body.avatarPic;
+                if (coverPic.trim().length === 0) delete req.body.coverPic;
+                await User.update({ ...req.body}, { where: { id: req.userId } });
+                user = {...user, ...req.body};
+                return res.status(200).json(user);
             }
-            delete req.body.password;
-            if (req.body.name.trim().length === 0) delete req.body.name;
-            await User.update({ ...req.body, password: passwordHash }, { where: { id: req.userId } });
-            user = { ...user, ...req.body, passwordHash };
-            return res.status(200).json(user);
         }
     } catch (error) {
         console.log(error);

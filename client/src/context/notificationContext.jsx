@@ -4,7 +4,6 @@ import React, { createContext, useState } from "react";
 export const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
-    // const [isSuccess, setIsSuccess] = useState(false);
     const [message, setMessage] = useState({
         title: "",
         message: "",
@@ -13,13 +12,13 @@ export const NotificationProvider = ({ children }) => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [loading, setloading] = useState(false);
 
-    const handeMessage = (res) => {
+    const handeMessage = (res, mess) => {
         const title = res.response ? res.response.status + "-" + res.response.statusText : res.status + "-" + res.statusText;
         setOpenSnackbar(true);
         if (res.status === 200) {
-            setMessage((prev) => ({ ...prev, title: title, message: res.data, type: "success" }));
+            setMessage((prev) => ({ ...prev, title: title, message: mess? mess : res.data, type: "success" }));
         } else {
-            setMessage((prev) => ({ ...prev, title: title, message: res.response.data, type: "error" }));
+            setMessage((prev) => ({ ...prev, title: title, message: mess ? mess : res.response.data, type: "error" }));
         }
     };
 
