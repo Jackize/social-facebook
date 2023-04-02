@@ -16,12 +16,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AuthContext } from "../../context/authContext";
 import { styleImage } from "./modalUpdate.style";
+import { NotificationContext } from "../../context/notificationContext";
 
 const ModalUpdate = ({ open, handleClose }) => {
   const theme = useTheme();
   const [avatarFile, setAvatarFile] = React.useState(null);
   const [coverFile, setCoverFile] = React.useState(null);
-
+  
   const { currentUser } = React.useContext(AuthContext);
 
   const handleAvatarChange = (event) => {
@@ -42,7 +43,7 @@ const ModalUpdate = ({ open, handleClose }) => {
       },
     }
   );
-  const handleClick = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let avatarURL = "",
       coverURL = "";
@@ -59,7 +60,7 @@ const ModalUpdate = ({ open, handleClose }) => {
   };
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
+      <Box sx={{...style, width: 600}}>
         <Stack direction="column">
           <Box>
             <Typography
@@ -69,7 +70,7 @@ const ModalUpdate = ({ open, handleClose }) => {
               {currentUser.name}
             </Typography>
             <Divider />
-            <form onSubmit={handleClick}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 variant="outlined"
                 label="Name"
@@ -142,6 +143,9 @@ const ModalUpdate = ({ open, handleClose }) => {
                   <input hidden accept="image/*" type="file" />
                 </Button>
               )}
+              
+              <ModalChangePass/>
+
               <ButtonGroup fullWidth sx={{ margin: "20px 0 -30px 0" }}>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button type="submit">Change</Button>
@@ -155,3 +159,79 @@ const ModalUpdate = ({ open, handleClose }) => {
 };
 
 export default ModalUpdate;
+
+const ModalChangePass = ()=> {
+  const theme = useTheme();
+  const [changePassword, setChangePassword] = React.useState(false);
+  const [fieldPass, setfieldPass] = React.useState({
+      newPassword: "",
+      oldPassword: "",
+  });
+  const {handeMessage, handleLoading} = React.useContext(NotificationContext)
+
+  const mutation = useMutation(
+    async (updatePass) => {
+      handleLoading(true);
+      makeRequest.put("/users/changePass", updatePass)
+        .then(res => {
+            handeMessage(res)
+            handleResetFieldPass()
+            handleClose();
+        }).catch((err) => {
+            handleResetFieldPass()
+            handeMessage(err)
+        }).finally(() => {
+            handleLoading(false);
+        })
+    }
+  );
+
+  const handleChangePass = async (e) => {
+    e.preventDefault();
+    mutation.mutate({
+      newPassword: fieldPass.newPassword,
+      oldPassword: fieldPass.oldPassword,
+    });
+  }
+
+  const handleChangeField = (event) => {
+    const { name, value } = event.target;
+    setfieldPass((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleClose = () => {
+    setChangePassword(false);
+  }
+
+  const handleResetFieldPass = () => {
+    setfieldPass({newPassword: "", oldPassword: ""})
+  }
+  return (
+    <>
+      <Button 
+        variant="contained"
+        component="label"
+        sx={{ marginTop: "20px", marginBottom: "20px" }}
+        fullWidth
+        onClick={()=> setChangePassword(!changePassword)}
+      >
+        Change Password
+      </Button>
+      <Modal open={changePassword} onClose={handleClose}>
+        <Box sx={{...style, width: 400}}>
+            <Typography variant="h6" textAlign="center" color={theme.palette.text.primary}>Change Password</Typography>
+
+            <Divider/>
+
+            <TextField variant="outlined" label="Old Password" fullWidth sx={{marginTop: 3}} name="oldPassword" value={fieldPass.oldPassword} onChange={handleChangeField} type="password"/>
+            <TextField variant="outlined" label="New Password" fullWidth sx={{marginTop: 3}} name="newPassword" value={fieldPass.newPassword} onChange={handleChangeField} type="password"/>
+
+            <ButtonGroup fullWidth sx={{ margin: "20px 0 -30px 0" }}>
+              <Button onClick={()=> setChangePassword(false)}>Cancel</Button>
+              <Button onClick={handleChangePass}>Change</Button>
+            </ButtonGroup>
+        </Box>
+      </Modal>
+    </>
+  );
+}

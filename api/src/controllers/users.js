@@ -116,3 +116,30 @@ export const getUserFollowed = async (req, res) => {
         return res.status(500).json(error);
     }
 };
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const { userId } = req;
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json("Old password and new password is required!");
+        } else if (oldPassword === newPassword) {
+            return res.status(400).json("Old password and new password is the same!");
+        } else {           
+            const user = await User.findByPk(userId);
+            if (!user) {
+                return res.status(400).json("User not found!");
+            }
+            const isPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+            if (!isPasswordCorrect) {
+                return res.status(400).json("Old password is incorrect!");
+            }
+            const passwordHash = bcrypt.hashSync(newPassword, 10);
+            await User.update({ password: passwordHash }, { where: { id: userId } });
+            // console.log(json(userUpdated));
+            return res.status(200).json("Change password successfully!");
+        }
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+}
