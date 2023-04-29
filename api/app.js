@@ -22,10 +22,7 @@ app.use(
     cors({
         origin: [
             "http://localhost:3000",
-            "https://nth-social-api.fly.dev/api/",
-            "https://social-facebook-smoky.vercel.app/",
-            "https://social-facebook-jackize.vercel.app/",
-            "https://social-facebook-git-main-jackize.vercel.app/",
+            "https://social-facebook-beta.vercel.app/",
         ],
         methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
         credentials: true,
