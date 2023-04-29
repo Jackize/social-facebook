@@ -1,13 +1,13 @@
 const passport = require("passport");
 const { User } = require("../models");
-const { where } = require("sequelize");
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require("../utils/config");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 passport.use(
     new GoogleStrategy(
         {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientID: GOOGLE_CLIENT_ID,
+            clientSecret: GOOGLE_CLIENT_SECRET,
             callbackURL: "http://localhost:8080/api/auth/google/callback",
             passReqToCallback: true,
         },
