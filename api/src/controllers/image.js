@@ -1,6 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
 import { OPENAI_API_KEY } from "../utils/config";
-import { makeRequest } from "../utils/rapidAPI";
 const axios = require("axios");
 const fs = require("fs");
 const configuration = new Configuration({
