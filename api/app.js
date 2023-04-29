@@ -2,20 +2,14 @@ const config = require("./src/utils/config");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-import bodyParser from "body-parser";
+const session = require('express-session');
 import cookieParser from "cookie-parser";
 const path = require("path");
-
-import authRouter from "./src/routes/auth.js";
-import userRouter from "./src/routes/users.js";
-import postRouter from "./src/routes/posts.js";
-import likeRouter from "./src/routes/likes.js";
-import storyRouter from "./src/routes/stories.js";
-import relationshipRouter from "./src/routes/relationships.js";
-import commentRouter from "./src/routes/comments.js";
-import ConversationRouter from "./src/routes/conversations.js";
-import MessageRouter from "./src/routes/messages.js";
+import api from "./src/routes/index.js";
 import { connectToDatabase } from "./src/utils/db.js";
+import passport from "passport";
+require("./src/sso/passport.js")
+require("./src/sso/passportGoogle.js")
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
@@ -33,6 +27,7 @@ app.use(
             "https://social-facebook-jackize.vercel.app/",
             "https://social-facebook-git-main-jackize.vercel.app/",
         ],
+        methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
         credentials: true,
         optionsSuccessStatus: 200,
     })
@@ -41,16 +36,18 @@ app.use(cookieParser());
 
 connectToDatabase();
 
-app.use("/api/auth", authRouter);
-app.use("/api/users", userRouter);
-app.use("/api/posts", postRouter);
-app.use("/api/comments", commentRouter);
-app.use("/api/likes", likeRouter);
-app.use("/api/stories", storyRouter);
-app.use("/api/relationships", relationshipRouter);
-app.use("/api/conversations", ConversationRouter);
-app.use("/api/messages", MessageRouter);
+app.use(
+    session({
+        secret: config.SECRET,
+        resave: false,
+        saveUninitialized: false,
+        maxAge: 24 * 60 * 60 * 1000,
+    })
+);
 
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/api", api);
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("*", async (req, res) => {

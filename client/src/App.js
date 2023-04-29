@@ -1,9 +1,4 @@
-import {
-    createBrowserRouter,
-    RouterProvider,
-    Navigate,
-    Outlet,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
 import Home from "./pages/home/Home";
@@ -16,6 +11,8 @@ import { AuthContextProvider } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Inbox from "./pages/inbox/Inbox";
 import Messages from "./components/messages/Messages";
+import ImageGeneration from "./pages/imageGeneration/ImageGeneration";
+import LoginSuccess from "./components/loginSuccess/LoginSuccess";
 
 function App() {
     const queryClient = new QueryClient();
@@ -38,6 +35,14 @@ function App() {
         {
             element: <AuthLayout />,
             children: [
+                {
+                    path: "/login",
+                    element: <Login />,
+                },
+                {
+                    path: "/login/success",
+                    element: <LoginSuccess />,
+                },
                 {
                     path: "/login",
                     element: <Login />,
@@ -66,12 +71,8 @@ function App() {
                             element: <Profile />,
                         },
                         {
-                            path: "/watch",
-                            element: <Watch />,
-                        },
-                        {
-                            path: "/store",
-                            element: <Store />,
+                            path: "/imageGeneration",
+                            element: <ImageGeneration />,
                         },
                         {
                             path: "/inbox",
@@ -85,7 +86,7 @@ function App() {
                                     path: "/inbox/gpt",
                                     element: <Messages />,
                                 },
-                            ]
+                            ],
                         },
                     ],
                 },

@@ -5,6 +5,12 @@ const { Umzug, SequelizeStorage } = require('umzug');
 const sequelize = new Sequelize(DATABASE_URL, {
     logging: false,
 });
+// const sequelize = new Sequelize('postgres', 'postgres', '7huiDMtChk6paTQ', {
+//     host: 'localhost',
+//     port: 5432,
+//     dialect: 'postgres',
+//     logging: false
+// });
 const logger = require('./logger');
 
 const connectToDatabase = async () => {

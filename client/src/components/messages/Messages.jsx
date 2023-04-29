@@ -16,7 +16,7 @@ export default function Messages({ message, own, timeZone, userInfo }) {
                 sx={{
                     display: "flex",
                     flexDirection: own ? "row-reverse" : null,
-                    width: "50%",
+                    width: "100%",
                 }}>
                 <Avatar src={own ? currentUser?.avatarPic : userInfo.avatarPic ? userInfo.avatarPic : noneAvatar} sx={{ width: 30, height: 30 }} />
                 <Box display={"flex"} flexDirection={"column"}>

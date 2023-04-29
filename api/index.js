@@ -7,14 +7,7 @@ const logger = require("./src/utils/logger");
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
     cors: {
-        origin: [
-            "http://localhost:3000",
-            "http://localhost:8080",
-            "https://nth-social-api.fly.dev/api/",
-            "https://social-facebook-smoky.vercel.app/",
-            "https://social-facebook-jackize.vercel.app/",
-            "https://social-facebook-git-main-jackize.vercel.app/",
-        ],
+        origin: '*',
         credentials: true,
         optionsSuccessStatus: 200,
     },
