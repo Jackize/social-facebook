@@ -1,27 +1,21 @@
-import { Home, Inbox, OndemandVideo, Store } from '@mui/icons-material';
+import { Home, Image, Inbox } from "@mui/icons-material";
 
 export const dataLeftBar = [
     {
-        name: 'Home',
-        to: '/',
+        name: "Home",
+        to: "/",
         activeIcon: <Home color="primary" />,
         noneActiveIcon: <Home />,
     },
     {
-        name: 'Watch',
-        to: '/watch',
-        activeIcon: <OndemandVideo color="primary" />,
-        noneActiveIcon: <OndemandVideo />,
+        name: "image Generation",
+        to: "/imageGeneration",
+        activeIcon: <Image color="primary" />,
+        noneActiveIcon: <Image />,
     },
     {
-        name: 'Store',
-        to: '/store',
-        activeIcon: <Store color="primary" />,
-        noneActiveIcon: <Store />,
-    },
-    {
-        name: 'Inbox',
-        to: '/inbox',
+        name: "Inbox",
+        to: "/inbox",
         activeIcon: <Inbox color="primary" />,
         noneActiveIcon: <Inbox />,
     },

@@ -1,14 +1,16 @@
 import { Add } from "@mui/icons-material";
 import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemButton, ListItemText, Skeleton, Typography, useTheme } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { makeRequest } from "../../../axios";
 import { noneAvatar } from "../../../utils/image";
 import { ListStyle } from "./addFriend.style";
+import { NotificationContext } from "../../../context/notificationContext";
 
 const AddFriend = () => {
     const theme = useTheme();
+    const {handeMessage} = useContext(NotificationContext);
 
     const { isLoading, error, data } = useQuery(
         ["not-friends"],
@@ -24,13 +26,17 @@ const AddFriend = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation(
-        (userId) => {
-            console.log(userId);
-            return makeRequest.post("/relationships", { userId });
+        async (userId) => {
+            try {
+                const res = await makeRequest.post("/relationships", { userId });
+                handeMessage(res);
+            } catch (err) {
+                handeMessage(err);
+            }
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(["not-friends", "posts", "friends"]);
+                queryClient.invalidateQueries("posts");
             },
         }
     );

@@ -37,7 +37,7 @@ export const deleteRelationship = async (req, res) => {
                 followedUserId: req.query.userId,
             },
         });
-        return res.status(200).json("Unfollow!");
+        return res.status(200).json("Unfollow success!");
     } catch (error) {
         return res.status(500).json(error);
     }
