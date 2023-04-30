@@ -2,14 +2,16 @@ const config = require("./src/utils/config");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const session = require('express-session');
+import RedisStore from "connect-redis";
+import session from "express-session";
+const redis = require('redis');
 import cookieParser from "cookie-parser";
 const path = require("path");
 import api from "./src/routes/index.js";
 import { connectToDatabase } from "./src/utils/db.js";
 import passport from "passport";
-require("./src/sso/passport.js")
-require("./src/sso/passportGoogle.js")
+require("./src/sso/passport.js");
+require("./src/sso/passportGoogle.js");
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
@@ -20,11 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
     cors({
-        origin: [
-            "http://localhost:3000",
-            "https://social-facebook-beta.vercel.app",
-            `${config.URL_FE}`,
-        ],
+        origin: ["http://localhost:3000", "https://social-facebook-beta.vercel.app", `${config.URL_FE}`],
         methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
         credentials: true,
         optionsSuccessStatus: 200,
@@ -34,12 +32,14 @@ app.use(cookieParser());
 
 connectToDatabase();
 
+const redisClient = redis.createClient();
+
 app.use(
     session({
+        store: new RedisStore({ client: redisClient }),
         secret: config.SECRET,
         resave: false,
         saveUninitialized: false,
-        maxAge: 24 * 60 * 60 * 1000,
     })
 );
 
