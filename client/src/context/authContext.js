@@ -23,6 +23,7 @@ export const AuthContextProvider = ({ children }) => {
             localStorage.setItem("user", JSON.stringify(res.data));
             setCurrentUser(res.data);
             navigate("/");
+            window.location.reload();
         }
     };
 

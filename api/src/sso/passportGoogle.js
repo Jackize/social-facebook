@@ -27,7 +27,7 @@ passport.use(
                 console.log("Failed to create user: ", err);
                 done(err, null);
             });
-            if (user && user[0]) return done(null, user && user[0]);
+            if (user && user[0]) return done(null, user[0].dataValues);
         }
     )
 );
@@ -41,5 +41,5 @@ passport.deserializeUser(async (id, done) => {
         console.log("Failed to find user: ", err);
         done(err, null);
     });
-    if (user) done(null, user);
+    if (user) done(null, user.dataValues);
 });

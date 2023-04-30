@@ -16,14 +16,12 @@ router.get(
     "/google/callback",
     passport.authenticate("google", { failureRedirect: failureLoginUrl, successRedirect: successLoginUrl, failureMessage: "Cannot login to Google, please try again later!" }),
     (req, res) => {
-        console.log("Google callback", req.user);
-        res.send("Thanks for signing in!");
+        res.redirect('/');
     }
 );
-router.get("/user", isUserAuthenticated, (req, res) => {
+router.get("/user", (req, res) => {
     const token = jwt.sign({ id: req.user.id }, SECRET);
-    let user = req.user.dataValues;
-    res.status(200).json({ token, ...user });
+    res.status(200).json({ token, ...req.user });
 });
 router.post("/register", register);
 router.post("/logout", logout);
