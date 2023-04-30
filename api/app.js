@@ -22,6 +22,7 @@ app.use(
     cors({
         origin: [
             "http://localhost:3000",
+            "https://social-facebook-beta.vercel.app",
             `${config.URL_FE}`,
         ],
         methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],

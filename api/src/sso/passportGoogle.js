@@ -1,6 +1,6 @@
 const passport = require("passport");
 const { User } = require("../models");
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_FE } = require("../utils/config");
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } = require("../utils/config");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 passport.use(
@@ -8,7 +8,7 @@ passport.use(
         {
             clientID: GOOGLE_CLIENT_ID,
             clientSecret: GOOGLE_CLIENT_SECRET,
-            callbackURL: `${URL_FE}/api/auth/google/callback`,
+            callbackURL: `${URL_BE}/api/auth/google/callback`,
             passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, profile, done) => {
