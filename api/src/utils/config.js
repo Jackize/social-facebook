@@ -9,5 +9,6 @@ module.exports = {
     CLOUD_API_SECRET: process.env.CLOUD_API_SECRET,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    URL_FE: process.env.URL_FE,
 };

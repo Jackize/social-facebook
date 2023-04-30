@@ -3,12 +3,12 @@ import { login, register, logout } from "../controllers/auth.js";
 import { isUserAuthenticated } from "../middlewares/auth.js";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import { SECRET } from "../utils/config.js";
+import { SECRET, URL_FE } from "../utils/config.js";
 
 const router = express.Router();
 
-const successLoginUrl = "http://localhost:3000/login/success";
-const failureLoginUrl = "http://localhost:3000/login";
+const successLoginUrl = `${URL_FE}/login/success`;
+const failureLoginUrl = `${URL_FE}/login`;
 
 router.post("/login", login);
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
@@ -22,7 +22,7 @@ router.get(
 );
 router.get("/user", isUserAuthenticated, (req, res) => {
     const token = jwt.sign({ id: req.user.id }, SECRET);
-    let user = req.user.dataValues
+    let user = req.user.dataValues;
     res.status(200).json({ token, ...user });
 });
 router.post("/register", register);
