@@ -1,99 +1,147 @@
-import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
-import Home from "./pages/home/Home";
-import Watch from "./pages/watch/Watch";
-import Store from "./pages/store/Store";
-import Login from "./pages/login/Login";
-import Profile from "./pages/profile/Profile";
-import Register from "./pages/register/Register";
+// import Home from "./pages/home/Home";
+// import Watch from "./pages/watch/Watch";
+// import Store from "./pages/store/Store";
+// import Login from "./pages/login/Login";
+// import Profile from "./pages/profile/Profile";
+// import Register from "./pages/register/Register";
 import { AuthContextProvider } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Inbox from "./pages/inbox/Inbox";
-import Messages from "./components/messages/Messages";
-import ImageGeneration from "./pages/imageGeneration/ImageGeneration";
-import LoginSuccess from "./components/loginSuccess/LoginSuccess";
+import { Suspense, lazy } from "react";
+import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
+
+const Home = lazy(() => import("./pages/home/Home"));
+const Login = lazy(() => import("./pages/login/Login"));
+const Register = lazy(() => import("./pages/register/Register"));
+const Profile = lazy(() => import("./pages/profile/Profile"));
+const LoginSuccess = lazy(() =>
+  import("./components/loginSuccess/LoginSuccess")
+);
+const ImageGeneration = lazy(() =>
+  import("./pages/imageGeneration/ImageGeneration")
+);
+const Inbox = lazy(() => import("./pages/inbox/Inbox"));
+const Messages = lazy(() => import("./components/messages/Messages"));
 
 function App() {
-    const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
 
-    const AuthLayout = () => {
-        return (
-            <AuthContextProvider>
-                <Outlet />
-            </AuthContextProvider>
-        );
-    };
-    const ProtectedRoute = ({ children }) => {
-        if (localStorage.getItem("user") === null) {
-            return <Navigate to="/login" />;
-        }
+  const AuthLayout = () => {
+    return (
+      <AuthContextProvider>
+        <Outlet />
+      </AuthContextProvider>
+    );
+  };
+  const ProtectedRoute = ({ children }) => {
+    if (localStorage.getItem("user") === null) {
+      return <Navigate to="/login" />;
+    }
 
-        return children;
-    };
-    const router = createBrowserRouter([
+    return children;
+  };
+  const router = createBrowserRouter([
+    {
+      element: <AuthLayout />,
+      children: [
         {
-            element: <AuthLayout />,
-            children: [
-                {
-                    path: "/login",
-                    element: <Login />,
-                },
-                {
-                    path: "/login/success",
-                    element: <LoginSuccess />,
-                },
-                {
-                    path: "/login",
-                    element: <Login />,
-                },
-                {
-                    path: "/register",
-                    element: <Register />,
-                },
-                {
-                    element: (
-                        <ProtectedRoute>
-                            <Theme>
-                                <QueryClientProvider client={queryClient}>
-                                    <Layout />
-                                </QueryClientProvider>
-                            </Theme>
-                        </ProtectedRoute>
-                    ),
-                    children: [
-                        {
-                            path: "/",
-                            element: <Home />,
-                        },
-                        {
-                            path: "/profile/:id",
-                            element: <Profile />,
-                        },
-                        {
-                            path: "/imageGeneration",
-                            element: <ImageGeneration />,
-                        },
-                        {
-                            path: "/inbox",
-                            element: <Inbox />,
-                            children: [
-                                {
-                                    path: "/inbox/:id",
-                                    element: <Messages />,
-                                },
-                                {
-                                    path: "/inbox/gpt",
-                                    element: <Messages />,
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
+          path: "/login/success",
+          element: (
+            <Suspense fallback={<SuspenseLoading />}>
+              <LoginSuccess />
+            </Suspense>
+          ),
         },
-    ]);
-    return <RouterProvider router={router} />;
+        {
+          path: "/login",
+          element: (
+            <Suspense fallback={<SuspenseLoading />}>
+              <Login />
+            </Suspense>
+          ),
+        },
+        {
+          path: "/register",
+          element: (
+            <Suspense fallback={<SuspenseLoading />}>
+              <Register />
+            </Suspense>
+          ),
+        },
+        {
+          element: (
+            <ProtectedRoute>
+              <Theme>
+                <QueryClientProvider client={queryClient}>
+                  <Layout />
+                </QueryClientProvider>
+              </Theme>
+            </ProtectedRoute>
+          ),
+          children: [
+            {
+              path: "/",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <Home />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/profile/:id",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <Profile />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/imageGeneration",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <ImageGeneration />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/inbox",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <Inbox />
+                </Suspense>
+              ),
+              children: [
+                {
+                  path: "/inbox/:id",
+                  element: (
+                    <Suspense fallback={<SuspenseLoading />}>
+                      <Messages />
+                    </Suspense>
+                  ),
+                },
+                {
+                  path: "/inbox/gpt",
+                  element: (
+                    <Suspense fallback={<SuspenseLoading />}>
+                      <Messages />
+                    </Suspense>
+                  ),
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;
