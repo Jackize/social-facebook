@@ -1,11 +1,11 @@
-import User from './users';
-import Post from './posts';
-import Story from './stories';
-import Like from './likes';
-import Comment from './comments';
-import Relationship from './relationships';
-import Conversation from './conversations';
-import Message from './messages';
+import User from './users.js';
+import Post from './posts.js';
+import Story from './stories.js';
+import Like from './likes.js';
+import Comment from './comments.js';
+import Relationship from './relationships.js';
+import Conversation from './conversations.js';
+import Message from './messages.js';
 
 Post.hasMany(Like);
 Like.belongsTo(Post);
@@ -16,28 +16,11 @@ Comment.belongsTo(Post);
 User.hasMany(Comment);
 Comment.belongsTo(User);
 
-// User.hasMany(Conversation);
-// Conversation.belongsTo(User);
+User.hasMany(Conversation, { foreignKey: "user1_id" });
+User.hasMany(Conversation, { foreignKey: "user2_id" });
 
-User.hasMany(Conversation, { foreignKey: 'user1_id' });
-User.hasMany(Conversation, { foreignKey: 'user2_id' });
-
-Conversation.belongsTo(User, { as: 'user1', foreignKey: 'user1_id' });
-Conversation.belongsTo(User, { as: 'user2', foreignKey: 'user2_id' });
-
-// User.hasMany(Message, { as:'sent_messages', foreignKey: 'sender_id' });
-// User.hasMany(Message, { as:'received_messages', foreignKey: 'receiver_id' });
-// User.belongsToMany(Conversation, { as:'conversations', foreignKey: 'user_id' });
-
-// Conversation.hasMany(Message, { as:'messages', foreignKey: 'conversation_id' });
-// Conversation.belongsToMany(User, { as:'users', foreignKey: 'conversation_id' });
-
-// Message.belongsTo(Conversation, {as:'conversation', foreignKey: 'conversation_id'});
-// Message.belongsTo(User, {as:'sender', foreignKey: 'sender_id'});
-// Message.belongsTo(User, {as:'receiver', foreignKey: 'receiver_id'});
-
-// User.hasMany(Message)
-// Message.belongsTo(User);
+Conversation.belongsTo(User, { as: "user1", foreignKey: "user1_id" });
+Conversation.belongsTo(User, { as: "user2", foreignKey: "user2_id" });
 
 Conversation.hasMany(Message);
 Message.belongsTo(Conversation);
@@ -56,4 +39,4 @@ Comment.sync();
 Relationship.sync();
 Conversation.sync();
 Message.sync();
-export { User, Post, Story, Like, Comment,Relationship, Conversation, Message };
+export { User, Post, Story, Like, Comment, Relationship, Conversation, Message };

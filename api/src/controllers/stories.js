@@ -1,8 +1,6 @@
-import jwt from "jsonwebtoken";
-const { Op } = require("sequelize");
+import { Op } from 'sequelize';
 
-import { SECRET } from "../utils/config";
-import { Story, User, Relationship } from "../models";
+import { Story, User, Relationship } from "../models/index.js";
 
 export const getStories = async (req, res) => {
     try {

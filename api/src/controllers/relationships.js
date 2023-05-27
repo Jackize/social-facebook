@@ -1,7 +1,5 @@
-import jwt from "jsonwebtoken";
 
-import { SECRET } from "../utils/config";
-import { Relationship } from "../models";
+import { Relationship } from "../models/index.js";
 
 export const getRelationships = async (req, res) => {
     try {

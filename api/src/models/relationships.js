@@ -1,6 +1,6 @@
-const { Model, DataTypes, Op } = require('sequelize');
+import { Model, DataTypes } from 'sequelize';
 
-const { sequelize } = require('../utils/db');
+import { sequelize } from '../utils/db.js';
 
 class Relationship extends Model {}
 
@@ -33,4 +33,4 @@ Relationship.init(
     }
 );
 
-module.exports = Relationship;
+export default Relationship;

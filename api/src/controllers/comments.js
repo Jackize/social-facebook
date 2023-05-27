@@ -1,7 +1,5 @@
-import jwt from "jsonwebtoken";
 
-import { SECRET } from "../utils/config";
-import { Comment, User } from "../models";
+import { Comment, User } from "../models/index.js";
 
 export const getComments = async (req, res) => {
     try {

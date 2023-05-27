@@ -1,6 +1,6 @@
-import { Op } from "sequelize"
+import { Op } from 'sequelize';
 
-const { Conversation, User, Message } = require("../models")
+import {Conversation, User, Message} from "../models/index.js";
 
 
 export const createConversation = async (req, res) => {

@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import { User } from '../models';
-import { SECRET } from '../utils/config';
+import { User } from '../models/index.js';
+import { SECRET } from '../utils/config.js';
 
 const salt = bcrypt.genSaltSync(10);
 

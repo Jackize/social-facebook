@@ -1,7 +1,8 @@
-import { Message, User } from "../models";
-import { OPENAI_API_KEY } from "../utils/config";
-const { Configuration, OpenAIApi } = require("openai");
-const { v4: uuidv4 } = require("uuid");
+import { Message, User } from "../models/index.js";
+import { OPENAI_API_KEY } from "../utils/config.js";
+import { Configuration, OpenAIApi } from "openai";
+import { v4 as uuidv4 } from "uuid";
+
 const configuration = new Configuration({
     apiKey: OPENAI_API_KEY,
 });
@@ -43,10 +44,9 @@ export const sendMessageGPT = async (req, res) => {
             messages: [
                 {
                     role: "user",
-                    content: content,
-                }
+                    content,
+                },
             ],
-            temperature: 0,
         });
         const botMsg = response.data.choices[0].message.content;
         res.status(200).send({ bot: botMsg, id: uuidv4() });

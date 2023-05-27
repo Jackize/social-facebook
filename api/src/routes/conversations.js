@@ -1,6 +1,6 @@
 import express from "express";
-import { createConversation, getConversation, getConversationByCookie, getConversationByUserId } from "../controllers/conversations";
-import { authMiddleware } from "../utils/middleware";
+import { createConversation, getConversationByCookie, getConversationByUserId } from "../controllers/conversations.js";
+import { authMiddleware } from "../utils/middleware.js";
 
 const router = express.Router();
 

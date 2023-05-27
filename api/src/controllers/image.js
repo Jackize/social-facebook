@@ -1,10 +1,5 @@
-import { Configuration, OpenAIApi } from "openai";
-import { OPENAI_API_KEY } from "../utils/config";
-const axios = require("axios");
-const fs = require("fs");
-const configuration = new Configuration({
-    apiKey: OPENAI_API_KEY,
-});
+import { OPENAI_API_KEY } from "../utils/config.js";
+import axios from 'axios';
 export const createImage = async (req, res) => {
     try {
         const url = "https://api.openai.com/v1/images/generations";

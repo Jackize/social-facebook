@@ -1,6 +1,6 @@
-const { Model, DataTypes, Op } = require("sequelize");
+import { Model, DataTypes } from "sequelize";
 
-const { sequelize } = require("../utils/db");
+import { sequelize } from "../utils/db.js";
 
 class User extends Model {}
 
@@ -60,4 +60,4 @@ User.init(
     }
 );
 
-module.exports = User;
+export default User;

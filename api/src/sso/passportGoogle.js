@@ -1,7 +1,7 @@
-const passport = require("passport");
-const { User } = require("../models");
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } = require("../utils/config");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+import passport from "passport";
+import { User } from "../models/index.js";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } from "../utils/config.js";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 passport.use(
     new GoogleStrategy(
@@ -20,14 +20,14 @@ passport.use(
                 avatarPic: profile.photos[0].value,
             };
 
-            const user = await User.findOrCreate({
+            const [user] = await User.findOrCreate({
                 where: { googleId: profile.id },
                 defaults: defaultUser,
             }).catch((err) => {
                 console.log("Failed to create user: ", err);
                 done(err, null);
             });
-            if (user && user[0]) return done(null, user[0].dataValues);
+            if (user) return done(null, user.dataValues);
         }
     )
 );

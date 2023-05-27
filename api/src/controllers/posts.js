@@ -1,9 +1,7 @@
-import jwt from "jsonwebtoken";
-const { Op } = require("sequelize");
+import { Op } from 'sequelize';
 
-import { SECRET, CLOUD_API_KEY, CLOUD_NAME, CLOUD_API_SECRET } from "../utils/config";
-import { Post, Relationship, User } from "../models";
-import { handleDeleteImage } from "../utils/handleCloudinary";
+import { Post, Relationship, User } from "../models/index.js";
+import { handleDeleteImage } from "../utils/handleCloudinary.js";
 
 export const getPosts = async (req, res) => {
     const userId = req.query.userId;

@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 
-import { User, Relationship } from "../models";
-import { handleDeleteImage } from "../utils/handleCloudinary";
+import { User, Relationship } from "../models/index.js";
+import { handleDeleteImage } from "../utils/handleCloudinary.js";
 
 export const getAllUsers = async (req, res) => {
     try {

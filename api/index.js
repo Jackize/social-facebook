@@ -1,13 +1,13 @@
-const app = require("./app");
-const http = require("http");
+import app from "./app.js";
+import { createServer } from "http";
+import { PORT as _PORT } from "./src/utils/config.js";
+import { info } from "./src/utils/logger.js";
+import { Server } from "socket.io";
 
-const config = require("./src/utils/config");
-const logger = require("./src/utils/logger");
-
-const server = http.createServer(app);
-const io = require("socket.io")(server, {
+const server = createServer(app);
+const io = new Server(server, {
     cors: {
-        origin: '*',
+        origin: "*",
         credentials: true,
         optionsSuccessStatus: 200,
     },
@@ -15,35 +15,36 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-    //when connect
+    // when connect
     console.log("New client connected");
 
-    //Handle join room event
+    // Handle join room event
     socket.on("joinRoom", (roomId, userId) => {
         console.log(`${userId} joined room ${roomId}`);
         socket.join(roomId);
         socket.to(roomId).emit("user joined", userId, roomId);
     });
 
-    //Handle leave room event
+    // Handle leave room event
     socket.on("leaveRoom", (roomId, userId) => {
         console.log(`${userId} left room ${roomId}`);
         socket.leave(roomId);
         socket.to(roomId).emit("user left", userId, roomId);
     });
 
-    //Handle send message event
+    // Handle send message event
     socket.on("sendMessage", ({ roomId, senderId, message }) => {
         console.log(`${senderId} sent message in room ${roomId}: ${message}`);
         socket.to(roomId).emit("new message", senderId, message);
     });
-    //when disconnect
+
+    // when disconnect
     socket.on("disconnect", () => {
         console.log("Client disconnected");
     });
 });
 
-const PORT = config.PORT || 8080;
+const PORT = _PORT || 8080;
 server.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`);
+    info(`Server running on port ${PORT}`);
 });

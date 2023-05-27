@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
-import { SECRET } from "../utils/config";
-import { Like } from "../models";
+import { Like } from "../models/index.js";
 
 export const getLikes = async (req, res) => {
     try {
