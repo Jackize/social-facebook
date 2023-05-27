@@ -42,19 +42,16 @@ export const login = async (req, res) => {
             raw: true,
         });
         if (user) {
-            let checkPassword = bcrypt.compareSync(
-                req.body.password,
-                user.password
-            );
-            if (!checkPassword)
-                return res.status(400).json('Wrong username or password');
-
-            const token = jwt.sign({ id: user.id }, SECRET);
+            let checkPassword = bcrypt.compareSync(req.body.password, user.password);
+            if (!checkPassword) return res.status(400).json("Wrong username or password");
+            const token = jwt.sign({ id: user.id }, SECRET, {
+                expiresIn: "1h",
+            });
             const { password, ...other } = user;
             return res
-                // .cookie('accessToken', token, { httpOnly: true, secure: true })
+                .cookie("access_token", token, { httpOnly: true, secure: true })
                 .status(200)
-                .json({...other, token});
+                .json({ ...other });
         } else {
             return res.status(404).json('User not found');
         }

@@ -14,7 +14,6 @@ const Login = () => {
     const [err, setErr] = React.useState(null);
     const navigate = useNavigate();
     const { login } = useAuthContext();
-    console.log(login);
     const handleChange = (e) => {
         setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };

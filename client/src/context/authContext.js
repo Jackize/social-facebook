@@ -18,12 +18,9 @@ export const AuthContextProvider = ({ children }) => {
         }
 
         if (res && res.data) {
-            makeRequest.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-            localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data));
             setCurrentUser(res.data);
             navigate("/");
-            window.location.reload();
         }
     };
 
