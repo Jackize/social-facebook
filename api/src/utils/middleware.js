@@ -15,3 +15,15 @@ export const authMiddleware = (req, res, next) => {
         return res.sendStatus(403);
     }
 };
+
+export const cachedUser = (req, res, next) => {
+    const { userId } = req.params;
+    redisStore.get(userId, (err, user) => {
+        if (err) throw err;
+        if (user) {
+            res.sendStatus(200).json(user);
+        } else {
+            next();
+        }
+    });
+};

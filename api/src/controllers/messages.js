@@ -1,6 +1,7 @@
 import { Message, User } from "../models/index.js";
 import { OPENAI_API_KEY } from "../utils/config.js";
 import { Configuration, OpenAIApi } from "openai";
+import { error } from '../utils/logger.js';
 import { v4 as uuidv4 } from "uuid";
 
 const configuration = new Configuration({
@@ -14,8 +15,9 @@ export const createMessage = async (req, res) => {
             content: req.body.content,
         });
         res.status(200).json(message);
-    } catch (error) {
-        res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -30,8 +32,9 @@ export const getMessageByConversationId = async (req, res) => {
         });
         messages = messages.reverse();
         res.status(200).json(messages);
-    } catch (error) {
-        res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -50,12 +53,12 @@ export const sendMessageGPT = async (req, res) => {
         });
         const botMsg = response.data.choices[0].message.content;
         res.status(200).send({ bot: botMsg, id: uuidv4() });
-    } catch (error) {
-        if (error.response) {
-            console.error(error.response.status, error.response.data);
-            res.status(error.response.status).json(error.response.data);
+    } catch (err) {
+        if (err.response) {
+            error(err.response.status, err.response.data);
+            res.status(err.response.status).json(err.response.data);
         } else {
-            console.error(`Error with OpenAI API request: ${error.message}`);
+            error(`Error with OpenAI API request: ${err.message}`);
             res.status(500).json({
                 error: {
                     message: "An error occurred during your request.",

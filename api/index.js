@@ -16,31 +16,31 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     // when connect
-    console.log("New client connected");
+    info("New client connected");
 
     // Handle join room event
     socket.on("joinRoom", (roomId, userId) => {
-        console.log(`${userId} joined room ${roomId}`);
+        info(`${userId} joined room ${roomId}`);
         socket.join(roomId);
         socket.to(roomId).emit("user joined", userId, roomId);
     });
 
     // Handle leave room event
     socket.on("leaveRoom", (roomId, userId) => {
-        console.log(`${userId} left room ${roomId}`);
+        info(`${userId} left room ${roomId}`);
         socket.leave(roomId);
         socket.to(roomId).emit("user left", userId, roomId);
     });
 
     // Handle send message event
     socket.on("sendMessage", ({ roomId, senderId, message }) => {
-        console.log(`${senderId} sent message in room ${roomId}: ${message}`);
+        info(`${senderId} sent message in room ${roomId}: ${message}`);
         socket.to(roomId).emit("new message", senderId, message);
     });
 
     // when disconnect
     socket.on("disconnect", () => {
-        console.log("Client disconnected");
+        info("Client disconnected");
     });
 });
 

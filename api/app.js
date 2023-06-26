@@ -1,9 +1,11 @@
-import { URL_FE, SECRET } from "./src/utils/config.js";
+import { URL_FE, SECRET, REDIS_PORT } from "./src/utils/config.js";
 import express from "express";
 import cors from "cors";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import api from "./src/routes/index.js";
 import { connectToDatabase } from "./src/utils/db.js";
 import passport from "passport";
@@ -32,7 +34,13 @@ app.use(
 
 app.use(cookieParser());
 
-connectToDatabase();
+(async () => {
+    try {
+        await connectToDatabase();
+    } catch (error) {
+        error("Error connecting to the database:", error);
+    }
+})();
 
 app.use(
     session({
@@ -46,13 +54,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api", api);
-app.use("/", (req, res) => {
+app.use("/hello", (req, res) => {
     res.send("Hello World!");
 });
-app.use(express.static(path.join(import.meta.url, "../build")));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use(express.static(path.join(__dirname, "./build")));
 
 app.get("*", async (req, res) => {
-    res.sendFile(path.join(import.meta.url, "../build", "index.html"));
+    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
 export default app;

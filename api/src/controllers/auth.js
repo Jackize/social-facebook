@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { User } from '../models/index.js';
 import { SECRET } from '../utils/config.js';
+import { error } from '../utils/logger.js';
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -17,28 +18,43 @@ let checkUserName = (userName) => {
     });
 };
 export const register = async (req, res) => {
-    let checkIsUserNameExist = await checkUserName(req.body.username);
+    const { username, password, name } = req.body;
+
+    //Validate field
+    if (!username || !password || !name) {
+        return res.status(400).json({ error: 'Username, password, and name are required' });
+    }
+
+    let checkIsUserNameExist = await checkUserName(username);
     if (checkIsUserNameExist) {
         res.status(409).json('User already exists');
     } else {
         try {
-            const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+            const hashedPassword = bcrypt.hashSync(password, salt);
             await User.create({
-                username: req.body.username,
+                username,
                 password: hashedPassword,
-                name: req.body.name,
+                name
             });
             res.status(200).json('User created');
         } catch (err) {
+            error(err)
             res.status(500).json(err);
         }
     }
 };
 
 export const login = async (req, res) => {
+    const { username, password } = req.body;
+
+    //Validate field
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' })
+    }
+
     try {
         let user = await User.findOne({
-            where: { username: req.body.username },
+            where: { username },
             raw: true,
         });
         if (user) {
@@ -55,8 +71,9 @@ export const login = async (req, res) => {
         } else {
             return res.status(404).json('User not found');
         }
-    } catch (error) {
-        res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 

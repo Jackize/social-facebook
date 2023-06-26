@@ -1,5 +1,6 @@
 
 import { Comment, User } from "../models/index.js";
+import { error } from '../utils/logger.js';
 
 export const getComments = async (req, res) => {
     try {
@@ -15,9 +16,10 @@ export const getComments = async (req, res) => {
             ],
             order: [["createdAt", "DESC"]],
         });
-        return res.status(200).json(comments);
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json(comments);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -28,8 +30,9 @@ export const addComment = async (req, res) => {
             postId: req.body.postId,
             userId: req.userId,
         });
-        return res.status(200).json("Comment has been created!");
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json("Comment has been created!");
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };

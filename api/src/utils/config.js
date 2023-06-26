@@ -13,3 +13,4 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 export const URL_FE = process.env.URL_FE;
 export const URL_BE = process.env.URL_BE;
+export const REDIS_PORT = process.env.REDIS_PORT;

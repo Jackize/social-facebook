@@ -1,36 +1,20 @@
-FROM debian:bullseye as builder
+FROM node:16.17.1-alpine
 
-ARG NODE_VERSION=16.17.1
+ENV PORT=8080
+ENV NODE_ENV=development
+ENV SECRET='ecret'
+ENV DATABASE_URL='postgresql://postgres:123456@172.17.0.2:5432/postgres'
+ENV CLOUD_NAME='dpbhp5ury'
+ENV CLOUD_API_KEY='168921146788365'
+ENV CLOUD_API_SECRET='xyGefjjzHufGEcQDwyyjNUrR1tk'
+ENV OPENAI_API_KEY='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'
+ENV GOOGLE_CLIENT_ID='454362861673-tbo8m2u7g0mi5ohend7t99esivot2t9a.apps.googleusercontent.com'
+ENV GOOGLE_CLIENT_SECRET='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'
+ENV URL_FE='http://localhost:8080'
+ENV URL_BE='http://localhost:8080'
 
-RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essential
-RUN curl https://get.volta.sh | bash
-ENV VOLTA_HOME /root/.volta
-ENV PATH /root/.volta/bin:$PATH
-RUN volta install node@${NODE_VERSION}
-
-#######################################################################
-
-RUN mkdir /app
 WORKDIR /app
-
-# NPM will not install any package listed in "devDependencies" when NODE_ENV is set to "production",
-# to install all modules: "npm install --production=false".
-# Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
-
-ENV NODE_ENV production
-
 COPY . .
-
+EXPOSE 8080
 RUN npm install --production=false
-FROM debian:bullseye
-
-LABEL fly_launch_runtime="nodejs"
-
-COPY --from=builder /root/.volta /root/.volta
-COPY --from=builder /app /app
-
-WORKDIR /app
-ENV NODE_ENV production
-ENV PATH /root/.volta/bin:$PATH
-
-CMD [ "npm", "run", "start" ]
+CMD ["npm","run", "start"]

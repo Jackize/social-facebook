@@ -1,16 +1,17 @@
 import { Op } from 'sequelize';
+import { error } from '../utils/logger.js';
 
-import {Conversation, User, Message} from "../models/index.js";
+import { Conversation, User, Message } from "../models/index.js";
 
 
 export const createConversation = async (req, res) => {
     try {
-        const { userId} = req.body
+        const { userId } = req.body
         const [conversation, created] = await Conversation.findOrCreate({
             where: {
                 [Op.or]: [
-                    { user1_id: req.userId, user2_id: userId},
-                    { user2_id: req.userId, user1_id: userId},
+                    { user1_id: req.userId, user2_id: userId },
+                    { user2_id: req.userId, user1_id: userId },
                 ]
             },
             defaults: {
@@ -23,8 +24,9 @@ export const createConversation = async (req, res) => {
         } else {
             res.status(200).json(conversation)
         }
-    } catch (error) {
-        return res.status(500).json(error)
+    } catch (err) {
+        error(err)
+        res.status(500).json(err)
     }
 }
 
@@ -43,9 +45,10 @@ export const getConversationByCookie = async (req, res) => {
             ],
         })
         if (!conversation) return res.status(404).json('Conversation not found')
-        return res.status(200).json(conversation)
-    } catch (error) {
-        return res.status(500).json(error)        
+        res.status(200).json(conversation)
+    } catch (err) {
+        error(err)
+        res.status(500).json(err)
     }
 }
 
@@ -54,7 +57,7 @@ export const getConversationByUserId = async (req, res) => {
         const { conversationId } = req.params
         const conversation = await Conversation.findOne({
             where: {
-                id : conversationId,
+                id: conversationId,
             },
             include: [
                 { model: User, as: 'user1', attributes: ['username', 'avatarPic'] },
@@ -62,8 +65,9 @@ export const getConversationByUserId = async (req, res) => {
             ],
         })
         if (!conversation) return res.status(404).json('Conversation not found')
-        return res.status(200).json(conversation)
-    } catch (error) {
-        return res.status(500).json(error)        
+        res.status(200).json(conversation)
+    } catch (err) {
+        error(err)
+        res.status(500).json(err)
     }
 }

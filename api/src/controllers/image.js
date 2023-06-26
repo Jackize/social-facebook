@@ -1,5 +1,7 @@
 import { OPENAI_API_KEY } from "../utils/config.js";
 import axios from 'axios';
+import { error } from '../utils/logger.js';
+
 export const createImage = async (req, res) => {
     try {
         const url = "https://api.openai.com/v1/images/generations";
@@ -23,12 +25,12 @@ export const createImage = async (req, res) => {
         // Send the POST request to the API and get the response
         const response = await axios.post(url, data, { headers });
         res.status(200).send(response.data);
-    } catch (error) {
-        if (error.response) {
-            console.error(error.response.status, error.response.data.error.message);
-            res.status(error.response.status).json(error.response.data.error.message);
+    } catch (err) {
+        if (err.response) {
+            error(err.response.status, err.response.data.error.message);
+            res.status(err.response.status).json(err.response.data.error.message);
         } else {
-            console.error(`Error with OpenAI API request: ${error.message}`);
+            error(`Error with OpenAI API request: ${err.message}`);
             res.status(500).json({
                 error: {
                     message: "An error occurred during your request.",

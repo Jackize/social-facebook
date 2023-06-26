@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-
+import { error } from '../utils/logger.js';
 import { Like } from "../models/index.js";
 
 export const getLikes = async (req, res) => {
@@ -10,9 +10,10 @@ export const getLikes = async (req, res) => {
             },
             attributes: ["userId"],
         });
-        return res.status(200).json(likes.map((e) => e.userId));
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json(likes.map((e) => e.userId));
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -22,9 +23,10 @@ export const addLike = async (req, res) => {
             postId: req.body.postId,
             userId: req.userId,
         });
-        return res.status(200).json("Post has been liked!");
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json("Post has been liked!");
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 

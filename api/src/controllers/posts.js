@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-
+import { error } from '../utils/logger.js';
 import { Post, Relationship, User } from "../models/index.js";
 import { handleDeleteImage } from "../utils/handleCloudinary.js";
 
@@ -59,8 +59,9 @@ export const getPosts = async (req, res) => {
             });
             return res.status(200).json(result);
         }
-    } catch (error) {
-        return res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        return res.status(500).json(err);
     }
 };
 
@@ -71,9 +72,10 @@ export const addPost = async (req, res) => {
             img: req.body.img,
             userId: req.userId,
         });
-        return res.status(200).json("Post created successfully");
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json("Post created successfully");
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -89,10 +91,11 @@ export const deletePost = async (req, res) => {
             });
             return res.status(200).json("Post was deleted successfully");
         } else {
-            return res.status(404).json("Post was not found");
+            res.status(404).json("Post was not found");
         }
-    } catch (error) {
-        return res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -108,9 +111,10 @@ export const updatePost = async (req, res) => {
             post = { ...post, ...req.body };
             return res.status(200).json(post);
         } else {
-            return res.status(403).json("Post is not found");
+            res.status(403).json("Post is not found");
         }
-    } catch (error) {
-        return res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };

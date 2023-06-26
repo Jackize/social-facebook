@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-
+import { error } from '../utils/logger.js';
 import { Story, User, Relationship } from "../models/index.js";
 
 export const getStories = async (req, res) => {
@@ -28,10 +28,10 @@ export const getStories = async (req, res) => {
                 return result;
             })
         );
-        return res.status(200).json(stories[0]);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json(error);
+        res.status(200).json(stories[0]);
+    } catch (err) {
+        error(err);
+        res.status(500).json(err);
     }
 };
 
@@ -41,9 +41,10 @@ export const addStory = async (req, res) => {
             img: req.body.img,
             userId: req.userId,
         });
-        return res.status(200).json("Story created successfully!");
-    } catch (error) {
-        return res.status(500).json(error);
+        res.status(200).json("Story created successfully!");
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
 
@@ -55,9 +56,10 @@ export const deleteStory = async (req, res) => {
         if (result === 1) {
             return res.status(200).json("Story was deleted successfully!");
         } else {
-            return res.status(403).json("You can delete only your story!");
+            res.status(403).json("You can delete only your story!");
         }
-    } catch (error) {
-        return res.status(500).json(error);
+    } catch (err) {
+        error(err)
+        res.status(500).json(err);
     }
 };
