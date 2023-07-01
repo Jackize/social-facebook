@@ -13,7 +13,7 @@ ENV GOOGLE_CLIENT_SECRET='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'
 ENV URL_FE='http://localhost:8080'
 ENV URL_BE='http://localhost:8080'
 
-WORKDIR /app
+WORKDIR /api
 COPY . .
 EXPOSE 8080
 RUN npm install --production=false

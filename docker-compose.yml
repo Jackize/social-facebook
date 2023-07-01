@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./api
+    command: npm run start
+    environment:
+      - SECRET=ecret
+      - DATABASE_URL=postgresql://postgres:123456@db/postgres
+      - CLOUD_NAME='dpbhp5ury'
+      - CLOUD_API_KEY='168921146788365'
+      - CLOUD_API_SECRET='xyGefjjzHufGEcQDwyyjNUrR1tk'
+      - OPENAI_API_KEY='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'
+      - GOOGLE_CLIENT_ID='454362861673-tbo8m2u7g0mi5ohend7t99esivot2t9a.apps.googleusercontent.com'
+      - GOOGLE_CLIENT_SECRET='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'
+      - URL_FE='http://localhost:8080'
+      - URL_BE='http://localhost:8080'
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./api
+        target: /api
+    working_dir: /api
+    networks:
+      - public
+      - private
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - private
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+
+  frontend:
+    build: ./client
+    command: npm run start
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+    networks:
+      - public
+    depends_on:
+      - api
+
+volumes:
+  db-data:
+
+
+networks:
+  private:
+  public:

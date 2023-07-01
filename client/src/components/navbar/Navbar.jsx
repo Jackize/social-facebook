@@ -20,8 +20,8 @@ const Navbar = () => {
         setAnchorEl(null);
     };
     const theme = useTheme();
-    
-    const handleLogout = () =>{
+
+    const handleLogout = () => {
         logout()
     }
     return (
@@ -34,7 +34,7 @@ const Navbar = () => {
             <StyledToolBar>
                 <Left>
                     <Typography component={Link} to="/" variant="h4" fontWeight={600} sx={{ display: { xs: "none", sm: "block" } }}>
-                        facebook
+                        facebooks
                     </Typography>
                 </Left>
                 <Middle>
