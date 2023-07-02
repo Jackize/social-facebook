@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Divider, FormControlLabel, FormGroup, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useTheme } from "@mui/material";
-import { Home, OndemandVideo, Store } from "@mui/icons-material";
 import { MaterialUISwitch } from "./leftBar.style";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { NavLink } from "react-router-dom";

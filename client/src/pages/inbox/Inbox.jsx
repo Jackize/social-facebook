@@ -1,28 +1,31 @@
-import { Send } from "@mui/icons-material";
-import { Box, Divider, IconButton, List, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Call, Send, Videocam } from "@mui/icons-material";
+import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation, useMatch } from "react-router-dom";
+import { NavLink, useLocation, useMatch, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import logoGPT from "../../assets/logoGPT";
+import { ReactComponent as LogoGPT } from '../../assets/logoGPT/logo.svg'
 import { makeRequest } from "../../axios";
 import Conversation from "../../components/conversation/Conversation";
 import Message from "../../components/messages/Messages";
 import { AuthContext } from "../../context/authContext";
 import { SOCKET_SERVER } from "../../utils/config";
 import SEO from "../../components/seo/SEO";
+import { noneAvatar } from "../../utils/image";
 
 export default function Inbox() {
     const { currentUser } = React.useContext(AuthContext);
-    const [getMessages, setgetMessages] = useState([]);
+    const [getMessages, setGetMessages] = useState([]);
     const [sendMessage, setSendMessage] = useState("");
     const [dataConversations, setDataConversations] = useState([]);
     const [userInfo, setUserInfo] = useState({});
-    const [conversationId, setconversationId] = useState();
+    const [conversationId, setConversationId] = useState();
     const socketRef = useRef();
     const scrollRef = useRef();
+    const navigate = useNavigate();
     const gptURL = useMatch("/inbox/gpt");
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
 
+    // Initialize socket
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER, {
             withCredentials: true,
@@ -46,7 +49,7 @@ export default function Inbox() {
         });
 
         socketRef.current.on("new message", (senderId, message) => {
-            setgetMessages((prev) => [...prev, { sender_id: senderId, content: message, updatedAt: new Date() }]);
+            setGetMessages((prev) => [...prev, { sender_id: senderId, content: message, updatedAt: new Date() }]);
         });
         return () => {
             socketRef.current.disconnect();
@@ -55,6 +58,7 @@ export default function Inbox() {
     }, []);
 
     useEffect(() => {
+        // Get all history conservation
         const getConversation = async () => {
             try {
                 const res = await makeRequest.get("/conversations");
@@ -67,14 +71,19 @@ export default function Inbox() {
                 setDataConversations(res.data);
             } catch (error) {
                 console.log(error);
+                if (error.response.status === 403) {
+                    localStorage.removeItem('user')
+                    navigate("/login");
+                }
             }
         };
         getConversation();
+        // Get messages when users click on conversation
         const getMessages = async (roomId) => {
             try {
                 const mess = await makeRequest.get(`/messages/${roomId}`);
-                setgetMessages(mess.data);
-                setconversationId(roomId);
+                setGetMessages(mess.data);
+                setConversationId(roomId);
             } catch (error) {
                 console.log(error);
             }
@@ -83,8 +92,10 @@ export default function Inbox() {
             socketRef.current.emit("joinRoom", conversation_id, currentUser.id);
             getMessages(conversation_id);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [conversation_id, currentUser.id]);
 
+    // Get messages when users click on conversation
     const handleSetUserJoinRoom = async (roomId) => {
         if (!conversationId && !gptURL) {
             socketRef.current.emit("joinRoom", roomId, currentUser.id);
@@ -93,13 +104,13 @@ export default function Inbox() {
             socketRef.current.emit("leaveRoom", conversationId, currentUser.id);
             await getMessages();
         }
-        setgetMessages([]);
+        setGetMessages([]);
 
         async function getMessages() {
             try {
                 const mess = await makeRequest.get(`/messages/${roomId}`);
-                setgetMessages(mess.data);
-                setconversationId(roomId);
+                setGetMessages(mess.data);
+                setConversationId(roomId);
                 setSendMessage("");
             } catch (error) {
                 console.log(error);
@@ -107,6 +118,7 @@ export default function Inbox() {
         }
     };
 
+    // Handle send message
     const handleSendMessage = async (e) => {
         e.preventDefault();
 
@@ -117,7 +129,7 @@ export default function Inbox() {
         if (!gptURL) {
             try {
                 const res = await makeRequest.post("/messages", newMessage);
-                setgetMessages([...getMessages, res.data]);
+                setGetMessages([...getMessages, res.data]);
             } catch (error) {
                 console.log(error);
             }
@@ -134,12 +146,12 @@ export default function Inbox() {
                 const timestamp = Date.now();
                 const randomNumber = Math.random();
                 const hexadecimalNumber = randomNumber.toString(16);
-                setgetMessages((prev) => [...prev, { sender_id: currentUser.id, content: newMessage.content, id: `id-${timestamp}-${hexadecimalNumber}`, updatedAt: new Date() }]);
+                setGetMessages((prev) => [...prev, { sender_id: currentUser.id, content: newMessage.content, id: `id-${timestamp}-${hexadecimalNumber}`, updatedAt: new Date() }]);
                 setSendMessage("");
 
                 const res = await makeRequest.post("/messages/gpt", newMessage);
                 if (res.data) {
-                    setgetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
+                    setGetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
                 }
             } catch (error) {
                 console.log(error);
@@ -156,18 +168,27 @@ export default function Inbox() {
             handleSendMessage(e);
         }
     };
+
+    const handleNavigateProfilePage = () => {
+        const infoConversation = dataConversations.filter((conversation) => conversation.id === conversation_id)[0];
+        const profileUserId = infoConversation.user1_id === currentUser.id ? infoConversation.user2_id : infoConversation.user1_id;
+        navigate(`/profile/${profileUserId}`);
+    }
+
     return (
         <>
-            <SEO 
-            description={'Chat box'}
-            title={'Inbox'}            
-        />
+            <SEO
+                description={'Chat box'}
+                title={'Inbox'}
+            />
             <Stack direction="row" sx={{ flex: 3, height: "100vh", p: 2 }}>
                 <Paper variant="elevation" elevation={24} sx={{ display: "flex", flex: "3", height: "700px" }}>
+                    {/* Conservation contex */}
                     <Box flex={1}>
                         <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
                         <List sx={{ height: "100%", overflowY: "scroll" }}>
                             <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} onClick={handleSetUserJoinRoom} />
+                            {/* List conservation */}
                             {dataConversations &&
                                 dataConversations.map((e, i) => (
                                     <NavLink
@@ -180,9 +201,41 @@ export default function Inbox() {
                         </List>
                     </Box>
                     <Divider orientation="vertical" flexItem />
+                    {/* Message contex */}
                     <Box display={"flex"} flex={3} p={2} flexDirection={"column"}>
                         {gptURL || conversation_id ? (
                             <>
+                                {/* Header */}
+                                <Box display={"flex"} alignItems={'center'} justifyContent={"space-between"} paddingRight={1}>
+                                    <List>
+                                        <ListItemButton sx={{ borderRadius: 2 }} onClick={handleNavigateProfilePage}>
+                                            <ListItemAvatar>
+                                                <Avatar src={userInfo?.avatarPic ? userInfo.avatarPic : noneAvatar} />
+                                            </ListItemAvatar>
+                                            <ListItemText primary={userInfo?.username} />
+                                        </ListItemButton>
+                                    </List>
+
+                                    {/* Button call voice, video */}
+                                    <List sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <ListItem>
+                                            <ListItemButton sx={{ borderRadius: 2 }}>
+                                                <ListItemIcon>
+                                                    <Call fontSize="large" />
+                                                </ListItemIcon>
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemButton sx={{ borderRadius: 2 }}>
+                                                <ListItemIcon>
+                                                    <Videocam fontSize="large" />
+                                                </ListItemIcon>
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </List>
+                                </Box>
+                                <Divider flexItem />
+                                {/* Message */}
                                 <Box sx={{ height: "100%", overflowY: "scroll" }}>
                                     {getMessages &&
                                         getMessages.map((mess) => (
@@ -192,11 +245,12 @@ export default function Inbox() {
                                                     message={mess.content}
                                                     own={mess.sender_id === currentUser.id}
                                                     timeZone={mess.updatedAt}
-                                                    userInfo={gptURL ? { avatarPic: logoGPT.logo } : userInfo}
+                                                    userInfo={gptURL ? { avatarPic: <LogoGPT /> } : userInfo}
                                                 />
                                             </div>
                                         ))}
                                 </Box>
+                                {/* Input */}
                                 <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
                                     <TextField
                                         fullWidth
@@ -221,7 +275,7 @@ export default function Inbox() {
                     </Box>
                 </Paper>
                 <Box flex={1}></Box>
-            </Stack>
+            </Stack >
         </>
     );
 }

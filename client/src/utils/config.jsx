@@ -4,10 +4,3 @@ export const CLOUD_API_KEY = import.meta.env.VITE_CLOUD_API_KEY;
 export const CLOUD_API_SECRET = import.meta.env.VITE_CLOUD_API_SECRET;
 export const URL_BE = import.meta.env.VITE_BASE_URL;
 export const SOCKET_SERVER = import.meta.env.VITE_SOCKET_SERVER;
-
-console.log(CLOUD_NAME,
-    CLOUD_PRESET,
-    CLOUD_API_KEY,
-    CLOUD_API_SECRET,
-    URL_BE,
-    SOCKET_SERVER);

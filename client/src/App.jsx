@@ -6,12 +6,6 @@ import {
 } from "react-router-dom";
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
-// import Home from "./pages/home/Home";
-// import Watch from "./pages/watch/Watch";
-// import Store from "./pages/store/Store";
-// import Login from "./pages/login/Login";
-// import Profile from "./pages/profile/Profile";
-// import Register from "./pages/register/Register";
 import { AuthContextProvider } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy } from "react";
