@@ -13,6 +13,7 @@ const UpPost = ({ handleOpen }) => {
         avatar={
           <Avatar
             src={currentUser?.avatarPic ? currentUser.avatarPic : noneAvatar}
+            alt={currentUser?.name}
           />
         }
         title={

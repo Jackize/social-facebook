@@ -7,15 +7,15 @@ import {
     useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
-import { ReactComponent as LogoGPT } from '../../assets/logoGPT/logo.svg'
 import { DarkModeContext } from "../../context/darkModeContext";
 import { noneAvatar } from "../../utils/image";
+import LogoGPT from "../../assets/logoGPT/LogoGPT";
 
 export default function Conversation({ conversation, currentUser, checked, gpt }) {
     const theme = useTheme();
     const { darkMode } = React.useContext(DarkModeContext);
     const [user, setUser] = useState(
-        gpt ? null : currentUser.id === conversation.user1_id ? conversation.user2 : conversation.user1
+        gpt ? null : currentUser?.id === conversation.user1_id ? conversation.user2 : conversation.user1
     );
 
     return (

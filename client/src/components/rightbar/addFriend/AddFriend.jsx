@@ -10,7 +10,7 @@ import { NotificationContext } from "../../../context/notificationContext";
 
 const AddFriend = () => {
     const theme = useTheme();
-    const {handeMessage} = useContext(NotificationContext);
+    const { handeMessage } = useContext(NotificationContext);
 
     const { isLoading, error, data } = useQuery(
         ["not-friends"],
@@ -66,7 +66,7 @@ const AddFriend = () => {
                         <ListItem key={id}>
                             <ListItemButton sx={{ borderRadius: 2 }}>
                                 <ListItemAvatar>
-                                    <Avatar src={e.avatarPic ? e.avatarPic : noneAvatar} sx={{ width: 30, height: 30 }} component={Link} to={`/profile/${e.id}`} />
+                                    <Avatar src={e.avatarPic ? e.avatarPic : noneAvatar} alt={e.name} sx={{ width: 30, height: 30 }} component={Link} to={`/profile/${e.id}`} aria-label={e.name} />
                                 </ListItemAvatar>
                                 <ListItemText sx={{ color: theme.palette.text.primary }} primary={e.name} />
                                 <IconButton onClick={() => handleFollow(e.id)}>

@@ -7,6 +7,7 @@ export default defineConfig({
         svgrOptions: {
             ref: true,
         },
+        exportAsDefault: true
     }), react()],
     server: {
         port: 3000,
@@ -15,4 +16,7 @@ export default defineConfig({
     build: {
         outDir: './build'
     },
+    define: {
+        global: {},
+    }
 });

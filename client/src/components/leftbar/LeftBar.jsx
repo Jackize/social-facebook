@@ -12,11 +12,10 @@ const LeftBar = () => {
             <Box position="fixed">
                 <List>
                     {dataLeftBar.map((e, index) => (
-                        <NavLink
-                            key={index}
-                            to={e.to}
-                            children={({ isActive }) => (
-                                <ListItem>
+                        <ListItem key={index}>
+                            <NavLink
+                                to={e.to}
+                                children={({ isActive }) => (
                                     <ListItemButton
                                         sx={{
                                             borderRadius: 2,
@@ -30,9 +29,9 @@ const LeftBar = () => {
                                             }}
                                         />
                                     </ListItemButton>
-                                </ListItem>
-                            )}
-                        />
+                                )}
+                            />
+                        </ListItem>
                     ))}
                 </List>
                 <Divider />

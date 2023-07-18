@@ -2,15 +2,17 @@ import { Call, Send, Videocam } from "@mui/icons-material";
 import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation, useMatch, useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
-import { ReactComponent as LogoGPT } from '../../assets/logoGPT/logo.svg'
 import { makeRequest } from "../../axios";
 import Conversation from "../../components/conversation/Conversation";
-import Message from "../../components/messages/Messages";
+import Message from "./Messages";
 import { AuthContext } from "../../context/authContext";
-import { SOCKET_SERVER } from "../../utils/config";
 import SEO from "../../components/seo/SEO";
 import { noneAvatar } from "../../utils/image";
+import LogoGPT from "../../assets/logoGPT/LogoGPT";
+import { useSocketContext } from "../../context/socketContext";
+import Header from "./Header";
+import Input from "./Input";
+import LogoPhoneCall from '../../assets/phoneCall/telephone-call.png';
 
 export default function Inbox() {
     const { currentUser } = React.useContext(AuthContext);
@@ -19,65 +21,120 @@ export default function Inbox() {
     const [dataConversations, setDataConversations] = useState([]);
     const [userInfo, setUserInfo] = useState({});
     const [conversationId, setConversationId] = useState();
-    const socketRef = useRef();
-    const scrollRef = useRef();
     const navigate = useNavigate();
     const gptURL = useMatch("/inbox/gpt");
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
+    const socket = useSocketContext()
 
-    // Initialize socket
+    const [peerConnection, setPeerConnection] = useState(new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    }));
+    const [offer, setOffer] = useState();
+    const [ringing, setRinging] = useState(false);
+    const [audio, setAudio] = useState(new Audio('/phone.wav'));
+    const [connected, setConnected] = useState(false);
+    const [rejected, setRejected] = useState(false);
+    const localVideoRef = useRef(null);
+    const remoteVideoRef = useRef(null);
     useEffect(() => {
-        socketRef.current = io.connect(SOCKET_SERVER, {
-            withCredentials: true,
-            transports: ["websocket"],
-            extraHeaders: {
-                "Content-Type": "application/json",
-            },
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionAttempts: 5,
-            forceNew: false,
-            timeout: 20000,
-        });
-
-        socketRef.current.on("user joined", (userId, roomId) => {
+        socket?.on("user joined", async (userId, roomId) => {
             console.log(`${userId} joined room ${roomId}`);
         });
 
-        socketRef.current.on("user left", (userId, roomId) => {
+        socket?.on("user left", async (userId, roomId) => {
             console.log(`${userId} left room ${roomId}`);
         });
 
-        socketRef.current.on("new message", (senderId, message) => {
+        socket?.on("new message", async (senderId, message) => {
             setGetMessages((prev) => [...prev, { sender_id: senderId, content: message, updatedAt: new Date() }]);
         });
-        return () => {
-            socketRef.current.disconnect();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
-    useEffect(() => {
+        socket?.on('answer', async (answer) => {
+            try {
+                let rtc_session_description = new RTCSessionDescription(answer);
+                await peerConnection.setRemoteDescription(rtc_session_description);
+            } catch (error) {
+                console.log('Error setting remote description:', error);
+            }
+        })
+
+        const onCall = () => {
+            setRinging(true)
+            audio.play()
+        }
+
+        socket?.on('offer', async (offer) => {
+            setOffer(offer)
+            onCall()
+        })
+
+        socket?.on('reject', async (isCancle) => {
+            setRejected(isTrue)
+            localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            remoteVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+
+            localVideoRef.current.srcObject = null;
+            remoteVideoRef.current.srcObject = null;
+
+            peerConnection.setLocalDescription(null)
+        })
+
+        socket?.on('endMeeting', async (isEnd) => {
+            setOffer(null);
+            setConnected(!isEnd);
+
+            localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            remoteVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+
+            localVideoRef.current.srcObject = null;
+            remoteVideoRef.current.srcObject = null;
+
+            peerConnection.setLocalDescription(null)
+        });
+
+        peerConnection.ontrack = (event) => {
+            if (event.streams[0]) {
+                remoteVideoRef.current.srcObject = event.streams[0]
+            }
+        }
+
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket?.emit('ice-candidate', conversationId, event?.candidate)
+            }
+        }
+
+        if (peerConnection) {
+            peerConnection.onconnectionstatechange = () => {
+                setConnected(peerConnection.connectionState === 'connected')
+                console.log(peerConnection.connectionState);
+            }
+        }
         // Get all history conservation
         const getConversation = async () => {
             try {
                 const res = await makeRequest.get("/conversations");
-                const dataConversations = res.data;
-                if (dataConversations.length > 0 && conversation_id) {
-                    const dataConversation = dataConversations.find((conversation) => conversation.id === conversation_id);
-                    const infoReceiver = dataConversation?.user1_id === currentUser.id ? dataConversation?.user2 : dataConversation?.user1;
-                    infoReceiver && setUserInfo(infoReceiver);
-                }
                 setDataConversations(res.data);
             } catch (error) {
                 console.log(error);
-                if (error.response.status === 403) {
+                if (error.response?.status === 403) {
                     localStorage.removeItem('user')
                     navigate("/login");
                 }
             }
         };
         getConversation();
+        return () => {
+            socket?.off('offer')
+            socket?.off('reject')
+            socket?.off('endMeeting')
+            socket?.off("new message")
+            socket?.off("user joined")
+            socket?.off("user left")
+        };
+    }, []);
+
+    useEffect(() => {
         // Get messages when users click on conversation
         const getMessages = async (roomId) => {
             try {
@@ -89,22 +146,32 @@ export default function Inbox() {
             }
         };
         if (conversation_id) {
-            socketRef.current.emit("joinRoom", conversation_id, currentUser.id);
+            socket?.emit("joinRoom", conversationId, currentUser?.id);
             getMessages(conversation_id);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [conversation_id, currentUser.id]);
+        if (dataConversations.length > 0 && conversation_id) {
+            const convertionId = dataConversations.find((conversation) => conversation.id === conversation_id);
+            const infoReceiver = convertionId?.user1_id === currentUser.id ? convertionId?.user2 : convertionId?.user1;
+            infoReceiver && setUserInfo(infoReceiver);
+        }
+    }, [conversation_id, currentUser?.id]);
 
     // Get messages when users click on conversation
     const handleSetUserJoinRoom = async (roomId) => {
-        if (!conversationId && !gptURL) {
-            socketRef.current.emit("joinRoom", roomId, currentUser.id);
-            await getMessages();
-        } else if (roomId !== conversationId) {
-            socketRef.current.emit("leaveRoom", conversationId, currentUser.id);
-            await getMessages();
+        if (roomId !== 0) {
+            if (!conversationId && !gptURL) {
+                setConversationId(roomId);
+                setSendMessage("");
+            } else if (roomId !== conversationId && roomId > 0) {
+                socket?.emit("leaveRoom", conversationId, currentUser.id);
+                await getMessages();
+            }
+        } else {
+            setGetMessages([]);
+            setSendMessage("");
+            setUserInfo({})
+            setUserInfo(0)
         }
-        setGetMessages([]);
 
         async function getMessages() {
             try {
@@ -117,54 +184,52 @@ export default function Inbox() {
             }
         }
     };
-
     // Handle send message
     const handleSendMessage = async (e) => {
         e.preventDefault();
-
-        const newMessage = {
-            content: sendMessage,
-            conversation_id,
-        };
-        if (!gptURL) {
-            try {
-                const res = await makeRequest.post("/messages", newMessage);
-                setGetMessages([...getMessages, res.data]);
-            } catch (error) {
-                console.log(error);
-            }
-
-            socketRef.current.emit("sendMessage", {
-                roomId: conversation_id,
-                senderId: currentUser.id,
-                message: sendMessage,
-            });
-            setSendMessage("");
-        } else {
-            try {
+        try {
+            const newMessage = {
+                content: sendMessage,
+                conversation_id,
+            };
+            if (!gptURL) {
+                try {
+                    const res = await makeRequest.post("/messages", newMessage);
+                    setGetMessages([...getMessages, res.data]);
+                } catch (error) {
+                    console.log(error);
+                }
+                socket?.emit("sendMessage", {
+                    roomId: conversation_id,
+                    senderId: currentUser.id,
+                    message: sendMessage,
+                });
+                setSendMessage("");
+            } else {
                 delete newMessage.conversation_id;
                 const timestamp = Date.now();
                 const randomNumber = Math.random();
                 const hexadecimalNumber = randomNumber.toString(16);
                 setGetMessages((prev) => [...prev, { sender_id: currentUser.id, content: newMessage.content, id: `id-${timestamp}-${hexadecimalNumber}`, updatedAt: new Date() }]);
                 setSendMessage("");
-
-                const res = await makeRequest.post("/messages/gpt", newMessage);
+                // const res = await makeRequest.post("/messages/gpt", newMessage);
+                const res = {
+                    data: {
+                        bot: '123',
+                        id: `1`,
+                    }
+                }
                 if (res.data) {
                     setGetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
                 }
-            } catch (error) {
-                console.log(error);
             }
+        } catch (error) {
+            console.error(error);
         }
     };
 
-    useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [getMessages]);
-
     const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && sendMessage.trim() !== "") {
             handleSendMessage(e);
         }
     };
@@ -175,19 +240,104 @@ export default function Inbox() {
         navigate(`/profile/${profileUserId}`);
     }
 
+    const handleJoin = () => {
+        socket?.emit('join', roomId);
+    };
+
+    const getUserMedia = async () => {
+        try {
+            const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            localStream.getTracks().forEach((track) => {
+                peerConnection?.addTrack(track, localStream)
+            })
+            localVideoRef.current.srcObject = localStream
+        } catch (error) {
+            console.error('Counld not get user media', error)
+        }
+    }
+    const createOffer = async () => {
+        try {
+            await getUserMedia()
+            let offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            socket?.on('ice-candidate', async (cand) => {
+                try {
+                    await peerConnection.addIceCandidate(cand);
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+            socket?.emit('offer', conversationId, offer);
+        } catch (error) {
+            console.error('Error creating offer:', error);
+        }
+    };
+
+    const createAnswer = async () => {
+        try {
+            await getUserMedia()
+
+            audio.pause()
+            audio.currentTime = 0
+            setRinging(false)
+
+            const rtc_session_description = new RTCSessionDescription(offer)
+            await peerConnection?.setRemoteDescription(rtc_session_description)
+            let answer = await peerConnection?.createAnswer()
+            await peerConnection?.setLocalDescription(answer)
+            socket?.emit('answer', conversationId, answer)
+        } catch (error) {
+            console.error('Error creating answer:', error);
+        }
+    };
+
+    const cancelMeeting = () => {
+        try {
+            setRinging(false);
+            setOffer(null);
+
+            socket?.emit('reject', conversationId, true);
+
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        } catch (error) {
+            console.error('Error cancle meeting:', error);
+        }
+    };
+
+    const endMeeting = async () => {
+        try {
+            socket?.emit('endMeeting', conversationId, true)
+            setOffer(null);
+            setConnected(false)
+
+            localVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            remoteVideoRef.current.srcObject.getTracks().forEach(track => track.stop());
+
+            localVideoRef.current.srcObject = null;
+            remoteVideoRef.current.srcObject = null;
+
+            await peerConnection?.setLocalDescription(null)
+        } catch (error) {
+            console.error('Error ending meeting:', error);
+        }
+    }
     return (
         <>
             <SEO
                 description={'Chat box'}
                 title={'Inbox'}
             />
-            <Stack direction="row" sx={{ flex: 3, height: "100vh", p: 2 }}>
+            <Stack direction="row" sx={{ flex: 3, p: 2 }}>
                 <Paper variant="elevation" elevation={24} sx={{ display: "flex", flex: "3", height: "700px" }}>
                     {/* Conservation contex */}
                     <Box flex={1}>
                         <TextField fullWidth label="Search" type="search" variant="filled" sx={{ textAlign: "center" }} />
                         <List sx={{ height: "100%", overflowY: "scroll" }}>
-                            <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} gpt checked={isActive} />} onClick={handleSetUserJoinRoom} />
+                            <NavLink to={"/inbox/gpt"} children={({ isActive }) => <Conversation currentUser={currentUser} conversation={dataConversations} gpt checked={isActive} />} onClick={() => handleSetUserJoinRoom(0)} />
                             {/* List conservation */}
                             {dataConversations &&
                                 dataConversations.map((e, i) => (
@@ -206,66 +356,19 @@ export default function Inbox() {
                         {gptURL || conversation_id ? (
                             <>
                                 {/* Header */}
-                                <Box display={"flex"} alignItems={'center'} justifyContent={"space-between"} paddingRight={1}>
-                                    <List>
-                                        <ListItemButton sx={{ borderRadius: 2 }} onClick={handleNavigateProfilePage}>
-                                            <ListItemAvatar>
-                                                <Avatar src={userInfo?.avatarPic ? userInfo.avatarPic : noneAvatar} />
-                                            </ListItemAvatar>
-                                            <ListItemText primary={userInfo?.username} />
-                                        </ListItemButton>
-                                    </List>
+                                <Header gptURL={gptURL ? true : false} userInfo={userInfo} handleNavigateProfilePage={handleNavigateProfilePage} createOffer={createOffer} />
 
-                                    {/* Button call voice, video */}
-                                    <List sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <ListItem>
-                                            <ListItemButton sx={{ borderRadius: 2 }}>
-                                                <ListItemIcon>
-                                                    <Call fontSize="large" />
-                                                </ListItemIcon>
-                                            </ListItemButton>
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListItemButton sx={{ borderRadius: 2 }}>
-                                                <ListItemIcon>
-                                                    <Videocam fontSize="large" />
-                                                </ListItemIcon>
-                                            </ListItemButton>
-                                        </ListItem>
-                                    </List>
-                                </Box>
                                 <Divider flexItem />
+
                                 {/* Message */}
-                                <Box sx={{ height: "100%", overflowY: "scroll" }}>
-                                    {getMessages &&
-                                        getMessages.map((mess) => (
-                                            <div key={mess.id} ref={scrollRef}>
-                                                <Message
-                                                    key={mess.id}
-                                                    message={mess.content}
-                                                    own={mess.sender_id === currentUser.id}
-                                                    timeZone={mess.updatedAt}
-                                                    userInfo={gptURL ? { avatarPic: <LogoGPT /> } : userInfo}
-                                                />
-                                            </div>
-                                        ))}
-                                </Box>
+                                <Message
+                                    gptURL={gptURL ? true : false}
+                                    userInfo={userInfo}
+                                    getMessages={getMessages}
+                                />
+
                                 {/* Input */}
-                                <Box display={"flex"} alignItems={"center"} justifyContent={"space-between"}>
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        variant="outlined"
-                                        onChange={(e) => setSendMessage(e.target.value)}
-                                        value={sendMessage}
-                                        maxRows={5}
-                                        margin={"normal"}
-                                        onKeyDown={handleKeyDown}
-                                    />
-                                    <IconButton color={sendMessage.length > 0 ? "primary" : undefined} disabled={sendMessage.length > 0 ? false : true} onClick={handleSendMessage}>
-                                        <Send />
-                                    </IconButton>
-                                </Box>
+                                <Input setSendMessage={setSendMessage} sendMessage={sendMessage} handleSendMessage={handleSendMessage} handleKeyDown={handleKeyDown} />
                             </>
                         ) : (
                             <Typography variant="h4" sx={{ p: 2, margin: "0 auto" }} textAlign>
@@ -273,8 +376,22 @@ export default function Inbox() {
                             </Typography>
                         )}
                     </Box>
+                    <Divider orientation="vertical" flexItem />
+                    <Box flex={1}>
+                        {ringing && <Avatar src={LogoPhoneCall} alt='PhoneIcon' />}
+                        <div>
+                            <h3>Your Video</h3>
+                            <video ref={localVideoRef} autoPlay playsInline />
+                        </div>
+                        <div>
+                            <h3>Remote Video</h3>
+                            <video ref={remoteVideoRef} autoPlay playsInline />
+                        </div>
+                        <button onClick={createAnswer} disabled={!ringing}>Answer</button>
+                        {ringing && <button onClick={cancelMeeting}>Cancel</button>}
+                        {!ringing && <button onClick={endMeeting}>End Meeting</button>}
+                    </Box>
                 </Paper>
-                <Box flex={1}></Box>
             </Stack >
         </>
     );

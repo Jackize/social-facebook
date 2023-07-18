@@ -6,10 +6,11 @@ import {
 } from "react-router-dom";
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
-import { AuthContextProvider } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy } from "react";
 import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
+import Test from "./pages/test/Test";
+import SocketContextProider from "./context/socketContext";
 
 const Home = lazy(() => import("./pages/home/Home"));
 const Login = lazy(() => import("./pages/login/Login"));
@@ -22,18 +23,11 @@ const ImageGeneration = lazy(() =>
   import("./pages/imageGeneration/ImageGeneration")
 );
 const Inbox = lazy(() => import("./pages/inbox/Inbox"));
-const Messages = lazy(() => import("./components/messages/Messages"));
+const Messages = lazy(() => import("./pages/inbox/Messages"));
 
 function App() {
   const queryClient = new QueryClient();
 
-  const AuthLayout = () => {
-    return (
-      <AuthContextProvider>
-        <Outlet />
-      </AuthContextProvider>
-    );
-  };
   const ProtectedRoute = ({ children }) => {
     if (localStorage.getItem("user") === null) {
       return <Navigate to="/login" />;
@@ -43,7 +37,7 @@ function App() {
   };
   const router = createBrowserRouter([
     {
-      element: <AuthLayout />,
+      element: <Outlet />,
       children: [
         {
           path: "/login/success",
@@ -74,7 +68,9 @@ function App() {
             <ProtectedRoute>
               <Theme>
                 <QueryClientProvider client={queryClient}>
-                  <Layout />
+                  <SocketContextProider>
+                    <Layout />
+                  </SocketContextProider>
                 </QueryClientProvider>
               </Theme>
             </ProtectedRoute>
@@ -130,6 +126,14 @@ function App() {
                 },
               ],
             },
+            {
+              path: "/test",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <Test />
+                </Suspense>
+              ),
+            }
           ],
         },
       ],

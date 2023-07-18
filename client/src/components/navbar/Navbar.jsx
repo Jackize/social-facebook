@@ -7,10 +7,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { noneAvatar } from "../../utils/image";
+import { useSocketContext } from "../../context/socketContext";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { currentUser, logout } = React.useContext(AuthContext);
+    const socket = useSocketContext()
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const handleClick = (event) => {
@@ -23,6 +25,8 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logout()
+        socket?.close()
+        navigate("/login");
     }
     return (
         <AppBar
@@ -61,6 +65,7 @@ const Navbar = () => {
                             sx={{ width: 30, height: 30 }}
                             src={currentUser?.avatarPic ? currentUser.avatarPic : noneAvatar}
                             id="avatar-menu"
+                            alt={currentUser?.name || 'noneAvatar'}
                             aria-controls={open ? "menu" : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? "true" : undefined}

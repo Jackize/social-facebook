@@ -1,26 +1,29 @@
 import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { makeRequest } from "../axios";
 
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
-    const navigate = useNavigate();
     const login = async (values, google) => {
-        let res = null;
-        if (values) {
-            res = await makeRequest.post("/auth/login", values);
-        }
+        try {
+            let res = null;
+            if (values) {
+                res = await makeRequest.post("/auth/login", values);
+            }
 
-        if (google) {
-            res = await makeRequest.get("/auth/user").catch((err) => console.log(err));
-        }
+            if (google) {
+                res = await makeRequest.get("/auth/user").catch((err) => console.log(err));
+            }
 
-        if (res && res.data) {
-            localStorage.setItem("user", JSON.stringify(res.data));
-            setCurrentUser(res.data);
-            navigate("/");
+            if (res && res.data) {
+                localStorage.setItem("user", JSON.stringify(res.data));
+                setCurrentUser(res.data);
+                // navigate("/");
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -28,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setCurrentUser(null);
-        navigate("/login");
+        // navigate("/login");
     };
 
     const handleResetUser = (user) => {
@@ -37,6 +40,8 @@ export const AuthContextProvider = ({ children }) => {
         setCurrentUser(user);
         window.location.reload();
     };
+
+
     return <AuthContext.Provider value={{ handleResetUser, currentUser, login, logout }}>{children}</AuthContext.Provider>;
 };
 

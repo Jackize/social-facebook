@@ -1,29 +1,42 @@
-import { CircularProgress } from "@mui/material";
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { SOCKET_SERVER } from "../utils/config";
-import { AuthContext } from "./authContext";
+import { useAuthContext } from "./authContext";
 
 export const SocketContext = createContext();
-
+let socket = io(SOCKET_SERVER, {
+    withCredentials: true,
+    transports: ["websocket"],
+    extraHeaders: {
+        "Content-Type": "application/json",
+    },
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionAttempts: 5,
+    forceNew: false,
+    timeout: 20000,
+});
 export default function SocketContextProider({ children }) {
-    const {currentUser} = useContext(AuthContext);
-    const socket = io.connect(SOCKET_SERVER);
-    
-
+    const { currentUser } = useAuthContext()
     useEffect(() => {
-        currentUser?.id && socket.emit("addUser", currentUser.id)
+
+        // Connect to the socket server
+        socket.connect();
+
+        // Clean up the socket connection on component unmount
         return () => {
             socket.disconnect();
+            socket.close()
         };
-    }, [currentUser, socket]);
-
-    if (!socket) {
-        return <CircularProgress />;
-    }
+    }, []);
 
     return (
-        <SocketContext.Provider value={{ socket }}>
+        <SocketContext.Provider value={socket}>
             {children}
         </SocketContext.Provider>);
 }
+
+export const useSocketContext = () => {
+    const socket = useContext(SocketContext);
+    return socket;
+};
