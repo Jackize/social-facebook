@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
-import { error } from '../utils/logger.js';
-import { Like } from "../models/index.js";
+const jwt = require("jsonwebtoken");
+const { error } = require('../utils/logger');
+const { Like } = require("../models/index");
 
-export const getLikes = async (req, res) => {
+const getLikes = async (req, res) => {
     try {
         const likes = await Like.findAll({
             where: {
@@ -17,7 +17,7 @@ export const getLikes = async (req, res) => {
     }
 };
 
-export const addLike = async (req, res) => {
+const addLike = async (req, res) => {
     try {
         await Like.create({
             postId: req.body.postId,
@@ -30,7 +30,7 @@ export const addLike = async (req, res) => {
     }
 };
 
-export const deleteLike = async (req, res) => {
+const deleteLike = async (req, res) => {
     try {
         await Like.destroy({
             where: {
@@ -43,3 +43,9 @@ export const deleteLike = async (req, res) => {
         return res.status(500).json(error);
     }
 };
+
+module.exports = {
+    getLikes,
+    addLike,
+    deleteLike,
+}

@@ -1,16 +1,16 @@
-import { URL_FE, SECRET, REDIS_PORT } from "./src/utils/config.js";
-import express from "express";
-import cors from "cors";
-import session from "express-session";
-import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import api from "./src/routes/index.js";
-import { connectToDatabase } from "./src/utils/db.js";
-import passport from "passport";
-import "./src/sso/passport.js";
-import "./src/sso/passportGoogle.js";
+const { URL_FE, SECRET, REDIS_PORT } = require("./src/utils/config");
+const express = require("express");
+const cors = require("cors");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const path = require("path");
+const { fileURLToPath } = require('url');
+const { dirname } = require('path');
+const api = require("./src/routes/index");
+const { connectToDatabase } = require("./src/utils/db");
+const passport = require("passport");
+require("./src/sso/passport");
+require("./src/sso/passportGoogle");
 
 const app = express();
 
@@ -57,12 +57,12 @@ app.use("/api", api);
 app.use("/hello", (req, res) => {
     res.send("Hello World!456");
 });
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 app.use(express.static(path.join(__dirname, "./build")));
 
 app.get("*", async (req, res) => {
     res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
-export default app;
+module.exports = app;

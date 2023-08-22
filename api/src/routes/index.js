@@ -1,14 +1,14 @@
-import express from "express";
-import authRouter from "./auth.js";
-import userRouter from "./users.js";
-import postRouter from "./posts.js";
-import likeRouter from "./likes.js";
-import storyRouter from "./stories.js";
-import relationshipRouter from "./relationships.js";
-import commentRouter from "./comments.js";
-import ConversationRouter from "./conversations.js";
-import MessageRouter from "./messages.js";
-import ImageRouter from "./image.js";
+const express = require("express");
+const authRouter = require("./auth");
+const userRouter = require("./users");
+const postRouter = require("./posts");
+const likeRouter = require("./likes");
+const storyRouter = require("./stories");
+const relationshipRouter = require("./relationships");
+const commentRouter = require("./comments");
+const ConversationRouter = require("./conversations");
+const MessageRouter = require("./messages");
+const ImageRouter = require("./image");
 
 const router = express.Router();
 
@@ -23,4 +23,4 @@ router.use("/conversations", ConversationRouter);
 router.use("/messages", MessageRouter);
 router.use("/images", ImageRouter);
 
-export default router;
+module.exports = router;

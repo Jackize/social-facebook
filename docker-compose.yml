@@ -22,12 +22,8 @@ services:
         source: ./api
         target: /api
     working_dir: /api
-    networks:
-      - public
-      - private
     depends_on:
       - db
-
   db:
     image: postgres
     restart: always
@@ -35,13 +31,10 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data
-    networks:
-      - private
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
-
   frontend:
     build: ./client
     command: npm run start
@@ -50,15 +43,8 @@ services:
     volumes:
       - ./client:/client
       - /client/node_modules
-    networks:
-      - public
     depends_on:
       - api
 
 volumes:
   db-data:
-
-
-networks:
-  private:
-  public:

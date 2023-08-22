@@ -1,6 +1,6 @@
-import { Model, DataTypes, Op } from 'sequelize';
+const { Model, DataTypes, Op } = require('sequelize');
 
-import { sequelize } from '../utils/db.js';
+const { sequelize } = require('../utils/db');
 
 class Message extends Model {}
 
@@ -41,4 +41,4 @@ Message.init(
     }
 );
 
-export default Message;
+module.exports = Message;

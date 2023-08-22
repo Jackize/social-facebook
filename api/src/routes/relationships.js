@@ -1,6 +1,6 @@
-import express from "express";
-import { getRelationships, addRelationship, deleteRelationship } from "../controllers/relationships.js";
-import { authMiddleware } from "../utils/middleware.js";
+const express = require("express");
+const { getRelationships, addRelationship, deleteRelationship } = require("../controllers/relationships");
+const { authMiddleware } = require("../utils/middleware");
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.get("/", getRelationships);
 router.post("/", authMiddleware, addRelationship);
 router.delete("/", authMiddleware, deleteRelationship);
 
-export default router;
+module.exports = router;

@@ -1,8 +1,8 @@
-import { OPENAI_API_KEY } from "../utils/config.js";
-import axios from 'axios';
-import { error } from '../utils/logger.js';
+const { OPENAI_API_KEY } = require("../utils/config");
+const axios = require('axios');
+const { error } = require('../utils/logger');
 
-export const createImage = async (req, res) => {
+const createImage = async (req, res) => {
     try {
         const url = "https://api.openai.com/v1/images/generations";
         const headers = {
@@ -39,3 +39,7 @@ export const createImage = async (req, res) => {
         }
     }
 };
+
+module.exports = {
+    createImage
+}

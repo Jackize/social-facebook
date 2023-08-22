@@ -1,9 +1,9 @@
-import express from "express";
-import { login, register, logout } from "../controllers/auth.js";
-import { isUserAuthenticated } from "../middlewares/auth.js";
-import passport from "passport";
-import jwt from "jsonwebtoken";
-import { SECRET, URL_FE } from "../utils/config.js";
+const express = require("express");
+const { login, register, logout } = require("../controllers/auth");
+const { isUserAuthenticated } = require("../middlewares/auth");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
+const { SECRET, URL_FE } = require("../utils/config");
 
 const router = express.Router();
 
@@ -26,4 +26,4 @@ router.get("/user", (req, res) => {
 router.post("/register", register);
 router.post("/logout", logout);
 
-export default router;
+module.exports = router;

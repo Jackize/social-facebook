@@ -1,11 +1,11 @@
-import User from './users.js';
-import Post from './posts.js';
-import Story from './stories.js';
-import Like from './likes.js';
-import Comment from './comments.js';
-import Relationship from './relationships.js';
-import Conversation from './conversations.js';
-import Message from './messages.js';
+const User = require('./users');
+const Post = require('./posts');
+const Story = require('./stories');
+const Like = require('./likes');
+const Comment = require('./comments');
+const Relationship = require('./relationships');
+const Conversation = require('./conversations');
+const Message = require('./messages');
 
 Post.hasMany(Like);
 Like.belongsTo(Post);
@@ -39,4 +39,4 @@ Comment.sync();
 Relationship.sync();
 Conversation.sync();
 Message.sync();
-export { User, Post, Story, Like, Comment, Relationship, Conversation, Message };
+module.exports = { User, Post, Story, Like, Comment, Relationship, Conversation, Message };

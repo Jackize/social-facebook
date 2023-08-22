@@ -1,6 +1,6 @@
-import { CLOUD_NAME, CLOUD_API_KEY, CLOUD_API_SECRET } from "./config.js";
+const { CLOUD_NAME, CLOUD_API_KEY, CLOUD_API_SECRET } = require("./config");
 
-import cloudinary from "cloudinary";
+const cloudinary = require("cloudinary");
 
 cloudinary.v2.config({
     cloud_name: CLOUD_NAME,
@@ -8,9 +8,11 @@ cloudinary.v2.config({
     api_secret: CLOUD_API_SECRET,
 });
 
-export const handleDeleteImage = async (imageURL) => {
+const handleDeleteImage = async (imageURL) => {
     const filenameWithoutExtension = imageURL.match(/\/([^/.]+)(\.[^.]+)$/)[1];
     await cloudinary.api.delete_resources([filenameWithoutExtension], function (error, result) {
         return result;
     });
 };
+
+module.exports = { handleDeleteImage };

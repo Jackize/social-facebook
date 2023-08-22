@@ -1,22 +1,22 @@
-import Sequelize from "sequelize";
-import { DATABASE_URL } from "./config.js";
-import { Umzug, SequelizeStorage } from "umzug";
-import { info, error } from "./logger.js";
+const Sequelize = require("sequelize");
+const { DATABASE_URL } = require("./config");
+const { Umzug, SequelizeStorage } = require("umzug");
+const { info, error } = require("./logger");
 
 // Now you can use Sequelize, DATABASE_URL, Umzug, SequelizeStorage, and logger in your code
 
-export const sequelize = new Sequelize(DATABASE_URL, {
+const sequelize = new Sequelize(DATABASE_URL, {
     logging: false,
 });
 
-// export const sequelize = new Sequelize("social_facebook", "postgres", "123456", {
+// const sequelize = new Sequelize("social_facebook", "postgres", "123456", {
 //     host: "localhost",
 //     port: 5432,
 //     dialect: "postgres",
 //     logging: false,
 // });
 
-export const connectToDatabase = async () => {
+const connectToDatabase = async () => {
     try {
         await sequelize.authenticate();
         await sequelize
@@ -34,24 +34,31 @@ export const connectToDatabase = async () => {
     }
 };
 
-export const migrationConf = {
+const migrationConf = {
     migrations: {
-        glob: "src/migrations/*.js",
+        glob: "src/migrations/*",
     },
     storage: new SequelizeStorage({ sequelize, tableName: "migrations" }),
     context: sequelize.getQueryInterface(),
     logger: console,
 };
 
-export const runMigrations = async () => {
+const runMigrations = async () => {
     const migrator = new Umzug(migrationConf);
     const migrations = await migrator.up();
     info("Migrations up to date", {
         files: migrations.map((mig) => mig.name),
     });
 };
-export const rollbackMigration = async () => {
+const rollbackMigration = async () => {
     await sequelize.authenticate();
     const migrator = new Umzug(migrationConf);
     await migrator.down();
 };
+
+module.exports = {
+    connectToDatabase,
+    runMigrations,
+    rollbackMigration,
+    sequelize,
+}

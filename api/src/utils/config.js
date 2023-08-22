@@ -1,16 +1,31 @@
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-export const DATABASE_URL = process.env.DATABASE_URL;
-export const PORT = process.env.PORT || 3001;
-export const SECRET = process.env.SECRET;
-export const CLOUD_NAME = process.env.CLOUD_NAME;
-export const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
-export const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
-export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-export const URL_FE = process.env.URL_FE;
-export const URL_BE = process.env.URL_BE;
-export const REDIS_PORT = process.env.REDIS_PORT;
+const DATABASE_URL = process.env.DATABASE_URL;
+const PORT = process.env.PORT || 3001;
+const SECRET = process.env.SECRET;
+const CLOUD_NAME = process.env.CLOUD_NAME;
+const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
+const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const URL_FE = process.env.URL_FE;
+const URL_BE = process.env.URL_BE;
+const REDIS_PORT = process.env.REDIS_PORT;
+
+module.exports = {
+    DATABASE_URL,
+    PORT,
+    SECRET,
+    CLOUD_NAME,
+    CLOUD_API_KEY,
+    CLOUD_API_SECRET,
+    OPENAI_API_KEY,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    URL_FE,
+    URL_BE,
+    REDIS_PORT,
+}

@@ -1,9 +1,9 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-import { User } from '../models/index.js';
-import { SECRET } from '../utils/config.js';
-import { error } from '../utils/logger.js';
+const { User } = require('../models/index');
+const { SECRET } = require('../utils/config');
+const { error } = require('../utils/logger');
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -17,17 +17,17 @@ let checkUserName = (userName) => {
         }
     });
 };
-export const register = async (req, res) => {
+const register = async (req, res) => {
     const { username, password, name } = req.body;
 
     //Validate field
     if (!username || !password || !name) {
-        return res.status(400).json({ error: 'Username, password, and name are required' });
+        return res.status(400).js.json({ error: 'Username, password, and name are required' });
     }
 
     let checkIsUserNameExist = await checkUserName(username);
     if (checkIsUserNameExist) {
-        res.status(409).json('User already exists');
+        res.status(409).js.json('User already exists');
     } else {
         try {
             const hashedPassword = bcrypt.hashSync(password, salt);
@@ -44,7 +44,7 @@ export const register = async (req, res) => {
     }
 };
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
     const { username, password } = req.body;
 
     //Validate field
@@ -77,7 +77,7 @@ export const login = async (req, res) => {
     }
 };
 
-export const logout = (req, res) => {
+const logout = (req, res) => {
     res.clearCookie('accessToken', {
         secure: true,
         sameSite: 'none',
@@ -85,3 +85,5 @@ export const logout = (req, res) => {
         .status(200)
         .json('User has been logged out.');
 };
+
+module.exports = { register, login, logout };

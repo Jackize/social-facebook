@@ -1,6 +1,6 @@
-import express from "express";
-import { getUserById, updateUser, getUsersNotFollow, getAllUsers, getUserFollowed, changePassword } from "../controllers/users.js";
-import { authMiddleware } from "../utils/middleware.js";
+const express = require("express");
+const { getUserById, updateUser, getUsersNotFollow, getAllUsers, getUserFollowed, changePassword } = require("../controllers/users");
+const { authMiddleware } = require("../utils/middleware");
 
 const router = express.Router();
 
@@ -11,4 +11,4 @@ router.get("/friends", authMiddleware, getUserFollowed);
 router.put("/", authMiddleware, updateUser);
 router.put("/changePass", authMiddleware, changePassword);
 
-export default router;
+module.exports = router;

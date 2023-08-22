@@ -1,8 +1,8 @@
 
-import { Relationship } from "../models/index.js";
-import { error } from '../utils/logger.js';
+const { Relationship } = require("../models/index");
+const { error } = require('../utils/logger');
 
-export const getRelationships = async (req, res) => {
+const getRelationships = async (req, res) => {
     try {
         const relationships = await Relationship.findAll({
             where: {
@@ -18,7 +18,7 @@ export const getRelationships = async (req, res) => {
     }
 };
 
-export const addRelationship = async (req, res) => {
+const addRelationship = async (req, res) => {
     try {
         await Relationship.create({
             followerUserId: req.userId,
@@ -31,7 +31,7 @@ export const addRelationship = async (req, res) => {
     }
 };
 
-export const deleteRelationship = async (req, res) => {
+const deleteRelationship = async (req, res) => {
     try {
         await Relationship.destroy({
             where: {
@@ -45,3 +45,9 @@ export const deleteRelationship = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+module.exports = {
+    getRelationships,
+    addRelationship,
+    deleteRelationship,
+}

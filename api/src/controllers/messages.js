@@ -1,13 +1,13 @@
-import { Message, User } from "../models/index.js";
-import { OPENAI_API_KEY } from "../utils/config.js";
-import { Configuration, OpenAIApi } from "openai";
-import { error } from '../utils/logger.js';
-import { v4 as uuidv4 } from "uuid";
+const { Message, User } = require("../models/index");
+const { OPENAI_API_KEY } = require("../utils/config");
+const { Configuration, OpenAIApi } = require("openai");
+const { error } = require('../utils/logger');
+const { v4: uuidv4 } = require("uuid");
 
 const configuration = new Configuration({
     apiKey: OPENAI_API_KEY,
 });
-export const createMessage = async (req, res) => {
+const createMessage = async (req, res) => {
     try {
         const message = await Message.create({
             conversation_id: req.body.conversation_id,
@@ -21,7 +21,7 @@ export const createMessage = async (req, res) => {
     }
 };
 
-export const getMessageByConversationId = async (req, res) => {
+const getMessageByConversationId = async (req, res) => {
     try {
         let messages = await Message.findAll({
             where: {
@@ -38,7 +38,7 @@ export const getMessageByConversationId = async (req, res) => {
     }
 };
 
-export const sendMessageGPT = async (req, res) => {
+const sendMessageGPT = async (req, res) => {
     try {
         const content = req.body.content;
         const openai = new OpenAIApi(configuration);
@@ -67,3 +67,9 @@ export const sendMessageGPT = async (req, res) => {
         }
     }
 };
+
+module.exports = {
+    createMessage,
+    getMessageByConversationId,
+    sendMessageGPT,
+}

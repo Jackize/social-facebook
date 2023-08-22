@@ -1,8 +1,8 @@
 
-import { Comment, User } from "../models/index.js";
-import { error } from '../utils/logger.js';
+const { Comment, User } = require("../models/index");
+const { error } = require('../utils/logger');
 
-export const getComments = async (req, res) => {
+const getComments = async (req, res) => {
     try {
         const comments = await Comment.findAll({
             where: {
@@ -23,7 +23,7 @@ export const getComments = async (req, res) => {
     }
 };
 
-export const addComment = async (req, res) => {
+const addComment = async (req, res) => {
     try {
         await Comment.create({
             content: req.body.content,
@@ -36,3 +36,8 @@ export const addComment = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+module.exports = {
+    getComments,
+    addComment
+}

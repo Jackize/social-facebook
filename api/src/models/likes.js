@@ -1,6 +1,6 @@
-import { Model, DataTypes, Op } from 'sequelize';
+const { Model, DataTypes, Op } = require('sequelize');
 
-import { sequelize } from '../utils/db.js';
+const { sequelize } = require('../utils/db');
 
 class Like extends Model {}
 
@@ -35,4 +35,4 @@ Like.init(
     }
 );
 
-export default Like;
+module.exports = Like;

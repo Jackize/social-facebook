@@ -1,11 +1,11 @@
-import bcrypt from "bcryptjs";
-import { Op } from "sequelize";
-import { User, Relationship } from "../models/index.js";
-import { handleDeleteImage } from "../utils/handleCloudinary.js";
-import { error } from '../utils/logger.js';
+const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize");
+const { User, Relationship } = require("../models/index");
+const { handleDeleteImage } = require("../utils/handleCloudinary");
+const { error } = require('../utils/logger');
 
 
-export const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
         const where = {};
 
@@ -25,7 +25,7 @@ export const getAllUsers = async (req, res) => {
     }
 };
 
-export const getUserById = async (req, res) => {
+const getUserById = async (req, res) => {
     try {
         const { userId } = req.params;
         const user = await User.findOne({
@@ -43,7 +43,7 @@ export const getUserById = async (req, res) => {
     }
 };
 
-export const getUsersNotFollow = async (req, res) => {
+const getUsersNotFollow = async (req, res) => {
     try {
         const followedUser = await Relationship.findAll({
             where: {
@@ -68,7 +68,7 @@ export const getUsersNotFollow = async (req, res) => {
     }
 };
 
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         if (req.body.username) {
             res.status(403).json("Username is not changed!");
@@ -100,7 +100,7 @@ export const updateUser = async (req, res) => {
     }
 };
 
-export const getUserFollowed = async (req, res) => {
+const getUserFollowed = async (req, res) => {
     try {
         const idUserFollowed = await Relationship.findAll({
             where: {
@@ -125,7 +125,7 @@ export const getUserFollowed = async (req, res) => {
     }
 };
 
-export const changePassword = async (req, res) => {
+const changePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
         const { userId } = req;
@@ -151,3 +151,12 @@ export const changePassword = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+module.exports = {
+    getAllUsers,
+    getUserById,
+    getUsersNotFollow,
+    updateUser,
+    getUserFollowed,
+    changePassword
+}

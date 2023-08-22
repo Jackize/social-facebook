@@ -1,9 +1,9 @@
-import { Op } from 'sequelize';
-import { error } from '../utils/logger.js';
-import { Post, Relationship, User } from "../models/index.js";
-import { handleDeleteImage } from "../utils/handleCloudinary.js";
+const { Op } = require('sequelize');
+const { error } = require('../utils/logger');
+const { Post, Relationship, User } = require("../models/index");
+const { handleDeleteImage } = require("../utils/handleCloudinary");
 
-export const getPosts = async (req, res) => {
+const getPosts = async (req, res) => {
     const userId = req.query.userId;
     try {
         if (userId) {
@@ -65,7 +65,7 @@ export const getPosts = async (req, res) => {
     }
 };
 
-export const addPost = async (req, res) => {
+const addPost = async (req, res) => {
     try {
         await Post.create({
             content: req.body.content,
@@ -79,7 +79,7 @@ export const addPost = async (req, res) => {
     }
 };
 
-export const deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
     try {
         const post = await Post.findOne({ where: { id: req.params.id } });
         if (post) {
@@ -99,7 +99,7 @@ export const deletePost = async (req, res) => {
     }
 };
 
-export const updatePost = async (req, res) => {
+const updatePost = async (req, res) => {
     try {
         let post = await Post.findOne({
             where: { id: req.params.id },
@@ -118,3 +118,10 @@ export const updatePost = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+module.exports = {
+    getPosts,
+    addPost,
+    deletePost,
+    updatePost,
+}

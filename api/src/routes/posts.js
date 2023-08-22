@@ -1,6 +1,6 @@
-import express from "express";
-import { getPosts, addPost, deletePost, updatePost } from "../controllers/posts.js";
-import { authMiddleware } from "../utils/middleware.js";
+const express = require("express");
+const { getPosts, addPost, deletePost, updatePost } = require("../controllers/posts");
+const { authMiddleware } = require("../utils/middleware");
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.post("/", authMiddleware, addPost);
 router.delete("/:id", authMiddleware, deletePost);
 router.put("/:id", authMiddleware, updatePost);
 
-export default router;
+module.exports = router;

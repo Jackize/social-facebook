@@ -1,7 +1,7 @@
-import passport from "passport";
-import { User } from "../models/index.js";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } from "../utils/config.js";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+const passport = require("passport");
+const { User } = require("../models/index");
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } = require("../utils/config");
+const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 
 passport.use(
     new GoogleStrategy(

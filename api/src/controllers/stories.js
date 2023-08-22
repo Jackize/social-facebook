@@ -1,8 +1,8 @@
-import { Op } from 'sequelize';
-import { error } from '../utils/logger.js';
-import { Story, User, Relationship } from "../models/index.js";
+const { Op } = require('sequelize');
+const { error } = require('../utils/logger');
+const { Story, User, Relationship } = require("../models/index");
 
-export const getStories = async (req, res) => {
+const getStories = async (req, res) => {
     try {
         const relationships = await Relationship.findAll({
             where: {
@@ -35,7 +35,7 @@ export const getStories = async (req, res) => {
     }
 };
 
-export const addStory = async (req, res) => {
+const addStory = async (req, res) => {
     try {
         await Story.create({
             img: req.body.img,
@@ -48,7 +48,7 @@ export const addStory = async (req, res) => {
     }
 };
 
-export const deleteStory = async (req, res) => {
+const deleteStory = async (req, res) => {
     try {
         const result = await Story.destroy({
             where: { id: req.params.id, userId: req.userId },
@@ -63,3 +63,9 @@ export const deleteStory = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+module.exports = {
+    getStories,
+    addStory,
+    deleteStory,
+}

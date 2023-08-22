@@ -1,10 +1,10 @@
-import { Op } from 'sequelize';
-import { error } from '../utils/logger.js';
+const { Op } = require('sequelize');
+const { error } = require('../utils/logger');
 
-import { Conversation, User, Message } from "../models/index.js";
+const { Conversation, User, Message } = require("../models/index");
 
 
-export const createConversation = async (req, res) => {
+const createConversation = async (req, res) => {
     try {
         const { userId } = req.body
         const [conversation, created] = await Conversation.findOrCreate({
@@ -30,7 +30,7 @@ export const createConversation = async (req, res) => {
     }
 }
 
-export const getConversationByCookie = async (req, res) => {
+const getConversationByCookie = async (req, res) => {
     try {
         const conversation = await Conversation.findAll({
             where: {
@@ -52,7 +52,7 @@ export const getConversationByCookie = async (req, res) => {
     }
 }
 
-export const getConversationByUserId = async (req, res) => {
+const getConversationByUserId = async (req, res) => {
     try {
         const { conversationId } = req.params
         const conversation = await Conversation.findOne({
@@ -70,4 +70,10 @@ export const getConversationByUserId = async (req, res) => {
         error(err)
         res.status(500).json(err)
     }
+}
+
+module.exports = {
+    createConversation,
+    getConversationByCookie,
+    getConversationByUserId
 }

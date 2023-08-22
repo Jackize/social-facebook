@@ -1,6 +1,6 @@
-import { Model, DataTypes, Op } from 'sequelize';
+const { Model, DataTypes, Op } = require('sequelize');
 
-import { sequelize } from '../utils/db.js';
+const { sequelize } = require('../utils/db');
 
 class Post extends Model {}
 
@@ -37,4 +37,4 @@ Post.init(
     }
 );
 
-export default Post;
+module.exports = Post;

@@ -1,6 +1,6 @@
-import passport from "passport";
-import { SECRET } from "../utils/config.js";
-import passportJwt, { ExtractJwt, Strategy as StrategyJwt } from "passport-jwt";
+const passport = require("passport");
+const { SECRET } = require("../utils/config");
+const { ExtractJwt, Strategy: StrategyJwt } = require("passport-jwt");
 
 passport.use(
     new StrategyJwt(
