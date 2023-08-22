@@ -28,7 +28,7 @@ Relationship.init(
     },
     {
         sequelize,
-        underscored: true,
+        underscored: false,
         modelName: 'relationship',
     }
 );

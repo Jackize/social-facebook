@@ -37,7 +37,7 @@ Conversation.init(
     },
     {
         sequelize,
-        underscored: true,
+        underscored: false,
         modelName: 'conversations',
     }
 );

@@ -19,19 +19,13 @@ const sequelize = new Sequelize(DATABASE_URL, {
 const connectToDatabase = async () => {
     try {
         await sequelize.authenticate();
-        await sequelize
-            .sync()
-            .then(() => {
-                console.log("Connected to the database and models synced");
-            })
-            .catch((err) => {
-                console.error("Error connecting to the database:", err);
-            });
         await runMigrations();
     } catch (err) {
         error("failed to connect to the database");
         error(err);
+        return process.exit(1)
     }
+    return null
 };
 
 const migrationConf = {

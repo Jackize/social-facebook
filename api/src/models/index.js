@@ -31,12 +31,4 @@ Post.belongsTo(User);
 User.hasMany(Story);
 Story.belongsTo(User);
 
-Post.sync();
-User.sync();
-Story.sync();
-Like.sync();
-Comment.sync();
-Relationship.sync();
-Conversation.sync();
-Message.sync();
 module.exports = { User, Post, Story, Like, Comment, Relationship, Conversation, Message };

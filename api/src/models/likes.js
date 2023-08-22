@@ -30,7 +30,7 @@ Like.init(
     },
     {
         sequelize,
-        underscored: true,
+        underscored: false,
         modelName: 'likes',
     }
 );
