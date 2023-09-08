@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose --runInBand --detectOpenHandles --forceExit ./src/__test__/api.test.js",
+    "test": "jest --verbose --runInBand --detectOpenHandles --forceExit ./src/__test__/api.test.js --coverage",
     "dev": "nodemon index.js",
     "start": "node index.js",
     "migration:down": "node utils/rollback.js",
