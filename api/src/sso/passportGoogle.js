@@ -1,5 +1,5 @@
 const passport = require("passport");
-const { User } = require("../models/index");
+const { User } = require("../models");
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, URL_BE } = require("../utils/config");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 
@@ -38,7 +38,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
     const user = await User.findOne({ where: { id } }).catch((err) => {
-        console.log("Failed to find user: ", err);
+        console.log("Error deserializin: ", err);
         done(err, null);
     });
     if (user) done(null, user.dataValues);

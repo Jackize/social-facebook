@@ -9,7 +9,6 @@ import Layout from "./layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy } from "react";
 import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
-import Test from "./pages/test/Test";
 import SocketContextProider from "./context/socketContext";
 
 const Home = lazy(() => import("./pages/home/Home"));
@@ -126,14 +125,6 @@ function App() {
                 },
               ],
             },
-            {
-              path: "/test",
-              element: (
-                <Suspense fallback={<SuspenseLoading />}>
-                  <Test />
-                </Suspense>
-              ),
-            }
           ],
         },
       ],

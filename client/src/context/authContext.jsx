@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import { makeRequest } from "../axios";
 
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
+
     const login = async (values, google) => {
         try {
             let res = null;
@@ -20,18 +20,17 @@ export const AuthContextProvider = ({ children }) => {
             if (res && res.data) {
                 localStorage.setItem("user", JSON.stringify(res.data));
                 setCurrentUser(res.data);
-                // navigate("/");
             }
         } catch (error) {
             console.error(error);
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setCurrentUser(null);
-        // navigate("/login");
+        await makeRequest.post("/auth/logout").catch(error => console.log(error));
     };
 
     const handleResetUser = (user) => {

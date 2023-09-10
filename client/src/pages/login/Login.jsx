@@ -23,8 +23,6 @@ const Login = () => {
         e.preventDefault();
         try {
             await login(values);
-            navigate("/");
-            // window.location.reload();
         } catch (error) {
             setErr(error.response.data);
         }
@@ -32,13 +30,13 @@ const Login = () => {
 
     const redirectToGoogleSSO = async () => {
         let timer = null;
-        const googleLoginUrl = `${URL_BE}/auth/google`;
+        const googleLoginUrl = `${URL_BE}auth/login/google`;
         const newWindow = window.open(googleLoginUrl, "_blank", "width=500,height=600");
         if (newWindow) {
-            timer = setInterval(() => {
+            timer = setInterval(async () => {
                 if (newWindow.closed) {
-                    console.log("Yay we're authenticated");
-                    login(null, true);
+                    await login(null, true);
+                    navigate("/");
                     if (timer) clearInterval(timer);
                 }
             }, 500);
@@ -50,7 +48,6 @@ const Login = () => {
             try {
                 await login(values);
                 navigate("/");
-                // window.location.reload();
             } catch (error) {
                 setErr(error.response.data);
             }

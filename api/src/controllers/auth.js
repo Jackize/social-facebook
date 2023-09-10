@@ -78,7 +78,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-    res.clearCookie('accessToken', {
+    res.clearCookie('access_token', {
         secure: true,
         sameSite: 'none',
     })

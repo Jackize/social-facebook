@@ -16,6 +16,14 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
+const isUserAuthenticated = (req, res, next) => {
+    if (req.user) {
+        next();
+    } else {
+        res.status(401).send("You must login first!");
+    }
+}
+
 const cachedUser = (req, res, next) => {
     const { userId } = req.params;
     redisStore.get(userId, (err, user) => {
@@ -30,5 +38,6 @@ const cachedUser = (req, res, next) => {
 
 module.exports = {
     authMiddleware,
-    cachedUser
+    cachedUser,
+    isUserAuthenticated
 }

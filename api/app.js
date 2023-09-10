@@ -17,12 +17,11 @@ const app = express();
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Cross-Origin-Opener-Policy", "same-origin");
     next();
 });
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(
     cors({
         origin: ["http://localhost:3000", "https://social-facebook-beta.vercel.app", `${URL_FE}`],
@@ -31,9 +30,16 @@ app.use(
         optionsSuccessStatus: 200,
     })
 );
-
 app.use(cookieParser());
-
+app.use(
+    session({
+        secret: SECRET,
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 (async () => {
     try {
         await connectToDatabase();
@@ -42,16 +48,6 @@ app.use(cookieParser());
     }
 })();
 
-app.use(
-    session({
-        secret: SECRET,
-        resave: false,
-        saveUninitialized: true,
-    })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use("/api", api);
 app.use("/hello", (req, res) => {
