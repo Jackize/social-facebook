@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const { error } = require('../utils/logger');
 
-const { Conversation, User, Message } = require("../models/index");
+const { Conversation, User, Message } = require("../models");
 
 
 const createConversation = async (req, res) => {

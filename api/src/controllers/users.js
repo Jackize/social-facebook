@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
-const { User, Relationship } = require("../models/index");
+const { User, Relationship } = require("../models");
 const { handleDeleteImage } = require("../utils/handleCloudinary");
 const { error } = require('../utils/logger');
 

@@ -1,4 +1,4 @@
-const { Message, User } = require("../models/index");
+const { Message } = require("../models");
 const { OPENAI_API_KEY } = require("../utils/config");
 const { Configuration, OpenAIApi } = require("openai");
 const { error } = require('../utils/logger');

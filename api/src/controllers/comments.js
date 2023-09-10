@@ -1,5 +1,5 @@
 
-const { Comment, User } = require("../models/index");
+const { Comment, User } = require("../models");
 const { error } = require('../utils/logger');
 
 const getComments = async (req, res) => {

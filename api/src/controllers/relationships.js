@@ -1,5 +1,5 @@
 
-const { Relationship } = require("../models/index");
+const { Relationship } = require("../models");
 const { error } = require('../utils/logger');
 
 const getRelationships = async (req, res) => {

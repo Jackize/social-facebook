@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { error } = require('../utils/logger');
-const { Story, User, Relationship } = require("../models/index");
+const { Story, User, Relationship } = require("../models");
 
 const getStories = async (req, res) => {
     try {

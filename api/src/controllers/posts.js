@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { error } = require('../utils/logger');
-const { Post, Relationship, User } = require("../models/index");
+const { Post, Relationship, User } = require("../models");
 const { handleDeleteImage } = require("../utils/handleCloudinary");
 
 const getPosts = async (req, res) => {
