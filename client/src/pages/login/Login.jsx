@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/authContext";
 import "./login.scss";
@@ -15,14 +15,29 @@ const Login = () => {
     const [err, setErr] = React.useState(null);
     const navigate = useNavigate();
     const { login } = useAuthContext();
+
+    useEffect(() => {
+        if (localStorage.getItem('user')) {
+            navigate('/')
+        }
+    }, [])
+    
     const handleChange = (e) => {
+        if (err) {
+            setErr(null);
+        }
         setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            await login(values);
+            let res = await login(values);
+            if (res.status !== 200) {
+                setErr(res?.response?.data)
+            } else {
+                navigate("/");
+            }
         } catch (error) {
             setErr(error.response.data);
         }
@@ -32,6 +47,20 @@ const Login = () => {
         let timer = null;
         const googleLoginUrl = `${URL_BE}auth/login/google`;
         const newWindow = window.open(googleLoginUrl, "_blank", "width=500,height=600");
+        if (newWindow) {
+            timer = setInterval(async () => {
+                if (newWindow.closed) {
+                    await login(null, true);
+                    navigate("/");
+                    if (timer) clearInterval(timer);
+                }
+            }, 500);
+        }
+    };
+    const redirectToFacebookSSO = async () => {
+        let timer = null;
+        const facebookLoginUrl = `${URL_BE}auth/login/facebook`;
+        const newWindow = window.open(facebookLoginUrl, "_blank", "width=500,height=600");
         if (newWindow) {
             timer = setInterval(async () => {
                 if (newWindow.closed) {
@@ -93,7 +122,7 @@ const Login = () => {
                             onClick={redirectToGoogleSSO}>
                             Sign in with Google
                         </Button>
-                        <Button variant="contained" startIcon={<FacebookRoundedIcon sx={{ color: "white" }} />}>
+                        <Button variant="contained" startIcon={<FacebookRoundedIcon sx={{ color: "white" }} />} onClick={redirectToFacebookSSO}>
                             Sign in with Facebook
                         </Button>
                         <Button
@@ -123,7 +152,9 @@ const Login = () => {
                             }}>
                             <TextField label="username" type="text" placeholder="Username" name="username" onChange={handleChange} />
                             <TextField label="password" type="password" placeholder="Password" name="password" onChange={handleChange} autoComplete="on" onKeyDown={handleKeyDown} />
-                            {err && err}
+                            {err &&
+                                <Typography variant="h6" color={"red"}>{err}</Typography>
+                            }
                             <Button variant="contained" onClick={handleLogin} sx={{ color: "white", backgroundColor: "#938eef" }}>
                                 Login
                             </Button>

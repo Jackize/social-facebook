@@ -20,9 +20,11 @@ export const AuthContextProvider = ({ children }) => {
             if (res && res.data) {
                 localStorage.setItem("user", JSON.stringify(res.data));
                 setCurrentUser(res.data);
+                return res
             }
         } catch (error) {
             console.error(error);
+            return error
         }
     };
 
