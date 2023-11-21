@@ -10,8 +10,8 @@ const configuration = new Configuration({
 const createMessage = async (req, res) => {
     try {
         const message = await Message.create({
-            conversation_id: req.body.conversation_id,
-            sender_id: req.userId,
+            conversationId: req.body.conversation_id,
+            senderId: req.userId,
             content: req.body.content,
         });
         res.status(200).json(message);
@@ -25,7 +25,7 @@ const getMessageByConversationId = async (req, res) => {
     try {
         let messages = await Message.findAll({
             where: {
-                conversation_id: req.params.conversation_id,
+                conversationId: req.params.conversation_id,
             },
             order: [["createdAt", "DESC"]],
             limit: 10,

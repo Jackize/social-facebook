@@ -12,14 +12,14 @@ Message.init(
             autoIncrement: true,
             allowNull: false,
         },
-        conversation_id: {
+        conversationId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: { model: 'conversations', key: 'id' },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         },
-        sender_id: {
+        senderId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: { model: 'users', key: 'id' },
@@ -28,7 +28,12 @@ Message.init(
           type: DataTypes.TEXT,  
           allowNull: false,
         },
-        timestamp: {
+        createdAt: {
+            allowNull: false,
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        },
+        updatedAt: {
             allowNull: false,
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW

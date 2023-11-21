@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const { error } = require('../utils/logger');
 
-const { Conversation, User, Message } = require("../models");
+const { Conversation, User } = require("../models");
 
 
 const createConversation = async (req, res) => {
@@ -10,13 +10,13 @@ const createConversation = async (req, res) => {
         const [conversation, created] = await Conversation.findOrCreate({
             where: {
                 [Op.or]: [
-                    { user1_id: req.userId, user2_id: userId },
-                    { user2_id: req.userId, user1_id: userId },
+                    { user1Id: req.userId, user2Id: userId },
+                    { user2Id: req.userId, user1Id: userId },
                 ]
             },
             defaults: {
-                user1_id: req.userId,
-                user2_id: userId,
+                user1Id: req.userId,
+                user2Id: userId,
             },
         })
         if (created) {
@@ -35,8 +35,8 @@ const getConversationByCookie = async (req, res) => {
         const conversation = await Conversation.findAll({
             where: {
                 [Op.or]: [
-                    { user1_id: req.userId },
-                    { user2_id: req.userId },
+                    { user1Id: req.userId },
+                    { user2Id: req.userId },
                 ]
             },
             include: [

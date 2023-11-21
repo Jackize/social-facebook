@@ -153,16 +153,18 @@ module.exports = {
                 autoIncrement: true,
                 allowNull: false,
             },
-            user1_id: {
+            user1Id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                field: 'user1_id',
                 references: { model: 'users', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
-            user2_id: {
+            user2Id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                field: 'user2_id',
                 references: { model: 'users', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
@@ -183,14 +185,14 @@ module.exports = {
                 autoIncrement: true,
                 allowNull: false,
             },
-            conversation_id: {
+            conversationId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: 'conversations', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
-            sender_id: {
+            senderId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: { model: 'users', key: 'id' },
@@ -199,7 +201,12 @@ module.exports = {
                 type: DataTypes.TEXT,
                 allowNull: false,
             },
-            timestamp: {
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+                defaultValue: DataTypes.NOW
+            },
+            updatedAt: {
                 allowNull: false,
                 type: DataTypes.DATE,
                 defaultValue: DataTypes.NOW

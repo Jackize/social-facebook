@@ -12,16 +12,18 @@ Conversation.init(
             autoIncrement: true,
             allowNull: false,
         },
-        user1_id: {
+        user1Id: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: 'user1_id',
             references: { model: 'users', key: 'id' },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
         },
-        user2_id: {
+        user2Id: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: 'user2_id',
             references: { model: 'users', key: 'id' },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
