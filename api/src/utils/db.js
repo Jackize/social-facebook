@@ -19,7 +19,7 @@ const sequelize = new Sequelize(DATABASE_URL, {
 const connectToDatabase = async () => {
     try {
         await sequelize.authenticate();
-        await runMigrations();
+        // await runMigrations();
     } catch (err) {
         error("failed to connect to the database");
         error(err);
@@ -43,6 +43,7 @@ const runMigrations = async () => {
     info("Migrations up to date", {
         files: migrations.map((mig) => mig.name),
     });
+
 };
 const rollbackMigration = async () => {
     await sequelize.authenticate();
