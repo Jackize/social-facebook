@@ -41,7 +41,7 @@ const register = async (req, res) => {
             });
             res.status(200).json('User created');
         } catch (err) {
-            error(err)
+            error('register error', err)
             res.status(500).json(err);
         }
     }
@@ -76,7 +76,7 @@ const login = async (req, res) => {
             return res.status(404).json('User not found');
         }
     } catch (err) {
-        error(err)
+        error('login error', err)
         res.status(500).json(err);
     }
 };

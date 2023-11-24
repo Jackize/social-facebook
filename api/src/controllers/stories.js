@@ -30,7 +30,7 @@ const getStories = async (req, res) => {
         );
         res.status(200).json(stories[0]);
     } catch (err) {
-        error(err);
+        error(`getStories userId ${req.userId} error`, err);
         res.status(500).json(err);
     }
 };
@@ -43,7 +43,7 @@ const addStory = async (req, res) => {
         });
         res.status(200).json("Story created successfully!");
     } catch (err) {
-        error(err)
+        error(`addStory userId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -59,7 +59,7 @@ const deleteStory = async (req, res) => {
             res.status(403).json("You can delete only your story!");
         }
     } catch (err) {
-        error(err)
+        error(`deleteStory userId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };

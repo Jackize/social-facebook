@@ -13,7 +13,7 @@ const getRelationships = async (req, res) => {
 
         res.status(200).json(relationships);
     } catch (err) {
-        error(err)
+        error(`getRelationships userId ${req.query.followedUserId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -26,7 +26,7 @@ const addRelationship = async (req, res) => {
         });
         res.status(200).json("Following");
     } catch (err) {
-        error(err)
+        error(`addRelationship userId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -41,7 +41,7 @@ const deleteRelationship = async (req, res) => {
         });
         res.status(200).json("Unfollow success!");
     } catch (err) {
-        error(err)
+        error(`deleteRelationship userId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };

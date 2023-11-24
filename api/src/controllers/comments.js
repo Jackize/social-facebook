@@ -18,7 +18,7 @@ const getComments = async (req, res) => {
         });
         res.status(200).json(comments);
     } catch (err) {
-        error(err)
+        error(`getComments postId ${req.query.postId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -32,7 +32,7 @@ const addComment = async (req, res) => {
         });
         res.status(200).json("Comment has been created!");
     } catch (err) {
-        error(err)
+        error(`addComment postId ${req.body.postId} error`, err)
         res.status(500).json(err);
     }
 };

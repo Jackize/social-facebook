@@ -25,7 +25,7 @@ const createConversation = async (req, res) => {
             res.status(200).json(conversation)
         }
     } catch (err) {
-        error(err)
+        error('createConversation error', err)
         res.status(500).json(err)
     }
 }
@@ -47,7 +47,7 @@ const getConversationByCookie = async (req, res) => {
         if (!conversation) return res.status(404).json('Conversation not found')
         res.status(200).json(conversation)
     } catch (err) {
-        error(err)
+        error(`getConversationByCookie userId ${req.userId} error`, err)
         res.status(500).json(err)
     }
 }
@@ -67,7 +67,7 @@ const getConversationByUserId = async (req, res) => {
         if (!conversation) return res.status(404).json('Conversation not found')
         res.status(200).json(conversation)
     } catch (err) {
-        error(err)
+        error(`getConversationByUserId userId ${conversationId} error`, err)
         res.status(500).json(err)
     }
 }

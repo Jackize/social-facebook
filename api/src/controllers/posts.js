@@ -60,7 +60,7 @@ const getPosts = async (req, res) => {
             return res.status(200).json(result);
         }
     } catch (err) {
-        error(err)
+        error(`getPosts userId ${userId || req.userId} error`, err)
         return res.status(500).json(err);
     }
 };
@@ -74,7 +74,7 @@ const addPost = async (req, res) => {
         });
         res.status(200).json("Post created successfully");
     } catch (err) {
-        error(err)
+        error(`addPost ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -94,7 +94,7 @@ const deletePost = async (req, res) => {
             res.status(404).json("Post was not found");
         }
     } catch (err) {
-        error(err)
+        error(`deletePost ${req.params.id} error`, err)
         res.status(500).json(err);
     }
 };

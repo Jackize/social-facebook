@@ -10,7 +10,7 @@ const createMessage = async (req, res) => {
         });
         res.status(200).json(message);
     } catch (err) {
-        error(err)
+        error(`createMessage senderId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -27,7 +27,7 @@ const getMessageByConversationId = async (req, res) => {
         messages = messages.reverse();
         res.status(200).json(messages);
     } catch (err) {
-        error(err)
+        error(`getMessageByConversationId ${req.params.conversation_id} error`, err)
         res.status(500).json(err);
     }
 };

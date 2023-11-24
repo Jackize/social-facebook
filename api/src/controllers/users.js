@@ -20,7 +20,7 @@ const getAllUsers = async (req, res) => {
         });
         res.status(200).json(users);
     } catch (err) {
-        error(err);
+        error(`getAllUsers error`, err);
         res.status(500).json(err);
     }
 };
@@ -38,7 +38,7 @@ const getUserById = async (req, res) => {
             res.status(404).json("User not found");
         }
     } catch (err) {
-        error(err);
+        error(`getUserById ${userId} error`, err);
         res.status(500).json(err);
     }
 };
@@ -63,7 +63,7 @@ const getUsersNotFollow = async (req, res) => {
         });
         res.status(200).json(users);
     } catch (err) {
-        error(err);
+        error(`getUsersNotFollow userId ${req.userId} error`, err);
         res.status(500).json(err);
     }
 };
@@ -95,7 +95,7 @@ const updateUser = async (req, res) => {
             }
         }
     } catch (err) {
-        error(err);
+        error(`updateUser userId ${req.userId} error`, err);
         res.status(500).json(err);
     }
 };
@@ -120,7 +120,7 @@ const getUserFollowed = async (req, res) => {
         });
         res.status(200).json(infoUsers);
     } catch (err) {
-        error(err)
+        error(`getUserFollowed userId ${req.userId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -147,7 +147,7 @@ const changePassword = async (req, res) => {
             res.status(200).json("Change password successfully!");
         }
     } catch (err) {
-        error(err)
+        error(`changePassword userId ${userId} error`, err)
         res.status(500).json(err);
     }
 };

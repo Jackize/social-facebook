@@ -12,7 +12,7 @@ const getLikes = async (req, res) => {
         });
         res.status(200).json(likes.map((e) => e.userId));
     } catch (err) {
-        error(err)
+        error(`getLikes postId ${req.query.postId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -25,7 +25,7 @@ const addLike = async (req, res) => {
         });
         res.status(200).json("Post has been liked!");
     } catch (err) {
-        error(err)
+        error(`addLike postId ${req.body.postId} error`, err)
         res.status(500).json(err);
     }
 };
@@ -39,8 +39,9 @@ const deleteLike = async (req, res) => {
             },
         });
         return res.status(200).json("Post has been disliked");
-    } catch (error) {
-        return res.status(500).json(error);
+    } catch (err) {
+        error(`deleteLike postId ${req.userId} error`, err)
+        return res.status(500).json(err);
     }
 };
 

@@ -15,7 +15,6 @@ Conversation.init(
         user1Id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: 'user1_id',
             references: { model: 'users', key: 'id' },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
@@ -23,7 +22,6 @@ Conversation.init(
         user2Id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: 'user2_id',
             references: { model: 'users', key: 'id' },
             onUpdate: 'CASCADE',
             onDelete: 'CASCADE',
