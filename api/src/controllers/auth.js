@@ -7,6 +7,7 @@ const { error } = require('../utils/logger');
 
 const salt = bcrypt.genSaltSync(10);
 
+// Check exist userName is exist in database
 let checkUserName = (userName) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -17,6 +18,8 @@ let checkUserName = (userName) => {
         }
     });
 };
+
+// handle register user endpoint api
 const register = async (req, res) => {
     const { username, password, name } = req.body;
 
@@ -44,6 +47,7 @@ const register = async (req, res) => {
     }
 };
 
+// handle login endpoint api
 const login = async (req, res) => {
     const { username, password } = req.body;
 
@@ -77,6 +81,7 @@ const login = async (req, res) => {
     }
 };
 
+// handle logout endpoint api
 const logout = (req, res) => {
     res.clearCookie('access_token', {
         secure: true,
@@ -86,4 +91,19 @@ const logout = (req, res) => {
         .json('User has been logged out.');
 };
 
-module.exports = { register, login, logout };
+// Check token is expire
+const authenticateToken = (req, res) => {
+    const token = req.cookies.access_token;
+    if (!token) {
+        return res.json({ message: 'Can not verify Token!!!', status: 403 });
+    }
+    try {
+        const user = jwt.verify(token, SECRET);
+        req.userId = user.id;
+        res.json({ message: 'Token valid!!!', status: 200 })
+    } catch (err) {
+        return res.json({ message: 'Can not verify Token!!!', status: 403 });
+    }
+}
+
+module.exports = { register, login, logout, authenticateToken };

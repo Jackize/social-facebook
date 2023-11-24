@@ -7,9 +7,10 @@ import {
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
 import SocketContextProider from "./context/socketContext";
+import { makeRequest } from "./axios";
 
 const Home = lazy(() => import("./pages/home/Home"));
 const Login = lazy(() => import("./pages/login/Login"));
@@ -27,13 +28,25 @@ const Messages = lazy(() => import("./pages/inbox/Messages"));
 function App() {
   const queryClient = new QueryClient();
 
+  // clear token in localstorage whentoken is expired
+  useEffect(() => {
+    async function VerifyToken() {
+      const res = await makeRequest.post('/auth/authenticateToken')
+      if (res.data.status !== 200) {
+        localStorage.removeItem('user')
+      }
+    }
+    VerifyToken()
+  }, [])
+
   const ProtectedRoute = ({ children }) => {
+    // navigate page login when don't have token in localstorage
     if (localStorage.getItem("user") === null) {
       return <Navigate to="/login" />;
     }
-
     return children;
   };
+  
   const router = createBrowserRouter([
     {
       element: <Outlet />,

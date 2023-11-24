@@ -1,5 +1,5 @@
 const express = require("express");
-const { login, register, logout } = require("../controllers/auth");
+const { login, register, logout, authenticateToken } = require("../controllers/auth");
 const { isUserAuthenticated } = require("../middlewares/auth");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
@@ -27,5 +27,6 @@ router.get("/user", isUserAuthenticated, (req, res) => {
 });
 router.post("/register", register);
 router.post("/logout", logout);
+router.post("/authenticateToken", authenticateToken)
 
 module.exports = router;
