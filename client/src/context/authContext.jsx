@@ -1,10 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import { makeRequest } from "../axios";
+import { useSocketContext } from "./socketContext";
 
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
+    const socket = useSocketContext()
 
     const login = async (values, google) => {
         try {
@@ -19,6 +21,8 @@ export const AuthContextProvider = ({ children }) => {
 
             if (res && res.data) {
                 localStorage.setItem("user", JSON.stringify(res.data));
+                socket.connect();
+                socket?.emit("userLogin", res.data)
                 setCurrentUser(res.data);
                 return res
             }
@@ -29,24 +33,16 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     const logout = async () => {
+        socket?.emit("userLogout", currentUser)
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setCurrentUser(null);
         await makeRequest.post("/auth/logout").catch(error => console.log(error));
     };
-
-    const handleResetUser = (user) => {
-        localStorage.removeItem("user");
-        localStorage.setItem("user", JSON.stringify(user));
-        setCurrentUser(user);
-        window.location.reload();
-    };
-
-
-    return <AuthContext.Provider value={{ handleResetUser, currentUser, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ currentUser, login, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => {
-    const { handleResetUser, currentUser, login, logout } = useContext(AuthContext);
-    return { handleResetUser, currentUser, login, logout };
+    const { currentUser, login, logout } = useContext(AuthContext);
+    return { currentUser, login, logout };
 };

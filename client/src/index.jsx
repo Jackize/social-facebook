@@ -5,15 +5,18 @@ import { DarkModeContextProvider } from './context/darkModeContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { NotificationProvider } from './context/notificationContext';
 import { AuthContextProvider } from './context/authContext';
+import SocketContextProider from './context/socketContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <HelmetProvider>
             <DarkModeContextProvider>
                 <NotificationProvider>
-                    <AuthContextProvider>
+                    <SocketContextProider>
+                        <AuthContextProvider>
                             <App />
-                    </AuthContextProvider>
+                        </AuthContextProvider>
+                    </SocketContextProider>
                 </NotificationProvider>
             </DarkModeContextProvider>
         </HelmetProvider>

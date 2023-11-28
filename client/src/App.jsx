@@ -9,7 +9,6 @@ import Layout from "./layout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy, useEffect } from "react";
 import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
-import SocketContextProider from "./context/socketContext";
 import { makeRequest } from "./axios";
 
 const Home = lazy(() => import("./pages/home/Home"));
@@ -46,7 +45,7 @@ function App() {
     }
     return children;
   };
-  
+
   const router = createBrowserRouter([
     {
       element: <Outlet />,
@@ -80,9 +79,7 @@ function App() {
             <ProtectedRoute>
               <Theme>
                 <QueryClientProvider client={queryClient}>
-                  <SocketContextProider>
                     <Layout />
-                  </SocketContextProider>
                 </QueryClientProvider>
               </Theme>
             </ProtectedRoute>

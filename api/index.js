@@ -1,23 +1,31 @@
 const app = require("./app");
 const { createServer } = require("http");
-const { PORT  } = require("./src/utils/config");
+const { PORT } = require("./src/utils/config");
 const { info } = require("./src/utils/logger");
 const { Server } = require("socket.io");
+const { initialSocket } = require("./src/socket");
 
 const server = createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "*",
-        credentials: true,
-        optionsSuccessStatus: 200,
-    },
-    // secure: true
-});
-
+const io = initialSocket(server)
+let userList = []
 io.on("connection", (socket) => {
-    // when connect
-    info("New client connected", socket.id, socket.rooms);
+    console.log(socket.id);
+    // when user login
+    socket.on("userLogin", (user) => {
+        const existUser = userList.some(users => users.id === user.id)
+        if (!existUser) {
+            userList.push(user)
+        }
+        console.log('after login', userList);
+    })
 
+    socket.on("userLogout", (user) => {
+        const existUser = userList.some(users => users.id === user.id)
+        if (existUser) {
+            userList = userList.filter(a => a.id !== user.id)
+        }
+        console.log('after logout', userList);
+    })
     // Handle join room event
     socket.on("joinRoom", (roomId, userId) => {
         info(`${userId} joined room ${roomId}`);

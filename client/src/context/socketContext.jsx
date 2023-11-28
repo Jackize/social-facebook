@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { SOCKET_SERVER } from "../utils/config";
-import { useAuthContext } from "./authContext";
 
 export const SocketContext = createContext();
 let socket = io(SOCKET_SERVER, {
@@ -17,23 +16,11 @@ let socket = io(SOCKET_SERVER, {
     timeout: 20000,
 });
 export default function SocketContextProider({ children }) {
-    const { currentUser } = useAuthContext()
-    useEffect(() => {
-
-        // Connect to the socket server
-        socket.connect();
-
-        // Clean up the socket connection on component unmount
-        return () => {
-            socket.disconnect();
-            socket.close()
-        };
-    }, []);
-
     return (
         <SocketContext.Provider value={socket}>
             {children}
-        </SocketContext.Provider>);
+        </SocketContext.Provider>
+    );
 }
 
 export const useSocketContext = () => {

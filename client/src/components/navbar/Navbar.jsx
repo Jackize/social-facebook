@@ -24,6 +24,7 @@ const Navbar = () => {
     const theme = useTheme();
 
     const handleLogout = () => {
+        socket?.emit("userLogout", currentUser)
         logout()
         socket?.close()
         navigate("/login");
