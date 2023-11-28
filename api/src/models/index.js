@@ -16,11 +16,11 @@ Comment.belongsTo(Post);
 User.hasMany(Comment);
 Comment.belongsTo(User);
 
-User.hasMany(Conversation, { foreignKey: "user1_id" });
-User.hasMany(Conversation, { foreignKey: "user2_id" });
+User.hasMany(Conversation, { foreignKey: "user1Id" });
+User.hasMany(Conversation, { foreignKey: "user2Id" });
 
-Conversation.belongsTo(User, { as: "user1", foreignKey: "user1_id" });
-Conversation.belongsTo(User, { as: "user2", foreignKey: "user2_id" });
+Conversation.belongsTo(User, { as: "user1", foreignKey: "user1Id" });
+Conversation.belongsTo(User, { as: "user2", foreignKey: "user2Id" });
 
 Conversation.hasMany(Message);
 Message.belongsTo(Conversation);
