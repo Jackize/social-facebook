@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
         console.log('after login', userList);
     })
 
+    // when user logout
     socket.on("userLogout", (user) => {
         const existUser = userList.some(users => users.id === user.id)
         if (existUser) {
@@ -26,6 +27,13 @@ io.on("connection", (socket) => {
         }
         console.log('after logout', userList);
     })
+
+    // listen get user online
+    socket.on('getOnline', (users)=>{
+        let userOnline = userList.filter(user => users.some(userGet => userGet.id === user.id))
+        socket.emit('receiverOnline', userOnline)
+    })
+
     // Handle join room event
     socket.on("joinRoom", (roomId, userId) => {
         info(`${userId} joined room ${roomId}`);

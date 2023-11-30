@@ -1,20 +1,23 @@
 import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Skeleton, Typography, useTheme } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from "../../axios";
 import { noneAvatar } from "../../utils/image";
 import AddFriend from "./addFriend/AddFriend";
-import { BoxStyle, StyledBadge } from "./rightBar.style";
+import { BoxStyle, StyledBadgeOffline, StyledBadgeOnline } from "./rightBar.style";
+import { useSocketContext } from "../../context/socketContext";
 
 const RightBar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-
+    const socket = useSocketContext()
+    const [userOnline, setUserOnline] = useState([])
     const { isLoading, error, data } = useQuery(
         ["friends"],
         () =>
             makeRequest.get("/users/friends").then((res) => {
+                socket?.emit('getOnline', res.data)
                 return res.data;
             }),
         {
@@ -22,6 +25,13 @@ const RightBar = () => {
             refetchOnReconnect: false,
         }
     );
+
+    useEffect(() => {
+        socket?.on('receiverOnline', async (receiverOnline) => {
+            console.log(receiverOnline);
+            setUserOnline(receiverOnline)
+        })
+    }, [])
 
     const handleCreateConversation = async (e) => {
         const res = await makeRequest.post("/conversations", { userId: e.id });
@@ -54,15 +64,28 @@ const RightBar = () => {
                             <ListItem key={e.id}>
                                 <ListItemButton sx={{ borderRadius: 2 }} onClick={() => handleCreateConversation(e)}>
                                     <ListItemAvatar>
-                                        <StyledBadge
-                                            overlap="circular"
-                                            anchorOrigin={{
-                                                vertical: "bottom",
-                                                horizontal: "right",
-                                            }}
-                                            variant="dot">
-                                            <Avatar alt={e.name} src={e.avatarPic ? e.avatarPic : noneAvatar} />
-                                        </StyledBadge>
+                                        {userOnline.some(user => user.id === e.id) ? (
+                                            <StyledBadgeOnline
+                                                overlap="circular"
+                                                anchorOrigin={{
+                                                    vertical: "bottom",
+                                                    horizontal: "right",
+                                                }}
+                                                variant="dot">
+                                                <Avatar alt={e.name} src={e.avatarPic ? e.avatarPic : noneAvatar} />
+                                            </StyledBadgeOnline>
+                                        ) : (
+                                            <StyledBadgeOffline
+                                                overlap="circular"
+                                                anchorOrigin={{
+                                                    vertical: "bottom",
+                                                    horizontal: "right",
+                                                }}
+                                                variant="dot">
+                                                <Avatar alt={e.name} src={e.avatarPic ? e.avatarPic : noneAvatar} />
+                                            </StyledBadgeOffline>
+                                        )}
+
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={e.name}
