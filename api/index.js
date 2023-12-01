@@ -50,9 +50,9 @@ io.on("connection", (socket) => {
     });
 
     // Handle send message event
-    socket.on("sendMessage", ({ roomId, senderId, message }) => {
-        info(`${senderId} sent message in room ${roomId}: ${message}`);
-        socket.to(roomId).emit("new message", senderId, message);
+    socket.on("sendMessage", (message) => {
+        info(`${message.senderId} sent message in room ${message.conversationId}: ${message.content}`);
+        socket.to(message.conversationId).emit("new message", message);
     });
 
     socket.on('offer', (roomId, offer) => {

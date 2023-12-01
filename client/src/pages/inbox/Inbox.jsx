@@ -45,8 +45,8 @@ export default function Inbox() {
             console.log(`${userId} left room ${roomId}`);
         });
 
-        socket?.on("new message", async (senderId, message) => {
-            setGetMessages((prev) => [...prev, { sender_id: senderId, content: message, updatedAt: new Date() }]);
+        socket?.on("new message", async (message) => {
+            setGetMessages((prev) => [...prev, message]);
         });
 
         socket?.on('answer', async (answer) => {
@@ -196,31 +196,10 @@ export default function Inbox() {
                 try {
                     const res = await makeRequest.post("/messages", newMessage);
                     setGetMessages([...getMessages, res.data]);
+                    socket?.emit("sendMessage", res.data);
+                    setSendMessage("");
                 } catch (error) {
                     console.log(error);
-                }
-                socket?.emit("sendMessage", {
-                    roomId: conversation_id,
-                    senderId: currentUser.id,
-                    message: sendMessage,
-                });
-                setSendMessage("");
-            } else {
-                delete newMessage.conversation_id;
-                const timestamp = Date.now();
-                const randomNumber = Math.random();
-                const hexadecimalNumber = randomNumber.toString(16);
-                setGetMessages((prev) => [...prev, { sender_id: currentUser.id, content: newMessage.content, id: `id-${timestamp}-${hexadecimalNumber}`, updatedAt: new Date() }]);
-                setSendMessage("");
-                // const res = await makeRequest.post("/messages/gpt", newMessage);
-                const res = {
-                    data: {
-                        bot: '123',
-                        id: `1`,
-                    }
-                }
-                if (res.data) {
-                    setGetMessages((prev) => [...prev, { sender_id: 0, content: res.data.bot, id: res.data.id, updatedAt: new Date() }]);
                 }
             }
         } catch (error) {
