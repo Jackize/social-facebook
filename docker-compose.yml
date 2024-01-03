@@ -27,14 +27,17 @@ services:
   db:
     image: postgres
     restart: always
+    container_name: social-db
+    hostname: db
     ports:
       - 5432:5432
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - ./var/postgres/init:/docker-entrypoint-initdb.d
+      - ./var/social/db/data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: social
   frontend:
     build: ./client
     command: npm run start
