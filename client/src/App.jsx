@@ -15,12 +15,8 @@ const Home = lazy(() => import("./pages/home/Home"));
 const Login = lazy(() => import("./pages/login/Login"));
 const Register = lazy(() => import("./pages/register/Register"));
 const Profile = lazy(() => import("./pages/profile/Profile"));
-const LoginSuccess = lazy(() =>
-  import("./components/loginSuccess/LoginSuccess")
-);
-const ImageGeneration = lazy(() =>
-  import("./pages/imageGeneration/ImageGeneration")
-);
+const LoginSuccess = lazy(() => import("./components/loginSuccess/LoginSuccess"));
+const Saving = lazy(() => import("./pages/saving/Saving"));
 const Inbox = lazy(() => import("./pages/inbox/Inbox"));
 const Messages = lazy(() => import("./pages/inbox/Messages"));
 
@@ -79,7 +75,7 @@ function App() {
             <ProtectedRoute>
               <Theme>
                 <QueryClientProvider client={queryClient}>
-                    <Layout />
+                  <Layout />
                 </QueryClientProvider>
               </Theme>
             </ProtectedRoute>
@@ -98,14 +94,6 @@ function App() {
               element: (
                 <Suspense fallback={<SuspenseLoading />}>
                   <Profile />
-                </Suspense>
-              ),
-            },
-            {
-              path: "/imageGeneration",
-              element: (
-                <Suspense fallback={<SuspenseLoading />}>
-                  <ImageGeneration />
                 </Suspense>
               ),
             },
@@ -134,6 +122,14 @@ function App() {
                   ),
                 },
               ],
+            },
+            {
+              path: "/saving",
+              element: (
+                <Suspense fallback={<SuspenseLoading />}>
+                  <Saving />
+                </Suspense>
+              ),
             },
           ],
         },

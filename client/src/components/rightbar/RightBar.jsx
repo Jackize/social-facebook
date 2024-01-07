@@ -28,7 +28,6 @@ const RightBar = () => {
 
     useEffect(() => {
         socket?.on('receiverOnline', async (receiverOnline) => {
-            console.log(receiverOnline);
             setUserOnline(receiverOnline)
         })
     }, [])
