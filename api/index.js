@@ -6,7 +6,15 @@ const { Server } = require("socket.io");
 const { initialSocket } = require("./src/socket");
 
 const server = createServer(app);
-const io = initialSocket(server)
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        credentials: true,
+        optionsSuccessStatus: 200,
+    },
+    // secure: true
+});
+
 let userList = []
 io.on("connection", (socket) => {
     console.log(socket.id);

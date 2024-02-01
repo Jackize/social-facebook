@@ -69,7 +69,7 @@ const login = async (req, res) => {
             });
             const { password, ...other } = user;
             return res
-                .cookie("access_token", token, { httpOnly: true, secure: true })
+                .cookie("access_token", token, { httpOnly: true, sameSite: true })
                 .status(200)
                 .json({ ...other });
         } else {

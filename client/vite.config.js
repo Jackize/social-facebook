@@ -17,6 +17,6 @@ export default defineConfig({
         outDir: './build'
     },
     define: {
-        global: {},
+        _global: ({})
     }
 });

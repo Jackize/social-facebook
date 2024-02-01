@@ -22,9 +22,9 @@ const ModalUpdate = ({ open, handleClose }) => {
   const theme = useTheme();
   const [avatarFile, setAvatarFile] = React.useState(null);
   const [coverFile, setCoverFile] = React.useState(null);
-  const {handleLoading, handeMessage} = React.useContext(NotificationContext);
-  
-  const { currentUser,handleResetUser } = React.useContext(AuthContext);
+  const { handleLoading, handeMessage } = React.useContext(NotificationContext);
+
+  const { currentUser, handleResetUser } = React.useContext(AuthContext);
 
   const handleAvatarChange = (event) => {
     setAvatarFile(event.target.files[0]);
@@ -74,7 +74,7 @@ const ModalUpdate = ({ open, handleClose }) => {
   };
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box sx={{...style, width: 600}}>
+      <Box sx={{ ...style, width: 600 }}>
         <Stack direction="column">
           <Box>
             <Typography
@@ -90,9 +90,7 @@ const ModalUpdate = ({ open, handleClose }) => {
                 label="Name"
                 name="name"
                 fullWidth
-                sx={{
-                  marginTop: "20px",
-                }}
+                sx={{ marginTop: "20px", }}
               />
 
               {avatarFile ? (
@@ -106,12 +104,7 @@ const ModalUpdate = ({ open, handleClose }) => {
                     onClick={() => setAvatarFile(null)}>
                     Close
                   </Button>
-                  <img
-                    src={URL.createObjectURL(avatarFile)}
-                    alt={avatarFile.name}
-                    type={avatarFile.type}
-                    style={styleImage}
-                  />
+                  <img src={URL.createObjectURL(avatarFile)} alt={avatarFile.name} type={avatarFile.type} style={styleImage} />
                 </>
               ) : (
                 <Button
@@ -136,12 +129,7 @@ const ModalUpdate = ({ open, handleClose }) => {
                     onClick={() => setCoverFile(null)}>
                     Close
                   </Button>
-                  <img
-                    src={URL.createObjectURL(coverFile)}
-                    alt={coverFile.name}
-                    type={coverFile.type}
-                    style={styleImage}
-                  />
+                  <img src={URL.createObjectURL(coverFile)} alt={coverFile.name} type={coverFile.type} style={styleImage} />
                 </>
               ) : (
                 <Button
@@ -157,8 +145,8 @@ const ModalUpdate = ({ open, handleClose }) => {
                   <input hidden accept="image/*" type="file" />
                 </Button>
               )}
-              
-              <ModalChangePass/>
+
+              <ModalChangePass />
 
               <ButtonGroup fullWidth sx={{ margin: "20px 0 -30px 0" }}>
                 <Button onClick={handleClose}>Cancel</Button>
@@ -174,28 +162,28 @@ const ModalUpdate = ({ open, handleClose }) => {
 
 export default ModalUpdate;
 
-const ModalChangePass = ()=> {
+const ModalChangePass = () => {
   const theme = useTheme();
   const [changePassword, setChangePassword] = React.useState(false);
   const [fieldPass, setfieldPass] = React.useState({
-      newPassword: "",
-      oldPassword: "",
+    newPassword: "",
+    oldPassword: "",
   });
-  const {handeMessage, handleLoading} = React.useContext(NotificationContext)
+  const { handeMessage, handleLoading } = React.useContext(NotificationContext)
 
   const mutation = useMutation(
     async (updatePass) => {
       handleLoading(true);
       makeRequest.put("/users/changePass", updatePass)
         .then(res => {
-            handeMessage(res)
-            handleResetFieldPass()
-            handleClose();
+          handeMessage(res)
+          handleResetFieldPass()
+          handleClose();
         }).catch((err) => {
-            handleResetFieldPass()
-            handeMessage(err)
+          handleResetFieldPass()
+          handeMessage(err)
         }).finally(() => {
-            handleLoading(false);
+          handleLoading(false);
         })
     }
   );
@@ -218,32 +206,32 @@ const ModalChangePass = ()=> {
   }
 
   const handleResetFieldPass = () => {
-    setfieldPass({newPassword: "", oldPassword: ""})
+    setfieldPass({ newPassword: "", oldPassword: "" })
   }
   return (
     <>
-      <Button 
+      <Button
         variant="contained"
         component="label"
         sx={{ marginTop: "20px", marginBottom: "20px" }}
         fullWidth
-        onClick={()=> setChangePassword(!changePassword)}
+        onClick={() => setChangePassword(!changePassword)}
       >
         Change Password
       </Button>
       <Modal open={changePassword} onClose={handleClose}>
-        <Box sx={{...style, width: 400}}>
-            <Typography variant="h6" textAlign="center" color={theme.palette.text.primary}>Change Password</Typography>
+        <Box sx={{ ...style, width: 400 }}>
+          <Typography variant="h6" textAlign="center" color={theme.palette.text.primary}>Change Password</Typography>
 
-            <Divider/>
+          <Divider />
 
-            <TextField variant="outlined" label="Old Password" fullWidth sx={{marginTop: 3}} name="oldPassword" value={fieldPass.oldPassword} onChange={handleChangeField} type="password"/>
-            <TextField variant="outlined" label="New Password" fullWidth sx={{marginTop: 3}} name="newPassword" value={fieldPass.newPassword} onChange={handleChangeField} type="password"/>
+          <TextField variant="outlined" label="Old Password" fullWidth sx={{ marginTop: 3 }} name="oldPassword" value={fieldPass.oldPassword} onChange={handleChangeField} type="password" />
+          <TextField variant="outlined" label="New Password" fullWidth sx={{ marginTop: 3 }} name="newPassword" value={fieldPass.newPassword} onChange={handleChangeField} type="password" />
 
-            <ButtonGroup fullWidth sx={{ margin: "20px 0 -30px 0" }}>
-              <Button onClick={()=> setChangePassword(false)}>Cancel</Button>
-              <Button onClick={handleChangePass}>Change</Button>
-            </ButtonGroup>
+          <ButtonGroup fullWidth sx={{ margin: "20px 0 -30px 0" }}>
+            <Button onClick={() => setChangePassword(false)}>Cancel</Button>
+            <Button onClick={handleChangePass}>Change</Button>
+          </ButtonGroup>
         </Box>
       </Modal>
     </>
