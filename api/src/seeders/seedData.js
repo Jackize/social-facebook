@@ -16,7 +16,7 @@ module.exports = {
       name: 'admin',
       username: 'admin',
       password: '$2a$10$46nlDZWl2LjKnC8Jmoc9huTPQxTxc3LDuB6CDZW0BQAnHHfY3LuG6',
-      avatarPic: 'https://www.pinterest.com/pin/703756186551584/',
+      avatarPic: 'https://yt3.ggpht.com/gXyQQzMtsKl1n_FQ9FwhjyPTcJhjkYdj4UcD17ivv0Zf_nVRKTQvpf3NkiqQC4LV23zKW9Wr-WE=s48-c-k-c0x00ffffff-no-nd-rj',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -24,7 +24,7 @@ module.exports = {
       name: 'hao',
       username: 'hao',
       password: '$2a$10$46nlDZWl2LjKnC8Jmoc9huTPQxTxc3LDuB6CDZW0BQAnHHfY3LuG6',
-      avatarPic: 'https://www.pinterest.com/pin/21532904461022255/',
+      avatarPic: 'https://yt3.ggpht.com/1uBbLtImllQ4ZwojiH5oDGdnnOfoTLWDZb-IsGDpWSH1AxMlKJ7l361dNF9tf7Jdvuj8zajEyQ=s48-c-k-c0x00ffffff-no-nd-rj',
       createdAt: new Date(),
       updatedAt: new Date()
     }])
