@@ -6,7 +6,7 @@ import moment from "moment";
 import { useAuthContext } from "../../context/authContext";
 import LogoGPT from "../../assets/logoGPT/LogoGPT";
 
-export default function Messages({ message, own, timeZone, gptURL, userInfo, getMessages }) {
+export default function Messages({ message, own, timeZone, userInfo, getMessages }) {
     const theme = useTheme();
     const { currentUser } = useAuthContext()
     const { darkMode } = React.useContext(DarkModeContext);
