@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Alert from '@mui/material/Alert';
 import './register.scss';
 import { makeRequest } from '../../axios';
@@ -13,6 +13,12 @@ const Register = () => {
     });
     const [err, setErr] = React.useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (localStorage.getItem('user')) {
+            navigate('/')
+        }
+    }, [])
 
     const handleChange = (e) => {
         setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));

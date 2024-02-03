@@ -30,6 +30,9 @@ const RightBar = () => {
         socket?.on('receiverOnline', async (receiverOnline) => {
             setUserOnline(receiverOnline)
         })
+        return () => {
+            socket.off('receiverOnline')
+        }
     }, [])
 
     const handleCreateConversation = async (e) => {
