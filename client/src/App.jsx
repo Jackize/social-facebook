@@ -23,7 +23,7 @@ const Messages = lazy(() => import("./pages/inbox/Messages"));
 
 function App() {
   const queryClient = new QueryClient();
-  const socket = useSocketContext()
+  const { socket } = useSocketContext()
 
   // clear token in localstorage whentoken is expired
   useEffect(() => {

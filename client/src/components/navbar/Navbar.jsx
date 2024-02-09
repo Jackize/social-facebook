@@ -12,7 +12,7 @@ import { useSocketContext } from "../../context/socketContext";
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { currentUser, logout } = React.useContext(AuthContext);
-    const socket = useSocketContext()
+    const { socket } = useSocketContext()
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const handleClick = (event) => {

@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
-    const socket = useSocketContext()
+    const { socket } = useSocketContext()
 
     const login = async (values, google) => {
         try {

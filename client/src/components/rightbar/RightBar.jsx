@@ -11,7 +11,7 @@ import { useSocketContext } from "../../context/socketContext";
 const RightBar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const socket = useSocketContext()
+    const { socket } = useSocketContext()
     const [userOnline, setUserOnline] = useState([])
     const { isLoading, error, data } = useQuery(
         ["friends"],

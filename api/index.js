@@ -23,8 +23,8 @@ io.on("connection", (socket) => {
         const existUser = userList.some(users => users.id === user.id)
         if (!existUser) {
             userList.push(user)
+            console.log('after login', userList);
         }
-        console.log('after login', userList);
     })
 
     // when user logout
@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
     })
 
     // listen get user online
-    socket.on('getOnline', (users)=>{
+    socket.on('getOnline', (users) => {
         let userOnline = userList.filter(user => users.some(userGet => userGet.id === user.id))
         socket.emit('receiverOnline', userOnline)
     })
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
         info(`${userId} joined room ${roomId}`);
         info(socket.rooms, socket.id)
         socket.join(roomId);
-        socket.to(roomId).emit("user joined", userId, roomId);
+        socket.to(roomId).emit("user joined", userId);
     });
 
     // Handle leave room event
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on('offer', (roomId, offer) => {
-        console.log('on offer');
+        console.log('on offer', roomId);
         // Broadcast the offer to other users in the room
         // socket.to(data.roomId).emit('offer', data.offer);
         socket.to(roomId).emit('offer', offer);
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on('ice-candidate', (roomId, cand) => {
-        console.log('on ice-candidate');
+        console.log('on ice-candidate', roomId);
         // Broadcast the ICE candidate to other users in the room
         socket.to(roomId).emit('ice-candidate', cand);
         // socket.broadcast.emit('ice-candidate', data);
