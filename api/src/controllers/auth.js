@@ -21,18 +21,18 @@ let checkUserName = (userName) => {
 
 // handle register user endpoint api
 const register = async (req, res) => {
-    const { username, password, name } = req.body;
+    try {
+        const { username, password, name } = req.body;
 
-    //Validate field
-    if (!username || !password || !name) {
-        return res.status(400).js.json({ error: 'Username, password, and name are required' });
-    }
+        //Validate field
+        if (!username || !password || !name) {
+            return res.status(400).json({ error: 'Username, password, and name are required' });
+        }
 
-    let checkIsUserNameExist = await checkUserName(username);
-    if (checkIsUserNameExist) {
-        res.status(409).js.json('User already exists');
-    } else {
-        try {
+        let checkIsUserNameExist = await checkUserName(username);
+        if (checkIsUserNameExist) {
+            res.status(409).json('User already exists');
+        } else {
             const hashedPassword = bcrypt.hashSync(password, salt);
             await User.create({
                 username,
@@ -40,10 +40,10 @@ const register = async (req, res) => {
                 name
             });
             res.status(200).json('User created');
-        } catch (err) {
-            error('register error', err)
-            res.status(500).json(err);
         }
+    } catch (err) {
+        error('register error', err)
+        res.status(500).json(err);
     }
 };
 
@@ -95,14 +95,14 @@ const logout = (req, res) => {
 const authenticateToken = (req, res) => {
     const token = req.cookies.access_token;
     if (!token) {
-        return res.json({ message: 'Can not verify Token!!!', status: 403 });
+        return res.status(403).json('Require access token');
     }
     try {
         const user = jwt.verify(token, SECRET);
         req.userId = user.id;
         res.json({ message: 'Token valid!!!', status: 200 })
     } catch (err) {
-        return res.json({ message: 'Can not verify Token!!!', status: 403 });
+        return res.status(500).json('Verify token error');
     }
 }
 
