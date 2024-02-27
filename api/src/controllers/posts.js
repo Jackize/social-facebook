@@ -6,6 +6,7 @@ const { handleDeleteImage } = require("../utils/handleCloudinary");
 const getPosts = async (req, res) => {
     const userId = req.query.userId;
     try {
+        // get post in profile page
         if (userId) {
             const posts = await Post.findAll({
                 where: {
@@ -19,6 +20,7 @@ const getPosts = async (req, res) => {
             });
             return res.status(200).json(posts);
         } else {
+            // get posts of user we followed
             const relationships = await Relationship.findAll({
                 where: {
                     followerUserId: req.userId,
@@ -28,6 +30,7 @@ const getPosts = async (req, res) => {
                 nested: true,
             });
             const postsShouldFind = relationships.map((e) => e.followedUserId);
+            // get All post when user don't have relationship
             if (relationships.length === 0) {
                 const result = await Post.findAll({
                     where: {
@@ -67,12 +70,12 @@ const getPosts = async (req, res) => {
 
 const addPost = async (req, res) => {
     try {
-        await Post.create({
+        const newPost = await Post.create({
             content: req.body.content,
             img: req.body.img,
             userId: req.userId,
         });
-        res.status(200).json("Post created successfully");
+        res.status(200).json(newPost);
     } catch (err) {
         error(`addPost ${req.userId} error`, err)
         res.status(500).json(err);
@@ -91,9 +94,10 @@ const deletePost = async (req, res) => {
             });
             return res.status(200).json("Post was deleted successfully");
         } else {
-            res.status(404).json("Post was not found");
+            res.status(404).json("Post is not found");
         }
     } catch (err) {
+        console.log("🚀 ~ deletePost ~ err:", err)
         error(`deletePost ${req.params.id} error`, err)
         res.status(500).json(err);
     }
@@ -111,7 +115,7 @@ const updatePost = async (req, res) => {
             post = { ...post, ...req.body };
             return res.status(200).json(post);
         } else {
-            res.status(403).json("Post is not found");
+            res.status(404).json("Post is not found");
         }
     } catch (err) {
         error(err)
