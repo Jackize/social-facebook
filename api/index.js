@@ -102,5 +102,6 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT || 8080, () => {
+    console.clear()
     info(`Server running on port ${PORT}`);
 });

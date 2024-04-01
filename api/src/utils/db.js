@@ -19,6 +19,7 @@ const sequelize = new Sequelize(DATABASE_URL, {
 const connectToDatabase = async () => {
     try {
         await sequelize.authenticate();
+        console.log("Connection has been established successfully.");
         // await runMigrations();
     } catch (err) {
         error("failed to connect to the database");

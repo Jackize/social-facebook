@@ -1,6 +1,5 @@
-fly.toml
+node_modules
 Dockerfile
 .dockerignore
-node_modules
 .git
-dist
+.gitignore
