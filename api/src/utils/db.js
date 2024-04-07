@@ -24,9 +24,8 @@ const connectToDatabase = async () => {
     } catch (err) {
         error("failed to connect to the database");
         error(err);
-        return process.exit(1)
+        setTimeout(connectToDatabase, 3000)
     }
-    return null
 };
 
 const migrationConf = {

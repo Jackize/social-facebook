@@ -22,14 +22,9 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost"],
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
+app.use(cors({}));
 app.use(cookieParser());
+app.enable("trust proxy");
 app.use(
   session({
     secret: SECRET,
@@ -49,7 +44,8 @@ app.use(passport.session());
 
 app.use("/api", api);
 app.use("/hello", (req, res) => {
-  res.send("Hello World!456");
+  res.send("Hello World!");
+  console.log("Hello World!");
 });
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);

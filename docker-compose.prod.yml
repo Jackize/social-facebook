@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  nginx:
+    ports:
+      - "80:80"
+  api:
+    build:
+      context: ./api
+      args: 
+        - NODE_ENV=production
+    environment:
+      - PORT=8080
+      - NODE_ENV=production
+      - SECRET=ecret
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/social
+      - CLOUD_NAME='dpbhp5ury'
+      - CLOUD_API_KEY='168921146788365'
+      - CLOUD_API_SECRET='xyGefjjzHufGEcQDwyyjNUrR1tk'
+      - OPENAI_API_KEY='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'
+      - GOOGLE_CLIENT_ID='454362861673-tbo8m2u7g0mi5ohend7t99esivot2t9a.apps.googleusercontent.com'
+      - GOOGLE_CLIENT_SECRET='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'
+      - URL_FE='http://localhost:8080'
+      - URL_BE='http://localhost:8080'
+    command: npm run start
+
+
