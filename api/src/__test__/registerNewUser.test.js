@@ -20,9 +20,26 @@ describe('Auth Register new user', () => {
             .post('/api/auth/register')
             .send({ password: '123', name: '123' });
         expect(res.status).toBe(400);
+        expect(res.body.errors).not.toBeNull()
     })
 
-    it('it should register new user fail when username exist and return 409', async () => {
+    it('it should register new user fail when not have field password and return 400', async () => {
+        const res = await supertes(app)
+            .post('/api/auth/register')
+            .send({ username: 'admin999', name: '123' });
+        expect(res.status).toBe(400);
+        expect(res.body.errors).not.toBeNull()
+    })
+
+    it('it should register new user fail when not have field name and return 400', async () => {
+        const res = await supertes(app)
+            .post('/api/auth/register')
+            .send({ username: 'admin999', password: '123' });
+        expect(res.status).toBe(400);
+        expect(res.body.errors).not.toBeNull()
+    })
+
+    it('it should register new user fail when username already exist and return 409', async () => {
         const res = await supertes(app)
             .post('/api/auth/register')
             .send({ username: 'admin', password: '123', name: '123' });

@@ -23,12 +23,6 @@ let checkUserName = (userName) => {
 const register = async (req, res) => {
     try {
         const { username, password, name } = req.body;
-
-        //Validate field
-        if (!username || !password || !name) {
-            return res.status(400).json({ error: 'Username, password, and name are required' });
-        }
-
         let checkIsUserNameExist = await checkUserName(username);
         if (checkIsUserNameExist) {
             res.status(409).json('User already exists');

@@ -2,6 +2,7 @@ const Sequelize = require("sequelize");
 const { DATABASE_URL } = require("./config");
 const { Umzug, SequelizeStorage } = require("umzug");
 const { info, error } = require("./logger");
+const { exec } = require('child_process');
 
 // Now you can use Sequelize, DATABASE_URL, Umzug, SequelizeStorage, and logger in your code
 
@@ -30,7 +31,7 @@ const connectToDatabase = async () => {
 
 const migrationConf = {
     migrations: {
-        glob: "src/migrations/*",
+        glob: "src/migrations/migrate-code.js",
     },
     storage: new SequelizeStorage({ sequelize, tableName: "migrations" }),
     context: sequelize.getQueryInterface(),
@@ -38,22 +39,42 @@ const migrationConf = {
 };
 
 const runMigrations = async () => {
-    const migrator = new Umzug(migrationConf);
-    const migrations = await migrator.up();
-    info("Migrations up to date", {
-        files: migrations.map((mig) => mig.name),
+    exec(`cd src && npx sequelize-cli db:migrate --env ${process.env.NODE_ENV}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
     });
-
 };
+
+const runAddSeedData = async () => {
+    exec(`cd src && npx sequelize-cli db:seed:all --env ${process.env.NODE_ENV}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+    });
+}
+
 const rollbackMigration = async () => {
-    await sequelize.authenticate();
-    const migrator = new Umzug(migrationConf);
-    await migrator.down();
+    exec(`cd src && npx sequelize-cli db:migrate:undo --env ${process.env.NODE_ENV}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+    });
 };
 
 module.exports = {
     connectToDatabase,
     runMigrations,
     rollbackMigration,
+    runAddSeedData,
     sequelize,
 }

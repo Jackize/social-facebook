@@ -1,6 +1,6 @@
 const express = require("express");
 const { login, register, logout, authenticateToken } = require("../controllers/auth");
-const { isUserAuthenticated } = require("../middlewares/auth");
+const { isUserAuthenticated, registerValidator } = require("../middlewares/auth");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const { SECRET, URL_FE } = require("../utils/config");
@@ -25,7 +25,7 @@ router.get("/user", isUserAuthenticated, (req, res) => {
         .status(200)
         .json({ ...req.user })
 });
-router.post("/register", register);
+router.post("/register", registerValidator, register);
 router.post("/logout", logout);
 router.post("/authenticateToken", authenticateToken)
 
