@@ -53,8 +53,8 @@ const getConversationByCookie = async (req, res) => {
 }
 
 const getConversationByUserId = async (req, res) => {
+    const { conversationId } = req.params
     try {
-        const { conversationId } = req.params
         const conversation = await Conversation.findOne({
             where: {
                 id: conversationId,

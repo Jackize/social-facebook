@@ -9,6 +9,7 @@ const { dirname } = require("path");
 const api = require("./src/routes/index");
 const { connectToDatabase } = require("./src/utils/db");
 const passport = require("passport");
+const { connectToRedis } = require("./src/utils/redis");
 require("./src/sso/passport");
 require("./src/sso/passportGoogle");
 
@@ -35,11 +36,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 (async () => {
-  try {
-    await connectToDatabase();
-  } catch (error) {
-    error("Error connecting to the database:", error);
-  }
+  await connectToDatabase();
+  await connectToRedis();
 })();
 
 app.use("/api", api);
