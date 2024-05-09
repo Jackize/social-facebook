@@ -8,6 +8,12 @@ cloudinary.v2.config({
     api_secret: CLOUD_API_SECRET,
 });
 
+/**
+ * Deletes an image from Cloudinary.
+ *
+ * @param {string} imageURL - The URL of the image to be deleted.
+ * @returns {Promise} - A promise that resolves with the result of the deletion.
+ */
 const handleDeleteImage = async (imageURL) => {
     const filenameWithoutExtension = imageURL.match(/\/([^/.]+)(\.[^.]+)$/)[1];
     await cloudinary.api.delete_resources([filenameWithoutExtension], function (error, result) {

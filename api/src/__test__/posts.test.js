@@ -79,9 +79,9 @@ describe('Route posts', () => {
         const newPost = await supertes(app)
             .post('/api/posts')
             .set("Cookie", [accessTokenCookie])
-            .send({ content: 'admin', img: 'https://yt3.ggpht.com/1uBbLtImllQ4ZwojiH5oDGdnnOfoTLWDZb-IsGDpWSH1AxMlKJ7l361dNF9tf7Jdvuj8zajEyQ=s48-c-k-c0x00ffffff-no-nd-rj' })
+            .send({ content: 'admin'})
         expect(newPost.status).toBe(200)
-
+        
         const res = await supertes(app)
             .delete(`/api/posts/${newPost.body.id}`)
             .set("Cookie", [accessTokenCookie])

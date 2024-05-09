@@ -5,6 +5,7 @@ dotenv.config();
 const DATABASE_URL = process.env.DATABASE_URL;
 const PORT = process.env.PORT || 3001;
 const SECRET = process.env.SECRET;
+const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
 const CLOUD_NAME = process.env.CLOUD_NAME;
 const CLOUD_API_KEY = process.env.CLOUD_API_KEY;
 const CLOUD_API_SECRET = process.env.CLOUD_API_SECRET;
@@ -28,4 +29,5 @@ module.exports = {
     URL_FE,
     URL_BE,
     REDIS_PORT,
+    JWT_EXPIRATION
 }

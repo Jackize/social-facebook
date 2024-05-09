@@ -97,7 +97,6 @@ const deletePost = async (req, res) => {
             res.status(404).json("Post is not found");
         }
     } catch (err) {
-        console.log("🚀 ~ deletePost ~ err:", err)
         error(`deletePost ${req.params.id} error`, err)
         res.status(500).json(err);
     }
