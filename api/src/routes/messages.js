@@ -1,6 +1,6 @@
 const express = require("express");
 const { createMessage, getMessageByConversationId } = require("../controllers/messages");
-const { authMiddleware } = require("../utils/middleware");
+const { authMiddleware } = require("../middlewares/middleware");
 
 const router = express.Router();
 

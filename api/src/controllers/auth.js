@@ -104,7 +104,7 @@ const logout = (req, res) => {
  * @param {Object} res - The response object used to send the error response.
  * @param {Function} next - The next middleware function to be called if the token is valid.
  */
-const authenticateToken = (req, res, next) => {
+const authenticateToken = (req, res) => {
   const token = req.cookies.access_token;
   
   if (!token) {
@@ -114,7 +114,7 @@ const authenticateToken = (req, res, next) => {
   try {
     const user = jwt.verify(token, SECRET);
     req.userId = user.id;
-    next();
+    res.json({ message: 'Token valid!!!', status: 200 })
   } catch (err) {
     return res.status(500).json('Verify token error');
   }

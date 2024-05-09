@@ -1,6 +1,6 @@
 const express = require("express");
 const { getStories, addStory, deleteStory } = require("../controllers/stories");
-const { authMiddleware } = require("../utils/middleware");
+const { authMiddleware } = require("../middlewares/middleware");
 
 const router = express.Router();
 

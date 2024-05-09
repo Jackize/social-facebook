@@ -1,9 +1,9 @@
 const express = require("express");
 const { login, register, logout, authenticateToken } = require("../controllers/auth");
-const { isUserAuthenticated } = require("../middlewares/auth");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const { SECRET, URL_FE } = require("../utils/config");
+const { isUserAuthenticated } = require("../middlewares/middleware");
 
 const router = express.Router();
 

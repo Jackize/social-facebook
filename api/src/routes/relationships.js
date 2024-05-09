@@ -1,6 +1,6 @@
 const express = require("express");
 const { getRelationships, addRelationship, deleteRelationship } = require("../controllers/relationships");
-const { authMiddleware } = require("../utils/middleware");
+const { authMiddleware } = require("../middlewares/middleware");
 
 const router = express.Router();
 

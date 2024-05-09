@@ -1,6 +1,6 @@
 const express = require("express");
 const { createConversation, getConversationByCookie, getConversationByUserId } = require("../controllers/conversations");
-const { authMiddleware } = require("../utils/middleware");
+const { authMiddleware } = require("../middlewares/middleware");
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { SECRET } = require("./config");
+const { SECRET } = require("../utils/config");
 
 // Middleware to check for JWT token
 const authMiddleware = (req, res, next) => {
@@ -24,20 +24,7 @@ const isUserAuthenticated = (req, res, next) => {
     }
 }
 
-const cachedUser = (req, res, next) => {
-    const { userId } = req.params;
-    redisStore.get(userId, (err, user) => {
-        if (err) throw err;
-        if (user) {
-            res.sendStatus(200).json(user);
-        } else {
-            next();
-        }
-    });
-};
-
 module.exports = {
     authMiddleware,
-    cachedUser,
     isUserAuthenticated
 }
