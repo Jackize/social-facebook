@@ -18,7 +18,7 @@ describe('Auth Authtenticate with accesstoken', () => {
         const res = await supertes(app)
             .post('/api/auth/authenticateToken')
             .set("Cookie", [accessTokenCookie])
-        expect(res.body).toStrictEqual({})
+        expect(res.body).toStrictEqual({ message: 'Token valid!!!', status: 200 })
     })
 
     it('it should authenticate not token and return 403', async () => {
