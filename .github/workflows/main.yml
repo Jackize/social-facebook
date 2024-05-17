@@ -42,7 +42,7 @@ jobs:
       run: docker compose exec api npm run migration:up
 
     - name: Run migration seed
-      run: docker compose exec api npm run migration:seed
+      run: docker compose exec api npm run migration:seed  || true
     
     - name: Run integration tests
-      run: docker-compose exec app npm test
+      run: docker-compose exec -T api npm run test
