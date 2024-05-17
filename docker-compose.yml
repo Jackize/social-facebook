@@ -40,6 +40,7 @@ services:
       - PORT=8080
       - NODE_ENV=development
       - SECRET=ecret
+      - JWT_EXPIRATION=1d
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/social
       - CLOUD_NAME='dpbhp5ury'
       - CLOUD_API_KEY='168921146788365'
