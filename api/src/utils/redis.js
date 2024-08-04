@@ -1,7 +1,8 @@
 const { createClient } = require("redis");
+const { REDIS_HOST } = require("./config");
 
 let client = createClient({
-  url: "redis://redis:6379",
+  url: `redis://${REDIS_HOST}:6379`,
 });
 
 const connectToRedis = async () => {

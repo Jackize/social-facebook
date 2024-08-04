@@ -15,6 +15,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const URL_FE = process.env.URL_FE;
 const URL_BE = process.env.URL_BE;
 const REDIS_PORT = process.env.REDIS_PORT;
+const REDIS_HOST = process.env.REDIS_HOST;
 
 module.exports = {
     DATABASE_URL,
@@ -29,5 +30,6 @@ module.exports = {
     URL_FE,
     URL_BE,
     REDIS_PORT,
+    REDIS_HOST,
     JWT_EXPIRATION
 }
