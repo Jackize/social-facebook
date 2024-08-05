@@ -7,7 +7,13 @@ const { error } = require('../utils/logger');
 
 const salt = bcrypt.genSaltSync(10);
 
-// handle register user endpoint api
+/**
+ * Register a new user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The registered user object.
+ */
 const register = async (req, res) => {
     try {
         const { username, password, name } = req.body;
@@ -103,6 +109,15 @@ const logout = (req, res) => {
  * @param {Object} req - The request object containing the cookies property.
  * @param {Object} res - The response object used to send the error response.
  * @param {Function} next - The next middleware function to be called if the token is valid.
+ */
+/**
+ * Authenticates the access token from the request cookies.
+ * If the token is valid, sets the user ID in the request object and sends a success response.
+ * If the token is missing or invalid, sends an error response.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The response object.
  */
 const authenticateToken = (req, res) => {
   const token = req.cookies.access_token;

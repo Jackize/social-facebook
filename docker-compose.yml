@@ -36,20 +36,8 @@ services:
       args: 
         - NODE_ENV=development
     container_name: api
-    environment:
-      - PORT=8080
-      - NODE_ENV=development
-      - SECRET=ecret
-      - JWT_EXPIRATION=1d
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/social
-      - CLOUD_NAME='dpbhp5ury'
-      - CLOUD_API_KEY='168921146788365'
-      - CLOUD_API_SECRET='xyGefjjzHufGEcQDwyyjNUrR1tk'
-      - OPENAI_API_KEY='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'
-      - GOOGLE_CLIENT_ID='454362861673-tbo8m2u7g0mi5ohend7t99esivot2t9a.apps.googleusercontent.com'
-      - GOOGLE_CLIENT_SECRET='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'
-      - URL_FE='http://localhost:8080'
-      - URL_BE='http://localhost:8080'
+    env_file:
+            - ./api/.env
     ports:
       - 8080:8080
     command: >
@@ -58,7 +46,19 @@ services:
       - ./api:/api
       - /api/node_modules
     depends_on:
-      - db    
+      - db
+  client:
+    build:
+      context: ./client
+    container_name: client
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/client
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

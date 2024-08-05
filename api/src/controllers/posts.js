@@ -3,6 +3,15 @@ const { error } = require('../utils/logger');
 const { Post, Relationship, User } = require("../models");
 const { handleDeleteImage } = require("../utils/handleCloudinary");
 
+/**
+ * Get posts based on the provided userId or the userId of the authenticated user.
+ * If userId is provided, it returns the posts of the specified user.
+ * If userId is not provided, it returns the posts of the users that the authenticated user follows, as well as their own posts.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The response object containing the posts.
+ */
 const getPosts = async (req, res) => {
     const userId = req.query.userId;
     try {
@@ -68,6 +77,17 @@ const getPosts = async (req, res) => {
     }
 };
 
+/**
+ * Add a new post.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.content - The content of the post.
+ * @param {string} req.body.img - The image URL of the post.
+ * @param {string} req.userId - The ID of the user creating the post.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the post is added.
+ */
 const addPost = async (req, res) => {
     try {
         const newPost = await Post.create({
@@ -82,6 +102,13 @@ const addPost = async (req, res) => {
     }
 };
 
+/**
+ * Deletes a post.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The response object.
+ */
 const deletePost = async (req, res) => {
     try {
         const post = await Post.findOne({ where: { id: req.params.id } });
@@ -102,6 +129,13 @@ const deletePost = async (req, res) => {
     }
 };
 
+/**
+ * Updates a post by its ID.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the post is updated.
+ */
 const updatePost = async (req, res) => {
     try {
         let post = await Post.findOne({

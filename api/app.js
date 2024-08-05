@@ -1,4 +1,4 @@
-const { URL_FE, SECRET, REDIS_PORT } = require("./src/utils/config");
+const { URL_FE, SECRET } = require("./src/utils/config");
 const express = require("express");
 const cors = require("cors");
 const session = require("cookie-session");

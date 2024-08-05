@@ -21,8 +21,8 @@ module.exports = {
       updatedAt: new Date()
     },
     {
-      name: 'hao',
-      username: 'hao',
+      name: 'John Doe',
+      username: 'John Doe',
       password: '$2a$10$46nlDZWl2LjKnC8Jmoc9huTPQxTxc3LDuB6CDZW0BQAnHHfY3LuG6',
       avatarPic: 'https://yt3.ggpht.com/1uBbLtImllQ4ZwojiH5oDGdnnOfoTLWDZb-IsGDpWSH1AxMlKJ7l361dNF9tf7Jdvuj8zajEyQ=s48-c-k-c0x00ffffff-no-nd-rj',
       createdAt: new Date(),

@@ -6,6 +6,14 @@ const { error } = require('../utils/logger');
 const { client } = require("../utils/redis");
 
 
+/**
+ * Retrieves all users based on the provided query parameters.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves with the retrieved users or an error.
+ * @throws {Error} - If an error occurs while retrieving the users.
+ */
 const getAllUsers = async (req, res) => {
     try {
         const where = {};
@@ -13,7 +21,7 @@ const getAllUsers = async (req, res) => {
         const cachedUsers = await client.get("allUsers")
         if (cachedUsers) {
             const users = JSON.parse(cachedUsers);
-            if (req.query) {
+            if (req.query && Object.keys(req.query).length > 0) {
                 const searchField = Object.keys(req.query)[0];
                 const filteredUsers = users.filter(user => {
                     const userValue = user[searchField];
@@ -21,14 +29,14 @@ const getAllUsers = async (req, res) => {
                 });
                 return res.status(200).json(filteredUsers);
             }
-            return res.status(200).json(JSON.parse(cachedUsers));
+            return res.status(200).json(users);
         }
 
         // Get all users from database
         // Get all columns of the User model
         const userColumns = Object.keys(User.getAttributes());
 
-        if (req.query) {
+        if (req.query && Object.keys(req.query).length > 0) {
             for (const key in req.query) {
                 // Check if query key exists in column table
                 if(!userColumns.includes(key)) {
@@ -46,7 +54,7 @@ const getAllUsers = async (req, res) => {
             where,
         });
         // Cache the data in Redis
-        await client.set('allUsers', JSON.stringify(users));
+        await client.set('allUsers', JSON.stringify(users), 'EX', 60);
         res.status(200).json(users);
     } catch (err) {
         error(`getAllUsers error`, err);
