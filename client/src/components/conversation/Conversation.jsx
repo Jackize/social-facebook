@@ -7,14 +7,13 @@ import {
     useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { noneAvatar } from "../../utils/image";
-import LogoGPT from "../../assets/logoGPT/LogoGPT";
-import { AuthContext } from "../../context/authContext";
 
 export default function Conversation({ conversation, checked }) {
     const theme = useTheme();
-    const { currentUser } = React.useContext(AuthContext);
+    const { user: currentUser } = useSelector((state) => state.user);
     const { darkMode } = React.useContext(DarkModeContext);
     const [user, setUser] = useState(
         currentUser?.id === conversation.user1Id ? conversation.user2 : conversation.user1

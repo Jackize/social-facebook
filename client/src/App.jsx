@@ -1,16 +1,18 @@
+import { QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createBrowserRouter,
-  RouterProvider,
   Navigate,
   Outlet,
+  RouterProvider,
 } from "react-router-dom";
+import { makeRequest } from "./axios";
+import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
 import Theme from "./components/Theme/Theme";
 import Layout from "./layout";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy, useEffect } from "react";
-import SuspenseLoading from "./components/suspenseLoading/SuspenseLoading";
-import { makeRequest } from "./axios";
-import { useSocketContext } from "./context/socketContext";
+import { emitEvent, socket, updateUserList } from "./redux/socketSlice";
+import queryClient from "./utils/query";
 
 const Home = lazy(() => import("./pages/home/Home"));
 const Login = lazy(() => import("./pages/login/Login"));
@@ -22,10 +24,9 @@ const Inbox = lazy(() => import("./pages/inbox/Inbox"));
 const Messages = lazy(() => import("./pages/inbox/Messages"));
 
 function App() {
-  const queryClient = new QueryClient();
-  const { socket } = useSocketContext()
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-  // clear token in localstorage whentoken is expired
   useEffect(() => {
     async function VerifyToken() {
       const res = await makeRequest.post('/auth/authenticateToken')
@@ -33,16 +34,20 @@ function App() {
         localStorage.removeItem('user')
       }
     }
-    VerifyToken()
-  }, [])
+    if (user !== null) {
+      VerifyToken()
+    }
+    socket?.on('userStatus', (userList) => {
+      dispatch(updateUserList(userList));
+    });
+  }, [user])
 
   const ProtectedRoute = ({ children }) => {
     // navigate page login when don't have token in localstorage
-    const user = localStorage.getItem("user")
     if (user === null) {
       return <Navigate to="/login" />;
     }
-    socket?.emit("userLogin", JSON.parse(user))
+    dispatch(emitEvent({ event: "userLogin", data: user }));
     return children;
   };
 

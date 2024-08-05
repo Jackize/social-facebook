@@ -1,13 +1,14 @@
-import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Menu, MenuItem, Skeleton, Typography } from "@mui/material";
 import { Comment, Favorite, FavoriteBorder, MoreVert } from "@mui/icons-material";
-import { Link } from "react-router-dom";
-import React from "react";
-import { CardStyle } from "./post.style";
+import { Avatar, CardActions, CardContent, CardHeader, CardMedia, Checkbox, IconButton, Menu, MenuItem, Skeleton, Typography } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
+import React from "react";
+import { Link } from "react-router-dom";
+import { CardStyle } from "./post.style";
 
-import { AuthContext } from "../../../context/authContext";
+import { useSelector } from "react-redux";
 import { makeRequest } from "../../../axios";
+import { socket } from "../../../redux/socketSlice";
 import { noneAvatar } from "../../../utils/image";
 const Post = ({ post, loading }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -19,8 +20,7 @@ const Post = ({ post, loading }) => {
         setAnchorEl(null);
     };
 
-    const { currentUser } = React.useContext(AuthContext);
-
+    const { user: currentUser } = useSelector((state) => state.user);
     const { isLoading, error, data } = useQuery(
         ["likes", post?.id],
         () =>
@@ -59,8 +59,10 @@ const Post = ({ post, loading }) => {
         }
     );
 
-    const handleLike = () => {
-        likeMutation.mutate(data.includes(currentUser?.id));
+    const handleLike = (postId, postOwnerId) => {
+        console.log(postId, postOwnerId, currentUser?.id);
+        socket.emit("likePost", { postId, postOwnerId, userId: currentUser?.id });
+        // likeMutation.mutate(data.includes(currentUser?.id));
     };
 
     const handleDelete = () => {
@@ -77,7 +79,7 @@ const Post = ({ post, loading }) => {
                             post && <Avatar aria-label="recipe" component={Link} to={`/profile/${post.userId}`} src={post.user.avatarPic ? post.user.avatarPic : noneAvatar} />
                         )
                     }
-                    action={loading ? null : post && <IconButton onClick={handleClick}>{post.userId === currentUser?.id ? <MoreVert /> : null}</IconButton>}
+                    action={post && <IconButton onClick={handleClick}>{post.userId === currentUser?.id ? <MoreVert /> : null}</IconButton>}
                     title={loading ? <Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} /> : post?.user.name}
                     subheader={loading ? <Skeleton animation="wave" height={10} width="40%" /> : moment(post?.createdAt).fromNow()}
                 />
@@ -99,7 +101,7 @@ const Post = ({ post, loading }) => {
                 {post?.img && <CardMedia component="img" height="20%" image={post.img} alt={post.img} />}
                 <CardActions disableSpacing>
                     <IconButton aria-label="add to favorites">
-                        {isLoading ? null : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: "red" }} />} checked={data.includes(currentUser?.id)} onChange={handleLike} />}
+                        {isLoading ? null : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: "red" }} />} checked={data.includes(currentUser?.id)} onChange={() => handleLike(post?.id, post?.userId)} />}
                     </IconButton>
                     <IconButton aria-label="comment">{isLoading ? null : <Comment />}</IconButton>
                 </CardActions>

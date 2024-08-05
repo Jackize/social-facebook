@@ -1,24 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
+import { Provider } from 'react-redux';
 import App from './App';
 import { DarkModeContextProvider } from './context/darkModeContext';
-import { HelmetProvider } from 'react-helmet-async';
 import { NotificationProvider } from './context/notificationContext';
-import { AuthContextProvider } from './context/authContext';
 import SocketContextProider from './context/socketContext';
+import store from './redux/store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <HelmetProvider>
-            <DarkModeContextProvider>
-                <NotificationProvider>
-                    <SocketContextProider>
-                        <AuthContextProvider>
+            <Provider store={store}>
+                <DarkModeContextProvider>
+                    <NotificationProvider>
+                        <SocketContextProider>
                             <App />
-                        </AuthContextProvider>
-                    </SocketContextProider>
-                </NotificationProvider>
-            </DarkModeContextProvider>
+                        </SocketContextProider>
+                    </NotificationProvider>
+                </DarkModeContextProvider>
+            </Provider>
         </HelmetProvider>
     </React.StrictMode>
 );

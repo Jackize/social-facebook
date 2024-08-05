@@ -3,21 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { makeRequest } from "../../axios";
+import { socket } from "../../redux/socketSlice";
 import { noneAvatar } from "../../utils/image";
 import AddFriend from "./addFriend/AddFriend";
 import { BoxStyle, StyledBadgeOffline, StyledBadgeOnline } from "./rightBar.style";
-import { useSocketContext } from "../../context/socketContext";
 
 const RightBar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { socket } = useSocketContext()
     const [userOnline, setUserOnline] = useState([])
     const { isLoading, error, data } = useQuery(
         ["friends"],
         () =>
             makeRequest.get("/users/friends").then((res) => {
-                socket?.emit('getOnline', res.data)
+                socket?.emit('getFriendOfUser', res.data)
                 return res.data;
             }),
         {
@@ -30,9 +29,9 @@ const RightBar = () => {
         socket?.on('receiverOnline', async (receiverOnline) => {
             setUserOnline(receiverOnline)
         })
-        return () => {
-            socket.off('receiverOnline')
-        }
+        socket?.on('userStatus', (userList) => {
+            setUserOnline(userList)
+        })
     }, [])
 
     const handleCreateConversation = async (e) => {

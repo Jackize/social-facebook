@@ -1,85 +1,49 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/authContext";
-import "./login.scss";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
 import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
-import { URL_BE } from "../../utils/config";
+import GoogleIcon from "@mui/icons-material/Google";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import SEO from "../../components/seo/SEO";
+import { loginUser } from "../../redux/userSlice";
+import "./login.scss";
 const Login = () => {
     const [values, setValues] = React.useState({
         username: "",
         password: "",
     });
-    const [err, setErr] = React.useState(null);
+    const { user, loading, error } = useSelector((state) => state.user);
     const navigate = useNavigate();
-    const { login } = useAuthContext();
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        if (localStorage.getItem('user')) {
+        if (user !== null) {
             navigate('/')
         }
-    }, [])
-    
+    }, [user])
+
     const handleChange = (e) => {
-        if (err) {
-            setErr(null);
-        }
         setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            let res = await login(values);
-            if (res.status !== 200) {
-                setErr(res?.response?.data)
-            } else {
-                navigate("/");
-            }
-        } catch (error) {
-            setErr(error.response.data);
+        dispatch(loginUser(values));
+        if (!error && !loading && user) {
+            navigate("/");
         }
     };
 
     const redirectToGoogleSSO = async () => {
-        let timer = null;
-        const googleLoginUrl = `${URL_BE}auth/login/google`;
-        const newWindow = window.open(googleLoginUrl, "_blank", "width=500,height=600");
-        if (newWindow) {
-            timer = setInterval(async () => {
-                if (newWindow.closed) {
-                    await login(null, true);
-                    navigate("/");
-                    if (timer) clearInterval(timer);
-                }
-            }, 500);
-        }
+
     };
     const redirectToFacebookSSO = async () => {
-        let timer = null;
-        const facebookLoginUrl = `${URL_BE}auth/login/facebook`;
-        const newWindow = window.open(facebookLoginUrl, "_blank", "width=500,height=600");
-        if (newWindow) {
-            timer = setInterval(async () => {
-                if (newWindow.closed) {
-                    await login(null, true);
-                    navigate("/");
-                    if (timer) clearInterval(timer);
-                }
-            }, 500);
-        }
     };
 
     const handleKeyDown = async (e) => {
         if (e.key === "Enter") {
-            try {
-                await login(values);
-                navigate("/");
-            } catch (error) {
-                setErr(error.response.data);
-            }
+            dispatch(loginUser(values));
+            navigate("/");
         }
     };
     return (
@@ -152,8 +116,8 @@ const Login = () => {
                             }}>
                             <TextField label="username" type="text" placeholder="Username" name="username" onChange={handleChange} />
                             <TextField label="password" type="password" placeholder="Password" name="password" onChange={handleChange} autoComplete="on" onKeyDown={handleKeyDown} />
-                            {err &&
-                                <Typography variant="h6" color={"red"}>{err}</Typography>
+                            {error &&
+                                <Typography variant="h6" color={"red"}>{error}</Typography>
                             }
                             <Button variant="contained" onClick={handleLogin} sx={{ color: "white", backgroundColor: "#938eef" }}>
                                 Login

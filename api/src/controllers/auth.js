@@ -17,19 +17,19 @@ const salt = bcrypt.genSaltSync(10);
 const register = async (req, res) => {
     try {
         const { username, password, name } = req.body;
-        
+
         // Validate input data
         if (!username || !password || !name) {
             return res.status(400).json('Missing required fields');
         }
-        
+
         const [user, created] = await User.findOrCreate({ where: { username }, defaults: { password: bcrypt.hashSync(password, salt), name } });
         if (!created) {
             return res.status(409).json('User already exists');
         }
-        
+
         res.status(200).json(user);
-    
+
     } catch (err) {
         error('register error', err)
         res.status(500).json(err);
@@ -67,9 +67,8 @@ const login = async (req, res) => {
             });
             const { password: userPassword, ...other } = user;
             return res
-                .cookie("access_token", token, { httpOnly: true, sameSite: true, expiresIn: JWT_EXPIRATION })
                 .status(200)
-                .json({ ...other });
+                .json({ user: other, token });
         }
         return res.status(404).json('User not found');
     } catch (err) {
@@ -90,7 +89,7 @@ const login = async (req, res) => {
 const logout = (req, res) => {
     try {
         if (req.cookies.access_token) {
-            res.clearCookie('access_token', {
+            res.clearCookie('token', {
                 secure: true,
                 sameSite: 'none',
             })
@@ -120,19 +119,19 @@ const logout = (req, res) => {
  * @returns {Object} - The response object.
  */
 const authenticateToken = (req, res) => {
-  const token = req.cookies.access_token;
-  
-  if (!token) {
-    return res.status(403).json('Require access token');
-  }
-  
-  try {
-    const user = jwt.verify(token, SECRET);
-    req.userId = user.id;
-    res.json({ message: 'Token valid!!!', status: 200 })
-  } catch (err) {
-    return res.status(500).json('Verify token error');
-  }
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.status(403).json('Require access token');
+    }
+
+    try {
+        const user = jwt.verify(token, SECRET);
+        req.userId = user.id;
+        res.json({ message: 'Token valid!!!', status: 200 })
+    } catch (err) {
+        return res.status(401).json({ err: err.message });
+    }
 }
 
 module.exports = { register, login, logout, authenticateToken };

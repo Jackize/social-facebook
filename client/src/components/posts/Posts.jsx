@@ -1,9 +1,7 @@
-import React from "react";
-import Post from "./post/Post";
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { makeRequest } from "../../axios";
-import { useSocketContext } from "../../context/socketContext";
-import { useAuthContext } from "../../context/authContext";
+import Post from "./post/Post";
 
 const Posts = ({ userId }) => {
   const { isLoading, error, data } = useQuery(["posts"], async () => {

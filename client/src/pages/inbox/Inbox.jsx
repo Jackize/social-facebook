@@ -1,25 +1,26 @@
 import { Avatar, Box, Divider, List, Paper, Stack, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import LogoPhoneCall from '../../assets/phoneCall/telephone-call.png';
 import { makeRequest } from "../../axios";
 import Conversation from "../../components/conversation/Conversation";
-import Message from "./Messages";
-import { AuthContext } from "../../context/authContext";
 import SEO from "../../components/seo/SEO";
 import { useSocketContext } from "../../context/socketContext";
+import { socket } from "../../redux/socketSlice";
 import Header from "./Header";
 import Input from "./Input";
-import LogoPhoneCall from '../../assets/phoneCall/telephone-call.png';
+import Message from "./Messages";
 
 export default function Inbox() {
-    const { currentUser } = React.useContext(AuthContext);
+    const { user } = useSelector((state) => state.user);
     const [getMessages, setGetMessages] = useState([]);
     const [sendMessage, setSendMessage] = useState("");
     const [dataConversations, setDataConversations] = useState([]);
     const [userInfo, setUserInfo] = useState({});
     const navigate = useNavigate();
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
-    const { socket, calling, setRinging, setOffer, setCalling, myVideo, userVideo, createAnswer, rejectMeeting, endMeeting, ringing, setConversationId, conversationId, pc, audio } = useSocketContext()
+    const { calling, setRinging, setOffer, setCalling, myVideo, userVideo, createAnswer, rejectMeeting, endMeeting, ringing, setConversationId, conversationId, pc, audio } = useSocketContext()
 
     useEffect(() => {
 
@@ -92,7 +93,7 @@ export default function Inbox() {
                 // handle setUserInfo again when user reload page /inbox/{id}
                 if (convers.length > 0 && conversation_id > 0) {
                     const room = convers.filter(con => con.id === conversation_id)
-                    const myFriend = room[0].user1Id === currentUser.id ? room[0].user2 : room[0].user1
+                    const myFriend = room[0].user1Id === user.id ? room[0].user2 : room[0].user1
                     setUserInfo(myFriend)
                 }
             } catch (error) {
@@ -114,7 +115,7 @@ export default function Inbox() {
         };
     }, []);
 
-    // handle when state [conversation_id, currentUser?.id] change
+    // handle when state [conversation_id, user?.id] change
     useEffect(() => {
         // Get messages when users click on conversation
         const getMessages = async (roomId) => {
@@ -128,14 +129,14 @@ export default function Inbox() {
         };
         if (conversation_id > 0) {
             getMessages(conversation_id);
-            socket?.emit("joinRoom", conversation_id, currentUser?.id);
+            socket?.emit("joinRoom", conversation_id, user?.id);
         }
         if (dataConversations.length > 0 && conversation_id) {
             const convertionId = dataConversations.find((conversation) => conversation.id === conversation_id);
-            const infoReceiver = convertionId?.user1Id === currentUser.id ? convertionId?.user2 : convertionId?.user1;
+            const infoReceiver = convertionId?.user1Id === user.id ? convertionId?.user2 : convertionId?.user1;
             infoReceiver && setUserInfo(infoReceiver);
         }
-    }, [conversation_id, currentUser?.id]);
+    }, [conversation_id, user?.id]);
 
     // Get messages when users click on conversation
     const handleSetUserJoinRoom = async (roomId) => {
@@ -144,7 +145,7 @@ export default function Inbox() {
                 setConversationId(roomId);
                 setSendMessage("");
             } else if (roomId !== conversationId && roomId > 0) {
-                socket?.emit("leaveRoom", conversationId, currentUser.id);
+                socket?.emit("leaveRoom", conversationId, user.id);
                 await getMessages();
             }
         } else {
@@ -193,7 +194,7 @@ export default function Inbox() {
 
     const handleNavigateProfilePage = () => {
         const infoConversation = dataConversations.filter((conversation) => conversation.id === conversation_id)[0];
-        const profileUserId = infoConversation.user1Id === currentUser.id ? infoConversation.user2Id : infoConversation.user1Id;
+        const profileUserId = infoConversation.user1Id === user.id ? infoConversation.user2Id : infoConversation.user1Id;
         navigate(`/profile/${profileUserId}`);
     }
 

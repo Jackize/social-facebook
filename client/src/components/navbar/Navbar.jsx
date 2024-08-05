@@ -1,20 +1,33 @@
-import { AppBar, Avatar, Badge, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
-import React from "react";
-import { Icons, Left, Middle, Mobile, Right, Search, SearchIconWrapper, StyledInputBase, StyledToolBar } from "./Navbar.style";
 import { Home, Inbox, Mail, Notifications, OndemandVideo, Store } from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import { AppBar, Avatar, Badge, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/authContext";
+import { addNotification } from "../../redux/notificationSlice";
+import { socket } from "../../redux/socketSlice";
+import { logoutUser } from "../../redux/userSlice";
 import { noneAvatar } from "../../utils/image";
-import { useSocketContext } from "../../context/socketContext";
+import { Icons, Left, Middle, Mobile, Right, Search, SearchIconWrapper, StyledInputBase, StyledToolBar } from "./Navbar.style";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const { currentUser, logout } = React.useContext(AuthContext);
-    const { socket } = useSocketContext()
+    const { user, error } = useSelector((state) => state.user);
+    console.log("🚀 ~ Navbar ~ user:", user)
+    const notification = useSelector((state) => state.notification);
+    console.log("🚀 ~ Navbar ~ notifications:", notification)
+    const dispatch = useDispatch();
+
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        socket.on("notification", (data) => {
+            dispatch(addNotification({ ...data, currentUserId: user?.id }));
+        })
+    }, [socket])
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -24,9 +37,7 @@ const Navbar = () => {
     const theme = useTheme();
 
     const handleLogout = () => {
-        socket?.emit("userLogout", currentUser)
-        logout()
-        socket?.close()
+        dispatch(logoutUser(user))
         navigate("/login");
     }
     return (
@@ -58,15 +69,19 @@ const Navbar = () => {
                             </Badge>
                         </IconButton>
                         <IconButton sx={{ color: theme.palette.text.primary }}>
-                            <Badge badgeContent={2} color="error">
+                            {/* {notification.length > 0 && <Badge badgeContent={notification.length} color="error">
+                                <Notifications />
+                            </Badge>
+                            } */}
+                            <Badge badgeContent={notification.length} color={notification.length > 0 ? 'error' : 'default'}>
                                 <Notifications />
                             </Badge>
                         </IconButton>
                         <Avatar
                             sx={{ width: 30, height: 30 }}
-                            src={currentUser?.avatarPic ? currentUser.avatarPic : noneAvatar}
+                            src={user?.avatarPic ? user.avatarPic : noneAvatar}
                             id="avatar-menu"
-                            alt={currentUser?.name || 'noneAvatar'}
+                            alt={user?.name || 'noneAvatar'}
                             aria-controls={open ? "menu" : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? "true" : undefined}
@@ -93,8 +108,8 @@ const Navbar = () => {
                 MenuListProps={{
                     "aria-labelledby": "avatar-menu",
                 }}>
-                <MenuItem>{currentUser?.name}</MenuItem>
-                <MenuItem component={Link} to={`/profile/${currentUser?.id}`}>
+                <MenuItem>{user?.name}</MenuItem>
+                <MenuItem component={Link} to={`/profile/${user?.id}`}>
                     My account
                 </MenuItem>
                 {/* <MenuItem onClick={handleLogout} component={Link} to="/login"> */}
