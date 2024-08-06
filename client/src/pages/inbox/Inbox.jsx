@@ -110,7 +110,6 @@ export default function Inbox() {
             socket?.off('reject')
             socket?.off('endMeeting')
             socket?.off("new message")
-            socket?.off("user joined")
             socket?.off("user left")
         };
     }, []);
@@ -122,7 +121,6 @@ export default function Inbox() {
             try {
                 const mess = await makeRequest.get(`/messages/${roomId}`);
                 setGetMessages(mess.data);
-                setConversationId(roomId);
             } catch (error) {
                 console.log(error);
             }
@@ -140,6 +138,17 @@ export default function Inbox() {
 
     // Get messages when users click on conversation
     const handleSetUserJoinRoom = async (roomId) => {
+        async function getMessages() {
+            try {
+                const mess = await makeRequest.get(`/messages/${roomId}`);
+                setGetMessages(mess.data);
+                setConversationId(roomId);
+                setSendMessage("");
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         if (roomId !== 0) {
             if (!conversationId) {
                 setConversationId(roomId);
@@ -154,21 +163,13 @@ export default function Inbox() {
             setUserInfo({})
         }
 
-        async function getMessages() {
-            try {
-                const mess = await makeRequest.get(`/messages/${roomId}`);
-                setGetMessages(mess.data);
-                setConversationId(roomId);
-                setSendMessage("");
-            } catch (error) {
-                console.log(error);
-            }
-        }
+
     };
     // Handle send message
     const handleSendMessage = async (e) => {
         e.preventDefault();
         try {
+            console.log(userInfo);
             const newMessage = {
                 content: sendMessage,
                 conversation_id,
@@ -176,7 +177,7 @@ export default function Inbox() {
             try {
                 const res = await makeRequest.post("/messages", newMessage);
                 setGetMessages([...getMessages, res.data]);
-                socket?.emit("sendMessage", res.data);
+                socket?.emit("sendMessage", { ...res.data, senderName: user.username, receiverId: userInfo.id });
                 setSendMessage("");
             } catch (error) {
                 console.log(error);

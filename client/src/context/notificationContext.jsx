@@ -16,11 +16,16 @@ export const NotificationProvider = ({ children }) => {
         const title = res.response ? res.response.status + "-" + res.response.statusText : res.status + "-" + res.statusText;
         setOpenSnackbar(true);
         if (res.status === 200) {
-            setMessage((prev) => ({ ...prev, title: title, message: mess? mess : res.data, type: "success" }));
+            setMessage((prev) => ({ ...prev, title: title, message: mess ? mess : res.data, type: "success" }));
         } else {
             setMessage((prev) => ({ ...prev, title: title, message: mess ? mess : res.response.data, type: "error" }));
         }
     };
+
+    const handleNotification = (mess) => {
+        setOpenSnackbar(true);
+        setMessage((prev) => ({ ...prev, title: "Notification", message: mess, type: "info" }));
+    }
 
     const handleClose = (event, reason) => {
         if (reason === "clickaway") {
@@ -39,7 +44,7 @@ export const NotificationProvider = ({ children }) => {
         setloading(progress);
     };
     return (
-        <NotificationContext.Provider value={{ handeMessage, handleLoading }}>
+        <NotificationContext.Provider value={{ handeMessage, handleLoading, handleNotification }}>
             {message.message && (
                 <Snackbar open={openSnackbar} autoHideDuration={3000} anchorOrigin={{ vertical: "top", horizontal: "center" }} onClose={handleClose}>
                     {message.type && (

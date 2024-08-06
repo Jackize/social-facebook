@@ -1,24 +1,23 @@
 import { Instagram, LinkedIn, Twitter, YouTube } from "@mui/icons-material";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import React, { useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-import Posts from "../../components/posts/Posts";
-import { AvatarPic, CoverPic, InfoUser } from "./profile.style";
-import { AuthContext } from "../../context/authContext";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { makeRequest } from "../../axios";
 import ModalUpdate from "../../components/modalUpdate/ModalUpdate";
-import { noneAvatar, noneCoverPic } from "../../utils/image";
+import Posts from "../../components/posts/Posts";
 import SEO from "../../components/seo/SEO";
 import { NotificationContext } from "../../context/notificationContext";
+import { noneAvatar, noneCoverPic } from "../../utils/image";
+import { AvatarPic, CoverPic, InfoUser } from "./profile.style";
 
 const Profile = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const { currentUser } = React.useContext(AuthContext);
+    const { user: currentUser } = useSelector((state) => state.user);
     const { handeMessage } = useContext(NotificationContext);
     const navigate = useNavigate();
 
@@ -86,10 +85,10 @@ const Profile = () => {
     };
     return (
         <>
-            <SEO 
-            description={data?.name + " profile"}
-            title={data?.name}            
-        />
+            <SEO
+                description={data?.name + " profile"}
+                title={data?.name}
+            />
             <Box flex={4} p={10}>
                 {error ? (
                     "Something went wrong!"

@@ -47,8 +47,8 @@ const getConversationByCookie = async (req, res) => {
                 ]
             },
             include: [
-                { model: User, as: 'user1', attributes: ['username', 'avatarPic'] },
-                { model: User, as: 'user2', attributes: ['username', 'avatarPic'] },
+                { model: User, as: 'user1', attributes: ['id', 'username', 'avatarPic'] },
+                { model: User, as: 'user2', attributes: ['id', 'username', 'avatarPic'] },
             ],
         })
         if (!conversation) return res.status(404).json('Conversation not found')
@@ -66,7 +66,7 @@ const getConversationByUserId = async (req, res) => {
     try {
         // check if conversationId is in cache
         const cachedConversationId = await client.get(`conversation:${conversationId}`)
-        if(cachedConversationId) {
+        if (cachedConversationId) {
             return res.status(200).json(JSON.parse(cachedConversationId))
         }
         const conversation = await Conversation.findOne({

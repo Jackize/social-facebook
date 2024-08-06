@@ -1,11 +1,6 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
-import { SOCKET_SERVER } from "../utils/config";
-
+import React, { createContext, useContext, useRef, useState } from "react";
+import { socket } from "../redux/socketSlice";
 export const SocketContext = createContext();
-let socket = io(SOCKET_SERVER, {
-    transports: ["websocket"],
-});
 
 const configuration = {
     iceServers: [

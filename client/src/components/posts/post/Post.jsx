@@ -37,9 +37,13 @@ const Post = ({ post, loading }) => {
     const queryClient = useQueryClient();
 
     const likeMutation = useMutation(
-        (liked) => {
+        async (liked) => {
             if (liked) return makeRequest.delete("/likes?postId=" + post.id);
-            return makeRequest.post("/likes", { postId: post.id });
+            const res = await makeRequest.post("/likes", { postId: post.id });
+            if (res.status === 200) {
+                socket.emit("likePost", { postId: post?.id, postOwnerId: post?.userId, userId: currentUser?.id });
+            }
+            return res.data;
         },
         {
             onSuccess: () => {
@@ -59,10 +63,10 @@ const Post = ({ post, loading }) => {
         }
     );
 
-    const handleLike = (postId, postOwnerId) => {
-        console.log(postId, postOwnerId, currentUser?.id);
-        socket.emit("likePost", { postId, postOwnerId, userId: currentUser?.id });
-        // likeMutation.mutate(data.includes(currentUser?.id));
+    const handleLike = () => {
+        // console.log(postId, postOwnerId, currentUser?.id);
+        // socket.emit("likePost", { postId, postOwnerId, userId: currentUser?.id });
+        likeMutation.mutate(data.includes(currentUser?.id));
     };
 
     const handleDelete = () => {
@@ -101,7 +105,7 @@ const Post = ({ post, loading }) => {
                 {post?.img && <CardMedia component="img" height="20%" image={post.img} alt={post.img} />}
                 <CardActions disableSpacing>
                     <IconButton aria-label="add to favorites">
-                        {isLoading ? null : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: "red" }} />} checked={data.includes(currentUser?.id)} onChange={() => handleLike(post?.id, post?.userId)} />}
+                        {isLoading ? null : <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite sx={{ color: "red" }} />} checked={data.includes(currentUser?.id)} onChange={handleLike} />}
                     </IconButton>
                     <IconButton aria-label="comment">{isLoading ? null : <Comment />}</IconButton>
                 </CardActions>

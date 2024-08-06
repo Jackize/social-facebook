@@ -6,19 +6,19 @@ export const createNotification = (type, payload) => {
     case NotificationTypes.ADD_FRIEND:
       return {
         type,
-        message: `${payload.userName} sent you a friend request.`,
+        message: `${payload.senderName} sent you a friend request.`,
         data: payload,
       };
     case NotificationTypes.LIKE_POST:
       return {
         type,
-        message: `${payload.userName} liked your post.`,
+        message: `${payload.senderName} liked your post.`,
         data: payload,
       };
     case NotificationTypes.CHAT:
       return {
         type,
-        message: `${payload.userName} sent you a message.`,
+        message: `${payload.senderName} sent you a message.`,
         data: payload,
       };
     default:
@@ -36,19 +36,17 @@ const initialState = {
 
 const notificationSlice = createSlice({
   name: 'notifications',
-  initialState : [],
+  initialState: [],
   reducers: {
     addNotification: (state, action) => {
-      if (action.payload.data.postOwnerId === action.payload.currentUserId) {
-        if (state.length > 0) {
-          const index = state.findIndex((n) => n.data.id === action.payload.data.id);
-          if (index !== -1) {
-            state[index] = createNotification(action.payload.type, action.payload.data);
-            return;
-          }
-        } else {
-          state.push(createNotification(action.payload.type, action.payload.data));
+      if (state.length > 0) {
+        const index = state.findIndex((n) => n.data.id === action.payload.data.id);
+        if (index !== -1) {
+          state[index] = createNotification(action.payload.type, action.payload.data);
+          return;
         }
+      } else {
+        state.push(createNotification(action.payload.type, action.payload.data));
       }
     },
     clearNotifications: (state) => {

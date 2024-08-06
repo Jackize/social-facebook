@@ -44,16 +44,8 @@ io.on("connection", (socket) => {
         if (postOwner) {
             io.to(postOwner.socketId).emit('notification', {
                 type: 'LIKE_POST',
-                data: { id: v4(), userId, postId, userName: userNameLikePost?.username, postOwnerId }
+                data: { id: v4(), userId, postId, senderName: userNameLikePost?.username, postOwnerId }
             });
-        } else {
-            const user = await User.findOne({ where: { id: postOwnerId } });
-            if (user) {
-                io.to(socket.id).emit('notification', {
-                    type: 'LIKE_POST',
-                    data: { userId, postId, postOwnerId }
-                });
-            }
         }
     });
 
@@ -74,7 +66,14 @@ io.on("connection", (socket) => {
     // Handle send message event
     socket.on("sendMessage", (message) => {
         if (!message) return
-        socket.to(message.conversationId).emit("new message", message);
+        const receiver = userList.find(u => u.id === message.receiverId);
+        if (receiver) {
+            socket.to(message.conversationId).emit("new message", message);
+            io.to(receiver.socketId).emit("notification", {
+                type: "CHAT",
+                data: message,
+            });
+        }
     });
 
     socket.on('offer', (roomId, offer) => {

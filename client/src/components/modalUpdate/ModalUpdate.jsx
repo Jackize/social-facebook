@@ -9,22 +9,23 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
-import { style } from "../modalUpPost/ModalUpPost.style";
-import { makeRequest, uploadImage } from "../../axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { makeRequest, uploadImage } from "../../axios";
+import { style } from "../modalUpPost/ModalUpPost.style";
 
-import { AuthContext } from "../../context/authContext";
-import { styleImage } from "./modalUpdate.style";
+import { useSelector } from "react-redux";
 import { NotificationContext } from "../../context/notificationContext";
+import { styleImage } from "./modalUpdate.style";
 
 const ModalUpdate = ({ open, handleClose }) => {
   const theme = useTheme();
   const [avatarFile, setAvatarFile] = React.useState(null);
   const [coverFile, setCoverFile] = React.useState(null);
   const { handleLoading, handeMessage } = React.useContext(NotificationContext);
+  const { user: currentUser } = useSelector((state) => state.user);
 
-  const { currentUser, handleResetUser } = React.useContext(AuthContext);
+
 
   const handleAvatarChange = (event) => {
     setAvatarFile(event.target.files[0]);
@@ -40,7 +41,7 @@ const ModalUpdate = ({ open, handleClose }) => {
     async (updateUser) => {
       makeRequest.put("/users", updateUser)
         .then((res) => {
-          handleResetUser(res.data)
+          // handleResetUser(res.data)
           handeMessage(res, "Change successfully");
         })
         .catch((err) => {

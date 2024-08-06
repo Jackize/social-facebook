@@ -2,9 +2,10 @@ import { Home, Inbox, Mail, Notifications, OndemandVideo, Store } from "@mui/ico
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { AppBar, Avatar, Badge, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NotificationContext } from "../../context/notificationContext";
 import { addNotification } from "../../redux/notificationSlice";
 import { socket } from "../../redux/socketSlice";
 import { logoutUser } from "../../redux/userSlice";
@@ -14,9 +15,8 @@ import { Icons, Left, Middle, Mobile, Right, Search, SearchIconWrapper, StyledIn
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const { user, error } = useSelector((state) => state.user);
-    console.log("🚀 ~ Navbar ~ user:", user)
+    const { handleNotification } = useContext(NotificationContext);
     const notification = useSelector((state) => state.notification);
-    console.log("🚀 ~ Navbar ~ notifications:", notification)
     const dispatch = useDispatch();
 
     const open = Boolean(anchorEl);
@@ -24,9 +24,25 @@ const Navbar = () => {
 
     useEffect(() => {
         socket.on("notification", (data) => {
-            dispatch(addNotification({ ...data, currentUserId: user?.id }));
+            if (data.type === 'LIKE_POST') {
+                if (user.id === data.data.postOwnerId) {
+                    dispatch(addNotification(data));
+                }
+            }
+            if (data.type === 'CHAT') {
+                if (user.id === data.data.receiverId) {
+                    dispatch(addNotification(data));
+                }
+            }
+
         })
     }, [socket])
+
+    useEffect(() => {
+        if (notification.length > 0) {
+            handleNotification(notification[notification.length - 1]?.message);
+        }
+    }, [notification])
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -64,15 +80,11 @@ const Navbar = () => {
                 <Right>
                     <Icons>
                         <IconButton sx={{ color: theme.palette.text.primary }} onClick={() => navigate('/inbox')}>
-                            <Badge badgeContent={4} color="error">
+                            <Badge badgeContent={notification.filter(n => n.type === 'CHAT').length} color={notification.filter(n => n.type === 'CHAT').length > 0 ? 'error' : 'default'}>
                                 <Mail />
                             </Badge>
                         </IconButton>
-                        <IconButton sx={{ color: theme.palette.text.primary }}>
-                            {/* {notification.length > 0 && <Badge badgeContent={notification.length} color="error">
-                                <Notifications />
-                            </Badge>
-                            } */}
+                        <IconButton tton sx={{ color: theme.palette.text.primary }}>
                             <Badge badgeContent={notification.length} color={notification.length > 0 ? 'error' : 'default'}>
                                 <Notifications />
                             </Badge>
