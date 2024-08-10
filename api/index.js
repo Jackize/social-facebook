@@ -3,7 +3,6 @@ const { createServer } = require("http");
 const { PORT } = require("./src/utils/config");
 const { info } = require("./src/utils/logger");
 const { Server } = require("socket.io");
-const { initialSocket } = require("./src/socket");
 const { User } = require("./src/models");
 const { v4 } = require("uuid");
 const server = createServer(app);
@@ -13,10 +12,10 @@ const io = new Server(server, {
         credentials: true,
         optionsSuccessStatus: 200,
     },
-    // secure: true
 });
 
 let userList = []
+let rooms = []
 io.on("connection", (socket) => {
     // when user login
     socket.on("userLogin", (user) => {
@@ -30,7 +29,6 @@ io.on("connection", (socket) => {
 
     // listen get user online
     socket.on('getFriendOfUser', (users) => {
-        console.log("🚀 ~ socket.on ~ getFriendOfUser:", users)
         if (!users) return
         let userOnline = userList.filter(user => users.some(userGet => userGet.id === user.id))
         socket.emit('receiverOnline', userOnline)
@@ -50,17 +48,34 @@ io.on("connection", (socket) => {
     });
 
     // Handle join room event
-    socket.on("joinRoom", (roomId, userId) => {
-        if (!roomId || !userId) return
-        socket.join(roomId);
-        socket.to(roomId).emit("user joined", userId);
+    socket.on("joinRoom", ({ conversationId, userId, peerId }) => {
+        if (!conversationId || !userId || !peerId) return
+        if (!rooms[conversationId]) rooms[conversationId] = []
+        const user = userList.find(u => u.id === userId);
+        if (!rooms[conversationId].some(u => u.peerId === peerId)) {
+            rooms[conversationId].push({ peerId, userId, socketId: user.socketId });
+            socket.join(conversationId);
+            // socket.to(conversationId).emit("user-joined", { peerId });
+            // socket.emit("get-users", {
+            //     conversationId,
+            //     participants: rooms[conversationId]
+            // });
+        }
+        console.log(rooms)
+        socket.on("disconnect", () => {
+            console.log("user left the room", peerId);
+            rooms[conversationId] = rooms[conversationId].filter(u => u.peerId !== peerId);
+            socket.to(conversationId).emit("user-disconnected", peerId);
+        });
     });
 
     // Handle leave room event
-    socket.on("leaveRoom", (roomId, userId) => {
-        if (!roomId || !userId) return
+    socket.on("leaveRoom", ({ conservationId, userId, peerId }) => {
+        if (!conservationId || !userId || !peerId) return
+        rooms[conservationId] = rooms[conservationId].filter(u => u.userId !== userId);
+        console.log(rooms)
         socket.leave(roomId);
-        socket.to(roomId).emit("user left", userId, roomId);
+        socket.to(roomId).emit("user left", userId, roomId, peerId);
     });
 
     // Handle send message event
@@ -76,12 +91,15 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on('offer', (roomId, offer) => {
-        if (!roomId || !offer) return
-        console.log('on offer', roomId);
-        // Broadcast the offer to other users in the room
-        // socket.to(data.roomId).emit('offer', data.offer);
-        socket.to(roomId).emit('offer', offer);
+    socket.on('offer', ({ conversationId, peerId, userId }) => {
+        if (!conversationId || !peerId || !userId) return
+        const otherUser = userList.filter(u => u.id !== userId);
+        if (rooms[conversationId].some(u => u.peerId === peerId) && otherUser.length === 1) {
+            console.log('emit offer')
+            socket.join(conversationId);
+            // send event call to conversationId with peerId of user2
+            socket.to(conversationId).emit('call', { conversationId, peerId });
+        }
     });
 
     socket.on('answer', (roomId, answer) => {

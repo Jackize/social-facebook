@@ -6,6 +6,7 @@ import LogoPhoneCall from '../../assets/phoneCall/telephone-call.png';
 import { makeRequest } from "../../axios";
 import Conversation from "../../components/conversation/Conversation";
 import SEO from "../../components/seo/SEO";
+import VideoPlayer from "../../components/videoPlayer/VideoPlayer";
 import { useSocketContext } from "../../context/socketContext";
 import { socket } from "../../redux/socketSlice";
 import Header from "./Header";
@@ -20,8 +21,7 @@ export default function Inbox() {
     const [userInfo, setUserInfo] = useState({});
     const navigate = useNavigate();
     const conversation_id = parseInt(useLocation().pathname.split("/")[2]);
-    const { calling, setRinging, setOffer, setCalling, myVideo, userVideo, createAnswer, rejectMeeting, endMeeting, ringing, setConversationId, conversationId, pc, audio } = useSocketContext()
-
+    const { calling, setRinging, setOffer, setCalling, myVideo, userVideo, createAnswer, rejectMeeting, endMeeting, ringing, setConversationId, conversationId, pc, audio, peer, stream, peers } = useSocketContext()
     useEffect(() => {
 
         socket?.on("new message", async (message) => {
@@ -41,11 +41,6 @@ export default function Inbox() {
             setRinging(true)
             audio.play()
         }
-
-        socket?.on('offer', async (offer) => {
-            setOffer(offer)
-            onCall()
-        })
 
         socket?.on('reject', async (isCancle) => {
             setRejected(isTrue)
@@ -127,7 +122,7 @@ export default function Inbox() {
         };
         if (conversation_id > 0) {
             getMessages(conversation_id);
-            socket?.emit("joinRoom", conversation_id, user?.id);
+            socket?.emit("joinRoom", { conversationId: conversation_id, userId: user?.id, peerId: peer?._id ?? peer?._lastServerId});
         }
         if (dataConversations.length > 0 && conversation_id) {
             const convertionId = dataConversations.find((conversation) => conversation.id === conversation_id);
@@ -154,7 +149,7 @@ export default function Inbox() {
                 setConversationId(roomId);
                 setSendMessage("");
             } else if (roomId !== conversationId && roomId > 0) {
-                socket?.emit("leaveRoom", conversationId, user.id);
+                socket?.emit("leaveRoom", { conversationId, userId: user.id, peerId: peerId?._id });
                 await getMessages();
             }
         } else {
@@ -251,21 +246,25 @@ export default function Inbox() {
                     <Divider orientation="vertical" flexItem />
 
                     {ringing && <Avatar src={LogoPhoneCall} alt='PhoneIcon' />}
-                    {calling && (
+                    {/* {calling && ( */}
                         <div>
                             <div>
                                 <h3>Your Video</h3>
-                                <video ref={myVideo} autoPlay style={{ width: '100px', height: '100px' }} />
+                                {/* <video ref={myVideo} autoPlay style={{ width: '100px', height: '100px' }} /> */}
+                                <VideoPlayer stream={stream} />
                             </div>
                             <div>
                                 <h3>Remote Video</h3>
-                                <video ref={userVideo} autoPlay style={{ width: '100px', height: '100px' }} />
+                                {Object.values(peers).map((peer) => (
+                                    <VideoPlayer key={peer.peerId} stream={peer.stream} />
+                                ))}
+                                {/* <video ref={userVideo} autoPlay style={{ width: '100px', height: '100px' }} /> */}
                             </div>
                             <button onClick={() => createAnswer(conversationId)} disabled={!ringing}>Answer</button>
-                            {ringing && <button onClick={() => rejectMeeting(conversationId)}>Cancel</button>}
-                            {!ringing && <button onClick={() => endMeeting(conversationId)}>End Meeting</button>}
+                            {/* {ringing && <button onClick={() => rejectMeeting(conversationId)}>Cancel</button>}
+                            {!ringing && <button onClick={() => endMeeting(conversationId)}>End Meeting</button>} */}
                         </div>
-                    )}
+                    {/* )} */}
                 </Paper>
             </Stack >
         </>

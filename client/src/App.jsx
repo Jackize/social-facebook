@@ -40,6 +40,9 @@ function App() {
     socket?.on('userStatus', (userList) => {
       dispatch(updateUserList(userList));
     });
+    socket?.on('get-users', (data) => {
+      console.log(data)
+    });
   }, [user])
 
   const ProtectedRoute = ({ children }) => {

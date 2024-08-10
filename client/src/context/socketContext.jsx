@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useRef, useState } from "react";
+import Peer from 'peerjs';
+import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { useSelector } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import { socket } from "../redux/socketSlice";
+import { PEER_SERVER_HOST, PEER_SERVER_PORT } from '../utils/config';
+import { addPeerAction, removePeerAction } from './peerActions';
+import { peersReducer } from './peerReducer';
 export const SocketContext = createContext();
 
 const configuration = {
@@ -15,6 +21,11 @@ const configuration = {
 }
 
 export default function SocketContextProider({ children }) {
+    const [peer, setpeer] = useState()
+    const [peerId2, setpeerId2] = useState()
+    const [stream, setStream] = useState()
+    const { user } = useSelector((state) => state.user);
+    const [peers, dispatch] = useReducer(peersReducer, {})
     const [pc, setPc] = useState(new RTCPeerConnection(configuration));
     const [conversationId, setConversationId] = useState(0)
     const [offer, setOffer] = useState(null)
@@ -26,52 +37,87 @@ export default function SocketContextProider({ children }) {
 
     const myVideo = useRef(null)
     const userVideo = useRef(null)
+    useEffect(() => {
+        const peer = new Peer(uuid(), {
+            host: PEER_SERVER_HOST,
+            port: PEER_SERVER_PORT,
+            path: '/'
+        })
+        peer.on('open', (id) => {
+            console.log(`Connected to PeerServer with ID: ${id}`);
+        });
+        peer.on('error', (err) => {
+            console.error('Peer error:', err);
+        });
+        setpeer(peer)
+
+        socket.on('call', ({ conversationId, peerId }) => {
+            console.log("🚀 ~ socket.on ~ { conversationId, peerId }:", { conversationId, peerId })
+            setRinging(true);
+            audio.play();
+            setpeerId2(peerId)
+        })
+    }, [])
+
+    useEffect(() => {
+        if (!stream || !peer) return
+
+        socket.on('user-disconnected', (peerId) => {
+            dispatch(removePeerAction(peerId))
+        })
+        
+        // listen income call
+        peer.on('call', (call) => {
+            // answer call with stream
+            call.answer(stream)
+            call.on('stream', (remoteStream) => {
+                console.log("🚀 ~ call.on ~ remoteStream:", remoteStream)
+                dispatch(addPeerAction(call.peer, remoteStream))
+            })
+        })
+    }, [stream, peer])
+    console.log('peers:', peers)
 
     const getUserMedia = async () => {
         try {
-            const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            myVideo.current.srcObject = localStream
-            localStream.getTracks().forEach((track) => {
-                pc?.addTrack(track, localStream)
-            })
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setStream(stream);
+            return stream;
         } catch (error) {
-            console.error('Counld not get user media', error)
+            console.error('Error accessing media devices.', error);
+            throw error;
         }
     }
 
     const createOffer = async (conversationId) => {
-        try {
-            setConversationId(conversationId)
-            setCalling(true)
-            setCallAccepted(false)
-            await getUserMedia()
-            let offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
+        console.log("🚀 ~ createOffer ~ conversationId:", conversationId)
+        await getUserMedia();
+        setConversationId(conversationId);
+        setCalling(true);
+        setCallAccepted(false);
 
-            socket?.on('ice-candidate', async (cand) => {
-                await pc.addIceCandidate(cand);
-            });
-            socket?.emit('offer', conversationId, offer);
+        try {
+            // send conversationId, peerId, userId of user1 to user2
+            socket.emit('offer', { conversationId, peerId: peer._id ?? peer._lastServerId, userId: user.id });
         } catch (error) {
             console.error('Error creating offer:', error);
         }
+
     };
 
     const createAnswer = async (conversationId) => {
+        const localStream = await getUserMedia();
+        setConversationId(conversationId);
+        setCalling(true);
+        setCallAccepted(true);
+        setRinging(false);
+        audio.pause();
+        audio.currentTime = 0;
         try {
-            setCalling(true)
-            setConversationId(conversationId)
-            setCallAccepted(true)
-            await getUserMedia()
-            audio.pause()
-            audio.currentTime = 0
-            setRinging(false)
-
-            const rtc_session_description = new RTCSessionDescription(offer)
-            await pc?.setRemoteDescription(rtc_session_description)
-            let answer = await pc?.createAnswer()
-            await pc?.setLocalDescription(answer)
-            socket?.emit('answer', conversationId, answer)
+            const call = peer.call(peerId2, localStream)
+            call.on('stream', (remoteStream) => {
+                dispatch(addPeerAction(peerId2, remoteStream))
+            })
         } catch (error) {
             console.error('Error creating answer:', error);
         }
@@ -114,13 +160,13 @@ export default function SocketContextProider({ children }) {
         }
     }
     return (
-        <SocketContext.Provider value={{ pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio }}>
+        <SocketContext.Provider value={{ peer, peers, stream, pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio }}>
             {children}
         </SocketContext.Provider>
     );
 }
 
 export const useSocketContext = () => {
-    const { pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio } = useContext(SocketContext);
-    return { pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio };
+    const { pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio, peer, stream, peers } = useContext(SocketContext);
+    return { pc, socket, myVideo, userVideo, callAccepted, callEnded, calling, ringing, conversationId, createOffer, createAnswer, rejectMeeting, endMeeting, setRinging, setOffer, setCalling, setConversationId, audio, peer, stream, peers };
 };

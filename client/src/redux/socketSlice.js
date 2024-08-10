@@ -1,12 +1,8 @@
-// features/socket/socketSlice.js
-
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import io from 'socket.io-client';
 import { SOCKET_SERVER } from "../utils/config";
 import store from './store';
-
 export let socket = io(SOCKET_SERVER);
-
 const initialState = {
     connected: false,
     userList: [],
